@@ -1,0 +1,182 @@
+/* Basic Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Optional: Use a similar font */
+    font-family: Poppins, sans-serif; 
+}
+
+:root {
+    /* Define color variables based on the image */
+    --primary-yellow: #FFD700; /* A bright yellow */
+    --secondary-green: #4CAF50; /* A vibrant green */
+    --text-dark: #333;
+    --text-light: #fff;
+    --hero-overlay-color: rgba(255, 255, 255, 0.75); /* White foggy overlay */
+}
+
+/* --- Navigation Bar (Header) --- */
+.navbar {
+    background-color: var(--primary-yellow);
+    /* Ensures the navbar is at the top */
+    position: sticky; 
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-content {
+    /* Set max width to mimic typical web layouts */
+    max-width: 1200px; 
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    /* Adjust size to match the small logo in the image */
+    height: 40px; 
+    margin-right: 10px;
+}
+
+.university-name {
+    color: var(--text-dark);
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.nav-links a {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 25px;
+    /* Animation: Subtle transition for hover effect */
+    transition: color 0.3s ease; 
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--secondary-green);
+}
+
+.nav-links .highlight {
+    /* To match the slightly different look/emphasis of ROOM RESERVATIONS */
+    /* Could be colored green, or just a different shade */
+    color: var(--text-dark); 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #2d5a27; /* Dark green text from the image */
+}
+
+/* Parallax Effect */
+.parallax-bg {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), 
+                      url('img/kplrc_banner_2-2048x881.png'); /* Replace with your USM image */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    padding: 60px 20px;
+}
+
+.content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: justify;
+}
+
+header h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    color: #3e7a37;
+}
+
+.text-content {
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Scroll Animation Classes */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --- Footer Styling --- */
+.site-footer {
+    background-color: #FFD700; /* University Yellow */
+    padding: 5px 20px;
+    text-align: center;
+    border-top: 3px solid #4CAF50; /* Green accent line */
+}
+
+.footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    width: 50px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 5px;
+}
+
+.footer-university-name {
+    color: #006400; /* Dark Green */
+    font-size: 10px;
+    font-weight: bold;
+    margin: 10px 0;
+    letter-spacing: 1px;
+}
+
+.footer-tagline {
+    color: #006400; /* Dark Green */
+    font-size: 10px;
+    margin-bottom: 5px;
+}
+
+.footer-copyright {
+    color: #006400; /* Dark Green */
+    font-size: 10px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(0, 100, 0, 0.2);
+    padding-top: 15px;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer-university-name {
+        font-size: 18px;
+    }
+    .objectives-heading, .objectives-list, .library-hours-heading, .library-hours-text {
+        max-width: 95%;
+    }
+}

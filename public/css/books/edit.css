@@ -1,0 +1,113 @@
+
+    body {
+      background-color: #e8edf3;
+      font-family: 'Rubik', sans-serif;
+    }
+
+    /* Edit page uses catalog-page layout from create.css */
+    .catalog-page .btn-update {
+      background-color: #437057;
+      color: #fff;
+      padding: 6px 25px;
+      font-weight: bold;
+      border: none;
+    }
+
+    .catalog-page .btn-update:hover {
+      background-color: #2f5249;
+      color: #fff;
+    }
+
+    .catalog-cover-preview__img {
+      display: block;
+      max-height: 220px;
+      max-width: 100%;
+      width: auto;
+      border-radius: 8px !important;
+      border: 1px solid #e2e8f0;
+      object-fit: contain;
+    }
+
+    .edit-container {
+      max-width: 900px;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin: 40px auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-header {
+      background-color: var(--brand-button-bg, #22333b);
+      color: var(--brand-button-text, #ffffff);
+      padding: 12px 20px;
+      font-size: 24px;
+      font-weight: bold;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      margin: -40px -40px 30px -40px;
+    }
+
+    .form-label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+
+    .form-control, .form-select {
+      background-color: #eef2f6;
+      border: none;
+      border-radius: 10px;
+      height: 40px;
+      font-weight: 500;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border: 1px solid #3b82f6;
+      box-shadow: none;
+    }
+
+    .btn-cancel {
+      background-color: var(--brand-danger-bg, #932c27);
+      color: var(--brand-danger-text, #ffffff);
+      padding: 10px 25px;
+      
+      font-weight: bold;
+    }
+    .btn-cancel:hover {
+      background-color: var(--brand-danger-hover-bg, darkred);
+      color: var(--brand-danger-text, #ffffff);
+     
+    }
+
+    .btn-update {
+      background-color: var(--brand-success-hover-bg, #3E5F44);
+      color: var(--brand-success-text, #ffffff);
+      padding: 10px 25px;
+     
+      font-weight: bold;
+    }
+     .btn-update:hover {
+      background-color: green;
+      color: white;
+     
+    }
+
+    .file-preview {
+      margin-top: 10px;
+    }
+
+    .form-section {
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .row .form-section {
+        padding: 0 10px;
+      }
+    }
+    
+    * {
+    border-radius: 0 !important;
+}
+ 

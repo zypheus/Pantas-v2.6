@@ -1,0 +1,400 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Book;
+use App\Models\BookLog;
+use App\Models\FineSetting;
+use App\Models\Student;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class BookLogController extends Controller
+{
+    protected function calculateOverdueDays(Carbon $dueDate, Carbon $returnedDate, int $gracePeriod = 0)
+    {
+        if ($returnedDate->lessThanOrEqualTo($dueDate)) {
+            return 0;
+        }
+
+        $holidays = \App\Models\Holiday::pluck('holiday_date')->map(function ($d) {
+            return Carbon::parse($d)->startOfDay()->toDateString();
+        });
+
+        $overdueDays = 0;
+        $current = $dueDate->copy()->addDay()->startOfDay();
+
+        while ($current->lessThanOrEqualTo($returnedDate)) {
+            $isWeekend = $current->isWeekend();
+            $isHoliday = $holidays->contains($current->toDateString());
+
+            if (! $isWeekend && ! $isHoliday) {
+                $overdueDays++;
+            }
+
+            $current->addDay();
+        }
+
+        return max(0, $overdueDays - $gracePeriod);
+    }
+
+    protected function addBusinessDays(Carbon $start, int $days)
+    {
+        $holidays = \App\Models\Holiday::pluck('holiday_date')->map(function ($d) {
+            return Carbon::parse($d)->startOfDay()->toDateString();
+        });
+
+        $date = $start->copy()->startOfDay();
+        $added = 0;
+
+        while ($added < $days) {
+            $date->addDay();
+
+            $isWeekend = $date->isWeekend();
+            $isHoliday = $holidays->contains($date->toDateString());
+
+            if (! $isWeekend && ! $isHoliday) {
+                $added++;
+            }
+        }
+
+        return $date;
+    }
+
+    /**
+     * Cooldown: after returning a book, the same student must wait before borrowing the same book again.
+     */
+    protected function enforceReborrowCooldownOrNull(int $studentId, int $bookId): ?string
+    {
+        $latestReturn = BookLog::query()
+            ->where('student_id', $studentId)
+            ->where('book_id', $bookId)
+            ->where('status', 'Checked In')
+            ->whereNotNull('returned_date')
+            ->orderByDesc('returned_date')
+            ->value('returned_date');
+
+        if (! $latestReturn) {
+            return null;
+        }
+
+        $returnedAt = Carbon::parse($latestReturn)->timezone('Asia/Manila');
+        $allowedAt = $returnedAt->copy()->addDays(BookController::REBORROW_COOLDOWN_DAYS);
+        $now = Carbon::now('Asia/Manila');
+
+        if ($now->lt($allowedAt)) {
+            return 'This patron must wait '.BookController::REBORROW_COOLDOWN_DAYS.' days after returning this book before borrowing it again. (Available again on '.$allowedAt->format('M j, Y').')';
+        }
+
+        return null;
+    }
+
+    public function index(Request $request)
+    {
+        $logs = BookLog::with(['book', 'student']);
+
+        if ($request->filled('student_id')) {
+            $student = Student::find($request->student_id);
+            if ($student) {
+                $legacyComma = "{$student->lastname}, {$student->firstname}";
+                $legacySpace = trim("{$student->firstname} {$student->lastname}");
+                $logs->where(function ($q) use ($student, $legacyComma, $legacySpace) {
+                    $q->where('student_id', $student->id)
+                        ->orWhere('patron_name', $legacyComma)
+                        ->orWhere('patron_name', $legacySpace);
+                });
+            }
+        }
+
+        if ($request->filled('book_title')) {
+            $logs->whereHas('book', function ($query) use ($request) {
+                $query->where('title_statement', $request->book_title);
+            });
+        }
+
+        if ($request->filled('start_date')) {
+            $logs->whereDate('timestamp', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $logs->whereDate('timestamp', '<=', $request->end_date);
+        }
+
+        if ($request->filled('circulation_type') && in_array($request->circulation_type, ['checkout', 'room_use'], true)) {
+            if ($request->circulation_type === 'room_use') {
+                $logs->where('circulation_type', BookLog::CIRCULATION_ROOM_USE);
+            } else {
+                $logs->where(function ($q) {
+                    $q->where('circulation_type', BookLog::CIRCULATION_CHECKOUT)
+                        ->orWhereNull('circulation_type');
+                });
+            }
+        }
+
+        $logs = $logs->latest()->paginate(10);
+
+        $studentIds = BookLog::whereNotNull('student_id')->distinct()->pluck('student_id');
+        $filterStudents = Student::whereIn('id', $studentIds)
+            ->orderBy('lastname')
+            ->orderBy('firstname')
+            ->get();
+
+        $bookTitles = Book::pluck('title_statement')->unique();
+
+        $prefillPatronLabel = '';
+        if ($request->filled('student_id')) {
+            $ps = Student::find($request->student_id);
+            if ($ps) {
+                $prefillPatronLabel = "{$ps->lastname}, {$ps->firstname}"
+                    .($ps->id_number ? " ({$ps->id_number})" : '');
+            }
+        }
+
+        return view('books.logs', compact('logs', 'filterStudents', 'bookTitles', 'prefillPatronLabel'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'rfid' => 'required|string',
+            'status' => 'required|string|in:checked_out,room_use,checked_in',
+            'student_id' => 'required|integer|exists:students,id',
+        ]);
+
+        $book = Book::where('rfid', $request->rfid)->first();
+
+        if (! $book) {
+            return back()->with('error', 'Book not found.');
+        }
+
+        $student = Student::findOrFail($request->student_id);
+        $patronName = "{$student->lastname}, {$student->firstname}";
+
+        $action = $request->status;
+        $isOutbound = in_array($action, ['checked_out', 'room_use'], true);
+
+        $lastLog = BookLog::where('book_id', $book->id)
+            ->latest('timestamp')
+            ->first();
+
+        if ($isOutbound && $lastLog && $lastLog->status === 'Checked Out') {
+            return back()->with('error', 'This book is already on loan (check in first).');
+        }
+
+        if ($action === 'checked_in' && (! $lastLog || $lastLog->status !== 'Checked Out')) {
+            return back()->with('error', 'This book is already checked in.');
+        }
+
+        if ($action === 'checked_in' && $lastLog && $lastLog->student_id) {
+            if ((int) $request->student_id !== (int) $lastLog->student_id) {
+                return back()->with('error', 'Patron must match the student who has this book.');
+            }
+        }
+
+        if ($isOutbound) {
+            $cooldownError = $this->enforceReborrowCooldownOrNull((int) $student->id, (int) $book->id);
+            if ($cooldownError) {
+                return back()->with('error', $cooldownError);
+            }
+
+            $active = BookLog::countActiveLoansForStudent((int) $student->id);
+            if ($active >= BookController::MAX_CONCURRENT_BOOK_LOANS_PER_STUDENT) {
+                return back()->with(
+                    'error',
+                    'This patron already has the maximum of '.BookController::MAX_CONCURRENT_BOOK_LOANS_PER_STUDENT.' books on loan (including room use). Check one in first, or use check out only for books taken outside the library.'
+                );
+            }
+        }
+
+        $newStatus = $isOutbound ? 'Checked Out' : 'Checked In';
+        $book->availability = $isOutbound ? 'Borrowed' : 'Available';
+
+        $circulationType = BookLog::CIRCULATION_CHECKOUT;
+        if ($isOutbound && $action === 'room_use') {
+            $circulationType = BookLog::CIRCULATION_ROOM_USE;
+        } elseif (! $isOutbound && $lastLog) {
+            $circulationType = $lastLog->circulation_type ?? BookLog::CIRCULATION_CHECKOUT;
+        }
+
+        $settings = FineSetting::latest('created_at')->first();
+
+        $dueDate = null;
+        $returnedDate = null;
+        $fineIncurred = null;
+
+        if ($isOutbound && $action === 'checked_out') {
+            $loanDays = $settings->loan_duration_days ?? 7;
+            $dueDate = $this->addBusinessDays(Carbon::now('Asia/Manila'), $loanDays);
+        }
+
+        if ($action === 'checked_in') {
+            $returnedDate = Carbon::now('Asia/Manila');
+
+            if ($lastLog && $lastLog->due_date) {
+                $dueDate = $lastLog->due_date;
+
+                $gracePeriod = $settings->grace_period_days ?? 0;
+                $finePerDay = $settings->fine_per_day ?? 0;
+                $maxFine = $settings->max_fine;
+
+                $overdueDays = $this->calculateOverdueDays(
+                    Carbon::parse($dueDate)->startOfDay(),
+                    $returnedDate->copy()->startOfDay(),
+                    $gracePeriod
+                );
+
+                $fineIncurred = $overdueDays * $finePerDay;
+
+                if ($overdueDays > 0) {
+                    session()->flash('overdue_modal', [
+                        'book_title' => $book->title_statement,
+                        'patron_name' => $patronName,
+                        'days_late' => $overdueDays,
+                        'fine' => $fineIncurred,
+                        'breakdown' => "{$overdueDays} day(s) × ₱".number_format($finePerDay, 2).' = ₱'.number_format($fineIncurred, 2),
+                    ]);
+                }
+
+                if (! is_null($maxFine)) {
+                    $fineIncurred = min($fineIncurred, $maxFine);
+                }
+            }
+        }
+
+        BookLog::create([
+            'book_id' => $book->id,
+            'student_id' => $student->id,
+            'patron_name' => $patronName,
+            'status' => $newStatus,
+            'circulation_type' => $circulationType,
+            'renew_count' => 0,
+            'timestamp' => Carbon::now('Asia/Manila'),
+            'due_date' => $dueDate,
+            'returned_date' => $returnedDate,
+            'fine_incurred' => $fineIncurred,
+        ]);
+
+        $book->save();
+
+        if ($action === 'room_use') {
+            return back()->with('success', 'Room use recorded (in library only). Remind the patron to check in when finished.');
+        }
+
+        return back()->with('success', "Book has been {$newStatus} successfully!");
+    }
+
+    public function renew(Request $request, Book $book)
+    {
+        $request->validate([
+            'student_id' => 'required|integer|exists:students,id',
+        ]);
+
+        $studentId = (int) $request->student_id;
+
+        $lastLog = BookLog::query()
+            ->where('book_id', $book->id)
+            ->latest('timestamp')
+            ->first();
+
+        if (! $lastLog || $lastLog->status !== 'Checked Out') {
+            return back()->with('error', 'This book is not currently checked out.');
+        }
+
+        if ((int) $lastLog->student_id !== $studentId) {
+            return back()->with('error', 'Only the patron who borrowed this book can renew it.');
+        }
+
+        if (($lastLog->circulation_type ?? BookLog::CIRCULATION_CHECKOUT) !== BookLog::CIRCULATION_CHECKOUT) {
+            return back()->with('error', 'Room-use loans cannot be renewed.');
+        }
+
+        if (! $lastLog->due_date) {
+            return back()->with('error', 'This loan has no due date to renew.');
+        }
+
+        $renewCount = (int) ($lastLog->renew_count ?? 0);
+        if ($renewCount >= BookController::MAX_RENEWALS_PER_LOAN) {
+            return back()->with('error', 'Renewal limit reached (max '.BookController::MAX_RENEWALS_PER_LOAN.' renewals).');
+        }
+
+        $settings = FineSetting::latest('created_at')->first();
+        $loanDays = (int) ($settings->loan_duration_days ?? 7);
+
+        $base = Carbon::parse($lastLog->due_date, 'Asia/Manila');
+        $newDue = $this->addBusinessDays($base, $loanDays);
+
+        $lastLog->due_date = $newDue;
+        $lastLog->renew_count = $renewCount + 1;
+        $lastLog->last_renewed_at = Carbon::now('Asia/Manila');
+        $lastLog->save();
+
+        return back()->with('success', 'Loan renewed. New due date: '.$newDue->format('Y-m-d').'. ('.$lastLog->renew_count.'/'.BookController::MAX_RENEWALS_PER_LOAN.' renewals used)');
+    }
+
+    public function patronSuggestions(Request $request)
+    {
+        $search = $request->get('query', '');
+
+        $suggestions = Student::where(function ($q) use ($search) {
+            $q->where('firstname', 'LIKE', "%{$search}%")
+                ->orWhere('lastname', 'LIKE', "%{$search}%")
+                ->orWhere('id_number', 'LIKE', "%{$search}%")
+                ->orWhereRaw(
+                    'LOWER(CONCAT(firstname, \' \', lastname)) LIKE ?',
+                    ['%'.strtolower($search).'%']
+                );
+        })
+            ->limit(10)
+            ->get()
+            ->map(function ($s) {
+                $label = "{$s->lastname}, {$s->firstname}";
+                if ($s->id_number) {
+                    $label .= " ({$s->id_number})";
+                }
+
+                return [
+                    'id' => $s->id,
+                    'name' => $label,
+                ];
+            });
+
+        return response()->json($suggestions);
+    }
+
+    public function bookSuggestions(Request $request)
+    {
+        $search = $request->get('query', '');
+
+        $books = Book::where(function ($q) use ($search) {
+            $q->where('title_statement', 'LIKE', "%{$search}%")
+                ->orWhere('main_author', 'LIKE', "%{$search}%")
+                ->orWhere('rfid', 'LIKE', "%{$search}%")
+                ->orWhere('barcode', 'LIKE', "%{$search}%");
+        })
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $books->map(function ($b) {
+                $lastCheckout = BookLog::with('student')
+                    ->where('book_id', $b->id)
+                    ->where('status', 'Checked Out')
+                    ->latest('timestamp')
+                    ->first();
+
+                return [
+                    'id' => $b->id,
+                    'title' => $b->title_statement,
+                    'author' => $b->main_author,
+                    'barcode' => $b->barcode,
+                    'rfid' => $b->rfid,
+                    'availability' => $b->availability,
+                    'last_student_id' => $lastCheckout?->student_id,
+                    'last_patron' => $lastCheckout ? $lastCheckout->patronLabel() : null,
+                    'last_circulation_type' => $lastCheckout?->circulation_type,
+                ];
+            })
+        );
+    }
+}

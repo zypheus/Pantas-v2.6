@@ -1,0 +1,39 @@
+
+#logout  {
+    color: var(--brand-logout-text, #ffffff) !important;
+    background-color: var(--brand-logout-bg, #1f7902);
+    
+}
+
+#routeWrapper a:hover {
+    background-color: var(--brand-nav-hover-bg, #ffe202);
+    transform: scale(1.03);
+    color: var(--brand-nav-hover-text, #22333b);
+}
+
+#routeWrapper a {   
+    color: var(--brand-nav-link, #1f7902);
+}   
+
+#routeWrapper button {
+    color: var(--brand-nav-link, #1f7902);
+}   
+
+.btn5{
+    background-color: var(--brand-logout-bg, #1f7902);
+    font-weight: 600;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    padding: 5px 15px;
+    margin-top: 10px;
+    transition: color 0.3s, transform 0.3s;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    color: var(--brand-logout-text, #ffffff);
+    border:none;
+}
+.btn5:hover{
+    background-color: var(--brand-button-hover-bg, #ffb845);
+    color: var(--brand-nav-link-active, #ffe202);
+}
+

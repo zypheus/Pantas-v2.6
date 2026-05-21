@@ -1,0 +1,78 @@
+
+        body {
+            background-color: rgba(0, 0, 0, 0.05);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .custom-modal {
+            max-width: 700px;
+            background: #fff;
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 5rem auto;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+        .custom-title {
+            color: var(--brand-school-name-color, #932c27);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .custom-input,
+        .custom-select {
+            border-radius: 50px;
+            background-color: #f1f3f8;
+            border: none;
+            padding: 16px 26px;
+            font-size: 1.05rem;
+        }
+
+        .custom-input:focus,
+        .custom-select:focus {
+            outline: none;
+            box-shadow: none;
+            background-color: #e9edf5;
+        }
+
+        .custom-btn-save {
+            background-color: var(--brand-danger-bg, #932c27);
+            color: var(--brand-danger-text, #ffffff);
+            font-weight: bold;
+            border: none;
+            border-radius: 0px;
+            padding: 14px 38px;
+            font-size: 1.05rem;
+        }
+
+        .custom-btn-save:hover {
+            background-color: var(--brand-danger-hover-bg, darkred);
+            color: var(--brand-danger-text, yellow);
+        }
+
+        .custom-btn-back {
+            background-color: var(--brand-button-bg, #22333b);
+            color: var(--brand-button-text, #ffffff);
+            text-decoration: none;
+            padding: 14px 38px;
+            font-size: 1.05rem;
+        }
+        .custom-btn-back:hover {
+            background-color: var(--brand-button-hover-bg, #ffb845);
+            color: var(--brand-button-hover-text, #22333b);
+            padding: 14px 38px;
+            font-size: 1.05rem;
+        }
+
+        .add-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .add-link:hover {
+            text-decoration: underline;
+        }
+        * {
+    border-radius: 5 !important;
+}

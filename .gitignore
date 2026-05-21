@@ -1,0 +1,62 @@
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/storage/logs/*.log
+/vendor
+
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/auth.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.cursor/
+
+# OS junk
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Accidental / local-only folders
+/a/
+/img/
+
+# Legacy root images folder (use public/images/ for repo assets)
+/images/
+
+# Migration archives (use database/migrations/*.php instead)
+/database/migrations/*.zip
+/database/migrations/_migrations*
+
+# User-uploaded media (keep .gitkeep only)
+/public/images/profile_pictures/*
+!/public/images/profile_pictures/.gitkeep
+/public/images/student_signatures/*
+!/public/images/student_signatures/.gitkeep
+/public/images/signatures/*
+!/public/images/signatures/.gitkeep
+/public/images/edits/*
+!/public/images/edits/.gitkeep
+/public/images/formal_pictures/*
+!/public/images/formal_pictures/.gitkeep
+
+# Duplicate copies from Windows "(1)" exports
+*(1)*
+
+# Large videos — keep locally; copy to server after deploy (not in GitHub)
+/public/videos/*.mp4
+/videos/*.mp4
+!/public/videos/.gitkeep
