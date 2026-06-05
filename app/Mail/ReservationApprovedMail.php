@@ -2,31 +2,29 @@
 
 namespace App\Mail;
 
+use App\Models\RoomReservation;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\RoomReservation;
 
 class ReservationApprovedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $reservation;
+    public RoomReservation $reservation;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(RoomReservation $reservation)
     {
-        $this->reservation = $reservation;
+        $this->reservation = $reservation->loadMissing(['room', 'students', 'approver']);
     }
 
-    /**
-     * Build the message.
-     */
     public function build()
     {
-        return $this->subject('Your Room Reservation Has Been Approved')
-                    ->view('emails.reservations.approved'); // ✅ simple Blade view
+        $room = $this->reservation->room?->name ?? 'Room';
+        $date = Carbon::parse($this->reservation->date)->format('M j, Y');
+
+        return $this->subject("Room reservation approved — {$room}, {$date}")
+            ->view('emails.reservations.approved');
     }
 }

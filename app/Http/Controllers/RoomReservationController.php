@@ -140,10 +140,18 @@ class RoomReservationController extends Controller
             'action' => 'approved',
         ]);
 
-        // (Optional) send email to patron
-        Mail::to($reservation->patron_email)->send(new ReservationApprovedMail($reservation));
+        $flash = ['success' => 'Reservation approved successfully.'];
 
-        return back()->with('success', 'Reservation approved successfully.');
+        if (filled($reservation->patron_email)) {
+            try {
+                Mail::to($reservation->patron_email)->send(new ReservationApprovedMail($reservation));
+            } catch (\Throwable $e) {
+                report($e);
+                $flash['warning'] = 'The confirmation email could not be sent. Check SMTP settings for support@pantas.org.';
+            }
+        }
+
+        return back()->with($flash);
     }
 
     /**

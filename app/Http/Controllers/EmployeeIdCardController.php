@@ -2,93 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ComposesLibraryIdCard;
 use App\Models\Employee;
-use Carbon\Carbon;
-use Intervention\Image\Facades\Image;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use ZipArchive;
 
 /**
- * Faculty ID cards — same templates as student IDs, mapped to Employee fields.
+ * Faculty & staff ID cards — same layout and templates as student IDs.
  */
 class EmployeeIdCardController extends Controller
 {
-    private function drawText($img, $text, $x, $y, $size, $color = '#000', $align = 'center', $valign = 'top')
-    {
-        $fontPathBold = public_path('fonts/arialbd.ttf');
-        $fontPathRegular = public_path('fonts/arial.ttf');
-
-        if (file_exists($fontPathBold)) {
-            $img->text($text, $x, $y, function ($font) use ($fontPathBold, $size, $color, $align, $valign) {
-                $font->file($fontPathBold);
-                $font->size($size);
-                $font->color($color);
-                $font->align($align);
-                $font->valign($valign);
-            });
-        } else {
-            foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$ox, $oy]) {
-                $img->text($text, $x + $ox, $y + $oy, function ($font) use ($fontPathRegular, $size, $color, $align, $valign) {
-                    $font->file($fontPathRegular);
-                    $font->size($size);
-                    $font->color($color);
-                    $font->align($align);
-                    $font->valign($valign);
-                });
-            }
-            $img->text($text, $x, $y, function ($font) use ($fontPathRegular, $size, $color, $align, $valign) {
-                $font->file($fontPathRegular);
-                $font->size($size);
-                $font->color($color);
-                $font->align($align);
-                $font->valign($valign);
-            });
-        }
-    }
+    use ComposesLibraryIdCard;
 
     public function front($id)
     {
         $employee = Employee::findOrFail($id);
-        $img = Image::make(base_path('images/id_templates/front.png'));
+        $img = $this->idCardTemplate('front');
 
-        $picPath = $employee->formal_picture;
-        if ($picPath && file_exists(base_path($picPath))) {
-            $profile = Image::make(base_path($picPath))->resize(260, 260);
-            $img->insert($profile, 'center', 120, -195);
-        }
+        $subtitle = $employee->department
+            ?: $employee->program
+            ?: $employee->designation
+            ?: $employee->position;
 
-        $fullName = trim("{$employee->firstname} {$employee->lastname}");
-        $fontSize = 35;
-        $img->text($fullName, 280, 655, function ($font) use ($fontSize) {
-            $font->file(public_path('fonts/arial.ttf'));
-            $font->size($fontSize);
-            $font->color('#05014a');
-            $font->align('center');
-            $font->valign('top');
-        });
-
-        if ($employee->department) {
-            $courseFontSize = 25;
-            $img->text(trim($employee->department), 280, 705, function ($font) use ($courseFontSize) {
-                $font->file(public_path('fonts/arial.ttf'));
-                $font->size($courseFontSize);
-                $font->color('#05014a');
-                $font->align('center');
-                $font->valign('top');
-            });
-        }
-
-        $idNum = $employee->employee_number ?: $employee->employee_id;
-        if ($idNum) {
-            $idFontSize = 35;
-            $img->text(trim($idNum), 135, 345, function ($font) use ($idFontSize) {
-                $font->file(public_path('fonts/arial.ttf'));
-                $font->size($idFontSize);
-                $font->color('#fff');
-                $font->align('center');
-                $font->valign('top');
-            });
-        }
+        $this->composeIdCardFront($img, [
+            'photo' => $employee->formal_picture,
+            'full_name' => trim("{$employee->firstname} {$employee->lastname}"),
+            'subtitle' => $subtitle,
+            'id_number' => $employee->employee_id ?: $employee->employee_number,
+        ]);
 
         return $img->response('png');
     }
@@ -96,23 +36,16 @@ class EmployeeIdCardController extends Controller
     public function back($id)
     {
         $employee = Employee::findOrFail($id);
-        $img = Image::make(base_path('images/id_templates/back.png'));
+        $img = $this->idCardTemplate('back');
 
-        $qrValue = $employee->qrcode ?: ('E-'.$employee->id);
-        $qrPng = QrCode::format('png')->size(935)->margin(0)->generate($qrValue);
-        $qrImage = Image::make((string) $qrPng);
-
-        if ($employee->birth_date) {
-            $formattedDate = Carbon::parse($employee->birth_date)->format('m-d-Y');
-            $this->drawText($img, $formattedDate, 3000, 800, 300, '#000');
-        }
-
-        if ($employee->employee_signature && file_exists(base_path($employee->employee_signature))) {
-            $signature = Image::make(base_path($employee->employee_signature))->resize(1300, 600);
-            $img->insert($signature, 'center', 0, 1150);
-        }
-
-        $img->insert($qrImage, 'top-left', 630, 400);
+        $this->composeIdCardBack($img, [
+            'qrcode' => $employee->qrcode ?: ('E-'.$employee->id),
+            'signature' => $employee->employee_signature,
+            'emergency_person' => $employee->emergency_contact_name,
+            'emergency_relationship' => $employee->emergency_contact_relationship,
+            'emergency_number' => $employee->emergency_contact_number,
+            'birth_date' => $employee->birth_date,
+        ]);
 
         return $img->response('png');
     }
@@ -120,6 +53,7 @@ class EmployeeIdCardController extends Controller
     public function download($id)
     {
         $employee = Employee::findOrFail($id);
+
         $front = $this->front($id)->getContent();
         $back = $this->back($id)->getContent();
 
