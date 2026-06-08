@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Library catalog — OPAC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/books/landing.css') }}">
     <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}">
@@ -41,16 +44,17 @@
             </div>
         </header>
     @else
-        <header class="opac-public-header opac-header-bar">
+        <header class="opac-public-header opac-header-bar opac-header-sticky">
             <div class="logo opac-logo-wrap">
-                <a href="{{ route('landing') }}" class="text-decoration-none text-dark d-inline-flex align-items-center">
+                <a href="{{ route('landing') }}" class="text-decoration-none d-inline-flex align-items-center">
                     <img src="{{ asset('images/pantasLogo.png') }}" alt="Library Logo">
                 </a>
             </div>
+            <span class="opac-nav-divider" aria-hidden="true"></span>
             <nav class="opac-top-nav" aria-label="Quick links">
                 <a href="{{ route('home') }}" class="opac-nav-link">Home</a>
                 <a href="{{ route('kiosk.scan') }}" class="opac-nav-link">Student lookup</a>
-                <a href="{{ route('landing') }}" class="opac-nav-link fw-semibold">Catalog</a>
+                <a href="{{ route('landing') }}" class="opac-nav-link opac-nav-link--active">Catalog</a>
             </nav>
             <form action="{{ route('logout') }}" method="POST" class="mb-0" hidden>
                 @csrf
@@ -67,78 +71,96 @@
     @endunless
 
     @unless($searchActive)
-    <section class="opac-new-arrivals-block px-3 pb-2">
-        <h1 id="nab" class="opac-new-arrivals-title text-center my-3">New arrival books</h1>
+    <section class="opac-search-block px-3 px-md-4 py-4" aria-labelledby="opac-search-heading">
+        <h2 id="opac-search-heading" class="opac-search-heading text-center mb-1">Search the Library Catalog</h2>
+        <p class="text-center text-muted mb-3 opac-search-subheading">Find books, references, and resources available at the library</p>
 
-        <div class="carousel">
-            <div class="carousel-container">
-                <div class="arrow left" onclick="slide(-1)" role="button" tabindex="0" aria-label="Previous"
-                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();slide(-1);}">
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M12.5 3L5 10l7.5 7" stroke="#5b5e64" stroke-width="2.5" fill="none" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </div>
-
-                <div class="carousel-track" id="carouselTrack">
-                    @foreach ($carouselBooks as $book)
-                    @php
-                        $cMeta = $carouselMeta[$book->id] ?? ['copies' => 1, 'is_available' => $book->availability === 'Available'];
-                        $cAvail = ($cMeta['is_available'] ?? false) ? 'Available' : 'Not Available';
-                    @endphp
-                    <div class="carosel"
-                        data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
-                        data-title="{{ $book->title_statement }}"
-                        data-author="{{ $book->main_author }}"
-                        data-note="{{ $book->general_note }}"
-                        data-call="{{ $book->call_number }}"
-                        data-id="{{ $book->id }}"
-                        data-year="{{ $book->pub_year }}"
-                        data-availability="{{ $cAvail }}"
-                        data-copies="{{ $cMeta['copies'] }}"
-                        data-content="{{ $book->content_type }}"
-                        data-fixed="{{ $book->fixed_length_data }}"
-                        data-library="{{ $book->library_name }}"
-                        data-course="{{ $book->course ?? '' }}"
-                        onclick="openBookCard(this)">
-
-                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
-                            alt="{{ $book->title_statement }}">
-                        <p>{{ $book->title_statement }}</p>
-                    </div>
-                    @endforeach
-                </div>
-
-                <div class="arrow right" onclick="slide(1)" role="button" tabindex="0" aria-label="Next"
-                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();slide(1);}">
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M7.5 3L15 10l-7.5 7" stroke="#5b5e64" stroke-width="2.5" fill="none" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </div>
-            </div>
+        <div class="opac-search-tabs mb-3" role="tablist" aria-label="Catalog type">
+            <a href="{{ route('landing', ['view' => 'books']) }}"
+               class="opac-search-tab {{ ($viewMode ?? 'books') !== 'ebooks' ? 'opac-search-tab--active' : '' }}"
+               role="tab" aria-selected="{{ ($viewMode ?? 'books') !== 'ebooks' ? 'true' : 'false' }}">
+                Books
+            </a>
+            <a href="{{ route('landing', ['view' => 'ebooks']) }}"
+               class="opac-search-tab {{ ($viewMode ?? 'books') === 'ebooks' ? 'opac-search-tab--active' : '' }}"
+               role="tab" aria-selected="{{ ($viewMode ?? 'books') === 'ebooks' ? 'true' : 'false' }}">
+                E-Books
+            </a>
         </div>
+
+        <form method="GET" action="{{ route('landing') }}" class="opac-search-form mx-auto">
+            <input type="hidden" name="view" value="{{ $viewMode ?? 'books' }}">
+            <div class="opac-search-input-wrap mb-2">
+                <svg class="opac-search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
+                    <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input id="searchBar" type="search" name="search" value="{{ request('search') }}"
+                    class="form-control opac-search-main-input"
+                    placeholder="{{ ($viewMode ?? 'books') === 'ebooks' ? 'Search e-books by title, author, or keyword…' : 'Search books by title, author, or keyword…' }}"
+                    autocomplete="off"
+                    autofocus
+                    aria-label="Search catalog">
+                <button type="submit" class="btn opac-search-submit-btn">Search</button>
+            </div>
+        </form>
+
+        <p class="text-center text-muted small mt-2 mb-0 mx-auto opac-search-hint">
+            Catalog results and filters appear after you search. New arrivals are below.
+        </p>
     </section>
     @endunless
 
     @unless($searchActive)
-    <section class="opac-search-block px-3 px-md-4 py-4" aria-labelledby="opac-search-heading">
-        <h2 id="opac-search-heading" class="h5 text-center mb-3">Search books...</h2>
-        <form method="GET" action="{{ route('landing') }}" class="opac-search-form mx-auto">
-            <div class="input-group input-group-lg mb-2">
-                <input id="searchBar" type="search" name="search" value="{{ request('search') }}"
-                    class="form-control"
-                    placeholder="Title, author, or keywords…"
-                    autocomplete="off"
-                    aria-label="Search catalog">
-                <button type="submit" class="btn btn-success">Search</button>
+    <section class="opac-new-arrivals-block">
+        <div class="opac-arrivals-header">
+            <h2 class="opac-arrivals-title">New Arrival Books</h2>
+            <a href="{{ route('landing', ['search' => '', 'view' => 'books']) }}" class="opac-arrivals-viewall">View all books &rarr;</a>
+        </div>
+
+        <div class="opac-carousel-wrap">
+            <div class="opac-carousel-track" id="carouselTrack">
+                @foreach ($carouselBooks as $book)
+                @php
+                    $cMeta = $carouselMeta[$book->id] ?? ['copies' => 1, 'is_available' => $book->availability === 'Available'];
+                    $cAvail = ($cMeta['is_available'] ?? false) ? 'Available' : 'Not Available';
+                @endphp
+                <div class="opac-book-card"
+                    data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
+                    data-title="{{ $book->title_statement }}"
+                    data-author="{{ $book->main_author }}"
+                    data-note="{{ $book->general_note }}"
+                    data-call="{{ $book->call_number }}"
+                    data-id="{{ $book->id }}"
+                    data-year="{{ $book->pub_year }}"
+                    data-availability="{{ $cAvail }}"
+                    data-copies="{{ $cMeta['copies'] }}"
+                    data-content="{{ $book->content_type }}"
+                    data-fixed="{{ $book->fixed_length_data }}"
+                    data-library="{{ $book->library_name }}"
+                    data-course="{{ $book->course ?? '' }}"
+                    onclick="openBookCard(this)"
+                    tabindex="0"
+                    role="button"
+                    aria-label="{{ $book->title_statement }}">
+
+                    <div class="opac-book-card-cover">
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
+                            alt="{{ $book->title_statement }}">
+                    </div>
+                    <div class="opac-book-card-body">
+                        <p class="opac-book-card-title">{{ $book->title_statement }}</p>
+                        @if($book->main_author)
+                            <p class="opac-book-card-author">{{ $book->main_author }}</p>
+                        @endif
+                        <span class="opac-book-card-badge opac-book-card-badge--{{ ($cMeta['is_available'] ?? false) ? 'available' : 'unavailable' }}">
+                            {{ $cAvail }}
+                        </span>
+                    </div>
+                </div>
+                @endforeach
             </div>
-
-        </form>
-
-        <p class="text-center text-muted small mt-3 mb-0 mx-auto opac-search-hint">
-            Catalog results and filters appear after you search. New arrivals are above.
-        </p>
+        </div>
     </section>
     @endunless
 
@@ -442,6 +464,38 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
+
+    @unless($searchActive)
+    <footer class="opac-footer" role="contentinfo">
+        <div class="opac-footer-inner">
+            <div class="opac-footer-col opac-footer-brand">
+                <img src="{{ asset('images/pantasLogo-box.png') }}" alt="Library Logo" class="opac-footer-logo">
+                <div>
+                    <div class="opac-footer-school">Governor Generoso College of Arts, Sciences and Technology</div>
+                    <div class="opac-footer-tagline">Library Information System</div>
+                </div>
+            </div>
+            <div class="opac-footer-col">
+                <h3 class="opac-footer-heading">Quick Links</h3>
+                <ul class="opac-footer-links">
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('landing') }}">Catalog</a></li>
+                    <li><a href="{{ route('kiosk.scan') }}">Student Lookup</a></li>
+                </ul>
+            </div>
+            <div class="opac-footer-col">
+                <h3 class="opac-footer-heading">Library</h3>
+                <ul class="opac-footer-links opac-footer-info">
+                    <li>Governor Generoso, Davao Oriental</li>
+                    <li>Philippines</li>
+                </ul>
+            </div>
+        </div>
+        <div class="opac-footer-bottom">
+            <span>&copy; {{ date('Y') }} PANTAS Library System. All rights reserved.</span>
+        </div>
+    </footer>
+    @endunless
     </div>
 
     <script>
@@ -452,6 +506,15 @@
         function logout() {
             document.querySelector('header form[action*="logout"]')?.submit();
         }
+
+        // Sticky nav elevated shadow on scroll
+        (function () {
+            var header = document.querySelector('.opac-header-sticky');
+            if (!header) return;
+            window.addEventListener('scroll', function () {
+                header.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
+        })();
     </script>
     <script src="{{ asset('js/cart.js') }}"></script>
     <script src="{{ asset('js/landings.js') }}"></script>

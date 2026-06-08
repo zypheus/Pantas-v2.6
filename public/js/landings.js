@@ -308,7 +308,7 @@ function closeStudentModal() {
 }
 
 function markBorrowedInUi(bookId) {
-    document.querySelectorAll(`.book-card[data-id="${bookId}"], .carosel[data-id="${bookId}"]`).forEach((card) => {
+    document.querySelectorAll(`.book-card[data-id="${bookId}"], .carosel[data-id="${bookId}"], .opac-book-card[data-id="${bookId}"]`).forEach((card) => {
         const statusP = card.querySelector('p.text-success, p.text-danger');
         if (statusP) {
             statusP.textContent = 'Borrowed';
@@ -508,7 +508,7 @@ window.printReceiptBulk = function printReceiptBulk() {
 function slide(direction) {
     if (!track) return;
 
-    const bookWidth = 130;
+    const bookWidth = 184; // 168px card + 16px gap
     scrollAmount += direction * bookWidth * 2;
 
     if (scrollAmount < 0) scrollAmount = 0;
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const m = /^#book-(\d+)$/.exec(hash);
     if (m) {
         const id = m[1];
-        const card = document.querySelector(`.book-card[data-id="${id}"], .carosel[data-id="${id}"]`);
+        const card = document.querySelector(`.book-card[data-id="${id}"], .carosel[data-id="${id}"], .opac-book-card[data-id="${id}"]`);
         if (card) {
             openBookCard(card);
         }

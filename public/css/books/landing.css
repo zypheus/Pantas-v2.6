@@ -2,11 +2,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
 }
 
 body {
-    background: var(--brand-page-bg, #f4f6f9);
+    background: var(--brand-page-bg, #f8f9fa);
+    color: #191c1d;
 }
 
 /* ADdU-style OPAC header (search-active) */
@@ -90,41 +91,103 @@ body {
     margin-top: 6px;
 }
 
+/* ── Phase 1: Sticky public header ── */
+.opac-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-bottom: 3px solid var(--brand-nav-link, #001b3d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease;
+}
+
+.opac-header-sticky.scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 24px;
+    background-color: #ffffff;
+}
+
+/* Logo text block (school name + system name) */
+.opac-logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.15;
+}
+
+.opac-logo-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--brand-nav-link, #001b3d);
+    letter-spacing: -0.01em;
+}
+
+.opac-logo-sub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #74777f;
+    letter-spacing: 0.01em;
+}
+
+/* Nav divider between logo and links */
+.opac-nav-divider {
+    display: block;
+    width: 1px;
+    height: 32px;
+    background: #e0e4ec;
+    margin: 0 8px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 575px) {
+    .opac-nav-divider { display: none; }
 }
 
 .opac-top-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
     flex-wrap: wrap;
 }
 
 .opac-nav-link {
     display: inline-flex;
     align-items: center;
-    padding: 8px 14px;
+    padding: 8px 16px;
     border-radius: 999px;
     text-decoration: none;
-    color: var(--brand-nav-link, #1f4ea7);
+    color: #44474e;
+    font-size: 0.9rem;
     font-weight: 600;
-    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    letter-spacing: 0.01em;
+    transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 .opac-nav-link:hover {
-    background-color: var(--brand-nav-hover-bg, #ffffff);
-    color: var(--brand-nav-hover-text, #2e7d32);
-    transform: scale(1.03);
+    background-color: #edeeef;
+    color: var(--brand-nav-link, #001b3d);
+}
+
+/* Active / current page pill */
+.opac-nav-link--active {
+    background-color: var(--brand-nav-link, #0050cc);
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.opac-nav-link--active:hover {
+    background-color: color-mix(in srgb, var(--brand-nav-link, #0050cc) 85%, black);
+    color: #fff !important;
 }
 
 .opac-nav-link:focus-visible {
-    outline: 3px solid rgba(31, 121, 2, 0.35);
+    outline: 3px solid rgba(0, 80, 204, 0.3);
     outline-offset: 2px;
 }
 
@@ -132,12 +195,13 @@ header {
     display: flex;
     align-items: center;
     font-weight: bold;
-    font-size: 1.2rem;
-
+    font-size: 1rem;
 }
 
 .logo img {
-    height: 50px;
+    height: 48px;
+    width: auto;
+    object-fit: contain;
     margin-right: 10px;
 }
 
@@ -450,9 +514,331 @@ header {
     background: #555;
 }
 
-        #nab{
-        color: #1f4ea7  !important;
-        }
+        /* ──────────────────────────────────────────────────────────────────
+   NEW ARRIVALS ─ Stitch redesign
+───────────────────────────────────────────────────────────────── */
+.opac-new-arrivals-block {
+    max-width: 1280px;
+    margin: 0 auto 2.5rem;
+    padding: 0 2rem;
+}
+
+.opac-arrivals-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.opac-arrivals-title {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-nav-link, #001b3d);
+    letter-spacing: -0.01em;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.opac-arrivals-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 48px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--brand-nav-link, #0050cc);
+}
+
+.opac-arrivals-viewall {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--brand-nav-link, #0050cc);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.18s ease;
+}
+
+.opac-arrivals-viewall:hover {
+    color: #003fa4;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Carousel wrapper — no arrow padding needed */
+.opac-carousel-wrap {
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    /* smooth scroll on touch */
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+/* Hide scrollbar visually but keep it functional */
+.opac-carousel-wrap::-webkit-scrollbar { height: 4px; }
+.opac-carousel-wrap::-webkit-scrollbar-track { background: transparent; }
+.opac-carousel-wrap::-webkit-scrollbar-thumb { background: #c4c6cf; border-radius: 4px; }
+
+.opac-carousel-track {
+    display: flex;
+    gap: 16px;
+    /* Do NOT set overflow:hidden — parent scrolls */
+    width: max-content;
+}
+
+/* Individual book card */
+.opac-book-card {
+    flex: 0 0 168px;
+    width: 168px;
+    scroll-snap-align: start;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #e7e8e9;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    outline: none;
+}
+
+.opac-book-card:hover,
+.opac-book-card:focus-visible {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.13);
+}
+
+.opac-book-card:focus-visible {
+    outline: 3px solid rgba(0, 80, 204, 0.4);
+}
+
+.opac-book-card-cover {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    background: #edeeef;
+}
+
+.opac-book-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.opac-book-card:hover .opac-book-card-cover img {
+    transform: scale(1.04);
+}
+
+.opac-book-card-body {
+    padding: 10px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.opac-book-card-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #191c1d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.opac-book-card-author {
+    font-size: 0.75rem;
+    color: #74777f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.opac-book-card-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    width: fit-content;
+}
+
+.opac-book-card-badge--available {
+    background: #e6f4ea;
+    color: #1b7a36;
+}
+
+.opac-book-card-badge--unavailable {
+    background: #fde8e8;
+    color: #ba1a1a;
+}
+
+@media (max-width: 768px) {
+    .opac-new-arrivals-block { padding: 0 1rem; }
+    .opac-book-card { flex: 0 0 140px; width: 140px; }
+    .opac-arrivals-title { font-size: 1.25rem; }
+}
+
+/* Legacy selectors kept for backward compat with JS (carousel-track id) */
+.carousel-track { display: flex; gap: 16px; }
+
+/* ── Phase 2: Search section redesign ── */
+.opac-search-block {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0,0,0,0.04);
+    max-width: 680px;
+    margin: 0 auto 2.5rem;
+    padding: 2rem 2.5rem;
+    border: 1px solid #e7e8e9;
+}
+
+.opac-search-heading {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--brand-nav-link, #001b3d);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.25rem;
+}
+
+.opac-search-subheading {
+    font-size: 0.875rem;
+    color: #74777f;
+    margin-bottom: 0;
+}
+
+/* Books / E-Books toggle tabs */
+.opac-search-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    background: #f3f4f5;
+    border-radius: 999px;
+    padding: 4px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.opac-search-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: #44474e;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.opac-search-tab:hover {
+    color: var(--brand-nav-link, #001b3d);
+    text-decoration: none;
+}
+
+.opac-search-tab--active {
+    background: #ffffff;
+    color: var(--brand-nav-link, #001b3d);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    font-weight: 700;
+}
+
+.opac-search-tab--active:hover {
+    color: var(--brand-nav-link, #001b3d);
+}
+
+/* Input wrapper with icon */
+.opac-search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.opac-search-icon {
+    position: absolute;
+    left: 16px;
+    width: 18px;
+    height: 18px;
+    color: #74777f;
+    pointer-events: none;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.opac-search-main-input {
+    flex: 1;
+    height: 48px;
+    border-radius: 999px;
+    padding-left: 46px;
+    padding-right: 16px;
+    border: 1.5px solid #c4c6cf;
+    font-size: 0.9375rem;
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f8f9fa;
+    color: #191c1d;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.opac-search-main-input::placeholder { color: #74777f; }
+
+.opac-search-main-input:focus {
+    border-color: var(--brand-nav-link, #0050cc);
+    box-shadow: 0 0 0 3px rgba(0, 80, 204, 0.15);
+    background: #fff;
+    outline: none;
+}
+
+.opac-search-submit-btn {
+    height: 48px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--brand-nav-link, #0050cc);
+    color: #fff;
+    border: none;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+    flex-shrink: 0;
+}
+
+.opac-search-submit-btn:hover {
+    background: #003fa4;
+    box-shadow: 0 4px 14px rgba(0, 80, 204, 0.3);
+    color: #fff;
+}
+
+.opac-search-hint {
+    max-width: 500px;
+    color: #74777f;
+    font-size: 0.8125rem;
+}
+
+@media (max-width: 575px) {
+    .opac-search-block {
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+    }
+    .opac-search-input-wrap {
+        flex-wrap: wrap;
+    }
+    .opac-search-main-input {
+        width: 100%;
+    }
+    .opac-search-submit-btn {
+        width: 100%;
+    }
+}
 
 #searchBar {
 
@@ -545,9 +931,116 @@ header {
     margin-bottom: 10px;
 }
 
-footer {
-    padding: 10px;
+/* ── Phase 3: Footer ── */
+.opac-footer {
+    background: #05014a;
+    color: #c8cfe8;
+    margin-top: 48px;
+    padding: 3.5rem 2rem 0;
+    font-family: 'Inter', Arial, sans-serif;
+}
 
+.opac-footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+}
+
+.opac-footer-brand {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.opac-footer-logo {
+    width: 64px;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.opac-footer-school {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.opac-footer-tagline {
+    font-size: 0.8rem;
+    color: #8894bb;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+}
+
+.opac-footer-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+    margin: 0 0 1rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0050cc;
+    display: inline-block;
+}
+
+.opac-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.opac-footer-links a {
+    color: #c8cfe8;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.18s ease;
+}
+
+.opac-footer-links a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.opac-footer-info li {
+    font-size: 0.875rem;
+    color: #8894bb;
+    line-height: 1.6;
+}
+
+.opac-footer-bottom {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.78rem;
+    color: #8894bb;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+    .opac-footer-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding-bottom: 2rem;
+    }
+    .opac-footer { padding: 2.5rem 1.25rem 0; }
+}
+
+/* Keep old plain footer rule for any other page that uses it */
+footer:not(.opac-footer) {
+    padding: 10px;
     background: #05014a;
     color: white;
     text-align: center;
@@ -773,12 +1266,12 @@ h1 {
 }
 
 
-footer {
+/* legacy footer stub — superseded by .opac-footer above */
+footer:not(.opac-footer) {
     background-color: #05014a;
     width: 100%;
     height: 4rem;
     padding: 1rem;
-
 }
 
 .footer-img {
