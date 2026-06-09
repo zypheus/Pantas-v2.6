@@ -1,0 +1,569 @@
+/* ==========================================================================
+   sidebar.css — Pantas Dashboard Sidebar
+   Brand overrides on top of Flowbite + Bootstrap.
+   Uses CSS variables from branding.css where possible.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Layout shell
+   -------------------------------------------------------------------------- */
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.sidebar-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebar-wrapper {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar — desktop
+   -------------------------------------------------------------------------- */
+
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    flex-shrink: 0;
+    background-color: var(--brand-nav-link, #1f4ea7);
+    color: var(--brand-text-light, #ffffff);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+    transition: transform 0.25s ease-in-out;
+}
+
+/* ==========================================================================
+   NUCLEAR COLOR OVERRIDE — uses #sidebar ID (specificity 1,0,0) to beat
+   Bootstrap's .btn, a { color: #0d6efd } and body { color: #212529 }.
+   ID rules always win over class/element rules regardless of load order.
+   ========================================================================== */
+
+/* Base: everything inherits from the sidebar's light color */
+#sidebar,
+#sidebar * {
+    box-sizing: border-box;
+    color: inherit;
+}
+
+#sidebar {
+    color: var(--brand-text-light, #ffffff) !important;
+}
+
+/* Links */
+#sidebar a,
+#sidebar a:link,
+#sidebar a:visited {
+    color: var(--brand-text-light, #ffffff) !important;
+    text-decoration: none !important;
+}
+
+#sidebar a:hover,
+#sidebar a:focus {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* Buttons (group labels, logout) */
+#sidebar button {
+    color: var(--brand-text-light, #ffffff) !important;
+}
+
+#sidebar button:hover {
+    color: #e2e8f0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar header (logo + user info)
+   -------------------------------------------------------------------------- */
+
+.sidebar-header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+.sidebar-logo-wrap,
+.sidebar-logo-wrap:link,
+.sidebar-logo-wrap:visited {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #fff !important;
+    margin-bottom: 0.6rem;
+}
+
+.sidebar-logo-wrap:hover {
+    color: var(--brand-primary, #ffd700) !important;
+}
+
+.sidebar-logo-img {
+    height: 28px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.sidebar-app-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.sidebar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+
+.sidebar-user-name {
+    font-size: 0.78rem;
+    color: var(--brand-text-light, #ffffff) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.sidebar-role-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background-color: var(--brand-primary, #ffd700);
+    color: #1a1a1a;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar nav groups
+   -------------------------------------------------------------------------- */
+
+.sidebar-nav {
+    flex: 1;
+    padding: 0.75rem 0;
+    overflow-y: auto;
+}
+
+/* Group label (e.g. "BOOKS") */
+.sidebar-group-label {
+    padding: 0.6rem 1.25rem 0.2rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand-text-light, #ffffff);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+/* ID-specificity override for group labels */
+#sidebar .sidebar-group-label {
+    color: var(--brand-text-light, #ffffff) !important;
+}
+
+#sidebar .sidebar-group-label:hover {
+    color: #ffffff !important;
+}
+
+.sidebar-group-label:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.sidebar-group-label .sidebar-group-icon {
+    font-size: 0.9rem;
+    margin-right: 0.45rem;
+    flex-shrink: 0;
+    color: var(--brand-text-light, #ffffff);
+}
+
+.sidebar-group-label .sidebar-chevron {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    color: var(--brand-text-light, #ffffff);
+    flex-shrink: 0;
+}
+
+.sidebar-group-label:hover .sidebar-group-icon,
+.sidebar-group-label:hover .sidebar-chevron {
+    color: #ffffff;
+}
+
+.sidebar-group-label.open .sidebar-chevron {
+    transform: rotate(180deg);
+}
+
+/* Collapsible list of links */
+.sidebar-group-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    /* JS toggles max-height for animation */
+    max-height: 0;
+    transition: max-height 0.25s ease-in-out;
+}
+
+.sidebar-group-items.open {
+    max-height: 600px; /* large enough for any group */
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar nav links
+   -------------------------------------------------------------------------- */
+
+.sidebar-link,
+.sidebar-link:link,
+.sidebar-link:visited {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 1.25rem 0.45rem 2rem;
+    font-size: 0.83rem;
+    color: var(--brand-text-light, #ffffff);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ID-specificity overrides for nav links */
+#sidebar .sidebar-link,
+#sidebar .sidebar-link:link,
+#sidebar .sidebar-link:visited {
+    color: var(--brand-text-light, #ffffff) !important;
+    text-decoration: none !important;
+}
+
+#sidebar .sidebar-link:hover {
+    background-color: var(--brand-nav-hover-bg, #ffffff);
+    color: var(--brand-nav-hover-text, #2e7d32) !important;
+    border-left-color: var(--brand-primary, #ffd700);
+}
+
+#sidebar .sidebar-link.active,
+#sidebar .sidebar-link.active:link,
+#sidebar .sidebar-link.active:visited {
+    background-color: var(--brand-accent, #2e7d32);
+    color: var(--brand-nav-link-active, #ffffff) !important;
+    font-weight: 600;
+    border-left-color: var(--brand-primary, #ffd700);
+}
+
+#sidebar .sidebar-link.active i,
+#sidebar .sidebar-link.active span:not(.sidebar-admin-badge) {
+    color: var(--brand-nav-link-active, #ffffff) !important;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-left-color: rgba(255, 215, 0, 0.4);
+}
+
+.sidebar-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-weight: 600;
+    border-left-color: var(--brand-primary, #ffd700);
+}
+
+.sidebar-link .bi {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    opacity: 1;
+    color: var(--brand-text-light, #ffffff);
+}
+
+.sidebar-link.active .bi {
+    opacity: 1;
+}
+
+/* Direct links (non-group, e.g. OPAC) */
+.sidebar-direct-link,
+.sidebar-direct-link:link,
+.sidebar-direct-link:visited {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.83rem;
+    color: var(--brand-text-light, #ffffff);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* ID-specificity overrides for direct links */
+#sidebar .sidebar-direct-link,
+#sidebar .sidebar-direct-link:link,
+#sidebar .sidebar-direct-link:visited {
+    color: var(--brand-text-light, #ffffff) !important;
+    text-decoration: none !important;
+}
+
+#sidebar .sidebar-direct-link:hover {
+    background-color: var(--brand-nav-hover-bg, #ffffff);
+    color: var(--brand-nav-hover-text, #2e7d32) !important;
+    border-left-color: var(--brand-primary, #ffd700);
+}
+
+#sidebar .sidebar-direct-link.active,
+#sidebar .sidebar-direct-link.active:link,
+#sidebar .sidebar-direct-link.active:visited {
+    background-color: var(--brand-accent, #2e7d32);
+    color: var(--brand-nav-link-active, #ffffff) !important;
+    font-weight: 600;
+    border-left-color: var(--brand-primary, #ffd700);
+}
+
+#sidebar .sidebar-direct-link.active i,
+#sidebar .sidebar-direct-link.active span:not(.sidebar-admin-badge) {
+    color: var(--brand-nav-link-active, #ffffff) !important;
+}
+
+.sidebar-direct-link .bi {
+    color: var(--brand-text-light, #ffffff);
+}
+
+.sidebar-direct-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-left-color: rgba(255, 215, 0, 0.4);
+}
+
+/* Admin-only lock badge on a link */
+.sidebar-admin-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    background-color: var(--brand-primary, #ffd700);
+    color: #1a1a1a;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar divider
+   -------------------------------------------------------------------------- */
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar footer (profile + logout)
+   -------------------------------------------------------------------------- */
+
+.sidebar-footer-actions {
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.sidebar-footer-actions .btn-profile {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-footer-actions .btn-profile:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #fff !important;
+}
+
+.sidebar-footer-actions .btn-logout {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    background-color: rgba(220, 38, 38, 0.25);
+    color: #fca5a5 !important;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.sidebar-footer-actions .btn-logout:hover {
+    background-color: rgba(220, 38, 38, 0.45);
+    color: #fff !important;
+}
+
+/* --------------------------------------------------------------------------
+   Main content area
+   -------------------------------------------------------------------------- */
+
+.sidebar-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    margin-left: 260px;
+}
+
+.sidebar-page-header {
+    background-color: #fff;
+}
+
+.sidebar-page-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.sidebar-page-body {
+    flex: 1;
+}
+
+.sidebar-footer {
+    background-color: #fff;
+    font-size: 0.78rem;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile top bar
+   -------------------------------------------------------------------------- */
+
+.sidebar-topbar {
+    background-color: var(--brand-nav-link, #1f4ea7);
+    color: var(--brand-text-light, #ffffff);
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    flex-shrink: 0;
+}
+
+.sidebar-hamburger {
+    background: none;
+    border: none;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sidebar-topbar .sidebar-hamburger,
+.sidebar-topbar .sidebar-hamburger i,
+.sidebar-topbar .sidebar-hamburger:focus,
+.sidebar-topbar .sidebar-hamburger:hover {
+    color: #ffffff !important;
+}
+
+.sidebar-topbar .sidebar-hamburger i {
+    font-size: 1.2rem;
+}
+
+.sidebar-topbar-logo {
+    height: 22px;
+    width: auto;
+}
+
+.sidebar-topbar-title {
+    font-size: 0.9rem;
+    color: var(--brand-text-light, #ffffff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile overlay backdrop
+   -------------------------------------------------------------------------- */
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 300;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: mobile sidebar as off-canvas overlay
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767.98px) {
+    .sidebar-wrapper {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 400;
+        transform: translateX(-100%);
+        min-height: 100%;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-content {
+        min-height: calc(100vh - 52px);
+        margin-left: 0;
+    }
+}

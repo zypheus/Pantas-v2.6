@@ -14,7 +14,7 @@ class SMSService
             'message'    => $message,
             'sendername' => env('SEMAPHORE_SENDER_NAME'),
         ]);
-        
+
         \Log::info('SMS Raw Response:', ['body' => $response->body()]);
 
         return $response->json();

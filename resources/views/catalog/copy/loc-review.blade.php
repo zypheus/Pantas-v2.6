@@ -1,4 +1,4 @@
-@extends('layouts.sec')
+@extends('layouts.sidebar')
 
 <link rel="stylesheet" href="{{ asset('css/books/index.css') }}">
 @section('content')

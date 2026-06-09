@@ -1,4 +1,4 @@
-@extends('layouts.sec')
+@extends('layouts.sidebar')
 
 @section('styles')
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />

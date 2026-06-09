@@ -1,3 +1,8 @@
+{{--
+    DEPRECATED: This layout is no longer used by any dashboard pages.
+    All pages have been migrated to layouts/sidebar.blade.php (2026-06-09).
+    Kept here for reference only. Safe to delete once the sidebar layout is verified.
+--}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,12 +38,12 @@
             align-items: center;
             text-decoration: none;
         }
-        
+
         .header-logo-img {
             height: 25px; /* adjust based on your navbar */
             width: auto;
             display: block;
-        }   
+        }
     </style>
 </head>
 

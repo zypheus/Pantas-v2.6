@@ -1,8 +1,15 @@
+/*
+ * DEPRECATED: header.css — top navbar styles for the old horizontal nav.
+ * These rules target #routeWrapper, .btn5, and #logout which are part of
+ * the old layouts (sec/main/app). All dashboard pages now use layouts/sidebar.
+ * This file is kept for reference. Safe to delete once sidebar is verified.
+ * Deprecated: 2026-06-09
+ */
 
 #logout  {
     color: var(--brand-logout-text, #ffffff) !important;
     background-color: var(--brand-logout-bg, #1f7902);
-    
+
 }
 
 #routeWrapper a:hover {
@@ -11,13 +18,13 @@
     color: var(--brand-nav-hover-text, #22333b);
 }
 
-#routeWrapper a {   
+#routeWrapper a {
     color: var(--brand-nav-link, #1f7902);
-}   
+}
 
 #routeWrapper button {
     color: var(--brand-nav-link, #1f7902);
-}   
+}
 
 .btn5{
     background-color: var(--brand-logout-bg, #1f7902);

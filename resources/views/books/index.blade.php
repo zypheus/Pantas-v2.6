@@ -1,4 +1,6 @@
-@extends('layouts.main')
+@extends('layouts.sidebar')
+
+@section('title', 'Books')
 
 @section('content')
 

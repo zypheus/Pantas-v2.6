@@ -1,4 +1,4 @@
-@extends('layouts.sec')
+@extends('layouts.sidebar')
 
 @section('content')
 <div class="container py-4" style="max-width: 720px;">

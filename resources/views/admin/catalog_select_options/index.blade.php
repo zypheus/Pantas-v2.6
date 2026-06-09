@@ -1,4 +1,4 @@
-@extends('layouts.sec')
+@extends('layouts.sidebar')
 
 @section('content')
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
