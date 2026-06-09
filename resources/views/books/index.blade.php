@@ -2,6 +2,10 @@
 
 @section('title', 'Books')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/books/index.css') }}">
+@endsection
+
 @section('content')
 
 @if(session('success'))
@@ -25,15 +29,14 @@
 
 <div class="books-index-layout">
 
+    <section class="books-index-hero" aria-label="All books catalog">
+        <img src="{{ asset('images/Bannernew.jpg') }}" alt="Pantas library catalog banner">
+    </section>
+
     {{-- Left sidebar: search, filters, actions --}}
     <aside class="books-index-sidebar card p-3">
 
         <h6 class="books-sidebar-heading">Find books</h6>
-
-        <a href="{{ route('book.index', ['show_all' => 1]) }}"
-           class="btn btn-primary w-100 mb-3 {{ $showAll && !request('search') && !request('program') && !request('year1') && !$statusFilter ? 'active' : '' }}">
-            Show all books
-        </a>
 
         <form action="{{ route('book.index') }}" method="GET" class="books-sidebar-form">
             @if($statusFilter)
@@ -81,8 +84,12 @@
 
         <hr class="my-3">
 
-        <h6 class="books-sidebar-heading">Availability</h6>
+        <h6 class="books-sidebar-heading">Quick view</h6>
         <nav class="books-sidebar-nav">
+            <a href="{{ route('book.index', ['show_all' => 1]) }}"
+               class="btn btn-primary w-100 {{ $showAll && !request('search') && !request('program') && !request('year1') && !$statusFilter ? 'active' : '' }}">
+                Show all books
+            </a>
             <a href="{{ route('book.index', array_merge(request()->except('status', 'page'), ['status' => 'Available'])) }}"
                class="btn btn-available w-100 {{ $statusFilter === 'Available' ? 'active' : '' }}">Available</a>
             <a href="{{ route('book.index', array_merge(request()->except('status', 'page'), ['status' => 'Borrowed'])) }}"
@@ -246,9 +253,22 @@
                     Use the panel on the left to search by title or author, filter by program or publication year,
                     or choose <strong>Available</strong> / <strong>Borrowed</strong> to load results here.
                 </p>
-                <a href="{{ route('book.index', ['show_all' => 1]) }}" class="btn btn-primary btn-lg">
-                    Show all books
-                </a>
+                <div class="books-welcome-actions">
+                    <a href="{{ route('book.index', ['show_all' => 1]) }}" class="btn btn-primary btn-lg">
+                        Show all books
+                    </a>
+                    <div class="books-welcome-quicklinks" aria-label="Quick catalog options">
+                        <a href="{{ route('book.index', ['status' => 'Available']) }}" class="btn btn-available">
+                            Available
+                        </a>
+                        <a href="{{ route('book.index', ['status' => 'Borrowed']) }}" class="btn btn-borrowed">
+                            Borrowed
+                        </a>
+                        <a href="{{ route('ebooks.index') }}" class="btn btn-e-book">
+                            E-Resources
+                        </a>
+                    </div>
+                </div>
             </div>
 
         @endif
