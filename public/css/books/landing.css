@@ -525,8 +525,9 @@ header {
 
 .opac-arrivals-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 1.25rem;
 }
 
@@ -551,19 +552,42 @@ header {
     background: var(--brand-nav-link, #0050cc);
 }
 
-.opac-arrivals-viewall {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--brand-nav-link, #0050cc);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.18s ease;
+.opac-arrivals-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
-.opac-arrivals-viewall:hover {
-    color: #003fa4;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+.opac-arrivals-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid #d7dce3;
+    background: #ffffff;
+    color: var(--brand-nav-link, #0050cc);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.opac-arrivals-arrow:hover,
+.opac-arrivals-arrow:focus-visible {
+    background: var(--brand-nav-link, #0050cc);
+    border-color: var(--brand-nav-link, #0050cc);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.opac-arrivals-arrow:focus-visible {
+    outline: 3px solid rgba(0, 80, 204, 0.24);
+    outline-offset: 2px;
 }
 
 /* Carousel wrapper — no arrow padding needed */
@@ -685,6 +709,10 @@ header {
     .opac-new-arrivals-block { padding: 0 1rem; }
     .opac-book-card { flex: 0 0 140px; width: 140px; }
     .opac-arrivals-title { font-size: 1.25rem; }
+    .opac-arrivals-arrow {
+        width: 36px;
+        height: 36px;
+    }
 }
 
 /* Legacy selectors kept for backward compat with JS (carousel-track id) */

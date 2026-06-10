@@ -506,16 +506,20 @@ window.printReceiptBulk = function printReceiptBulk() {
 ========================================= */
 
 function slide(direction) {
+    scrollNewArrivals(direction);
+}
+
+function scrollNewArrivals(direction) {
     if (!track) return;
 
+    const scroller = track.closest('.opac-carousel-wrap');
+    if (!scroller) return;
+
     const bookWidth = 184; // 168px card + 16px gap
-    scrollAmount += direction * bookWidth * 2;
-
-    if (scrollAmount < 0) scrollAmount = 0;
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    if (scrollAmount > maxScroll) scrollAmount = maxScroll;
-
-    track.style.transform = `translateX(-${scrollAmount}px)`;
+    scroller.scrollBy({
+        left: direction * bookWidth * 2,
+        behavior: 'smooth'
+    });
 }
 
 function openStudentModalFromCart() {
@@ -537,6 +541,12 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     bindOpacTabsOnce();
+
+    document.querySelectorAll('[data-arrivals-scroll]').forEach((button) => {
+        button.addEventListener('click', () => {
+            scrollNewArrivals(Number(button.dataset.arrivalsScroll || 0));
+        });
+    });
 
     const hash = window.location.hash || '';
     const m = /^#book-(\d+)$/.exec(hash);

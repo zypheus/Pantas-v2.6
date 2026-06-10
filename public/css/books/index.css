@@ -839,6 +839,8 @@
      top: 1rem;
      border: 1px solid #e5e7eb;
      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+     min-width: 0;
+     overflow: hidden;
  }
 
  .books-index-sidebar.card {
@@ -863,7 +865,22 @@
      text-transform: uppercase;
      letter-spacing: 0.06em;
      color: var(--brand-button-bg, #22333b);
+     margin-bottom: 0;
+     min-width: 0;
+     overflow-wrap: anywhere;
+ }
+
+ .books-sidebar-section-title {
+     display: flex;
+     align-items: center;
+     gap: 0.45rem;
      margin-bottom: 0.65rem;
+     color: var(--brand-button-bg, #22333b);
+     min-width: 0;
+ }
+
+ .books-sidebar-section-title .bi {
+     font-size: 0.95rem;
  }
 
  .books-index-sidebar .form-label {
@@ -872,19 +889,65 @@
  }
 
  .books-sidebar-form .form-control,
- .books-sidebar-form .form-select {
+ .books-sidebar-form .form-select,
+ .books-sidebar-form .input,
+ .books-sidebar-form .select,
+ .books-sidebar-form .file-input {
      width: 100%;
      max-width: 100%;
+     min-width: 0;
      border: 1px solid #d8dee5;
      border-radius: 7px;
      min-height: 40px;
      box-shadow: none;
  }
 
+ .books-sidebar-form .input input,
+ .books-sidebar-form .select,
+ .books-sidebar-form .file-input {
+     min-width: 0;
+     overflow: hidden;
+     text-overflow: ellipsis;
+ }
+
  .books-sidebar-form .form-control:focus,
- .books-sidebar-form .form-select:focus {
+ .books-sidebar-form .form-select:focus,
+ .books-sidebar-form .input:focus-within,
+ .books-sidebar-form .select:focus,
+ .books-sidebar-form .file-input:focus {
      border-color: var(--brand-button-bg, #22333b);
      box-shadow: 0 0 0 0.18rem rgba(34, 51, 59, 0.14);
+ }
+
+ .books-sidebar-form .fieldset {
+     gap: 0.4rem;
+     padding: 0;
+     margin-bottom: 0.8rem;
+ }
+
+ .books-sidebar-form .fieldset-legend {
+     display: flex;
+     align-items: center;
+     flex-wrap: wrap;
+     gap: 0.35rem;
+     color: var(--brand-button-bg, #22333b);
+     font-weight: 700;
+     padding: 0;
+     max-width: 100%;
+     line-height: 1.2;
+     overflow-wrap: anywhere;
+ }
+
+ .books-sidebar-form .label {
+     color: #64748b;
+     font-size: 0.72rem;
+     line-height: 1.25;
+     padding: 0;
+     display: block;
+     max-width: 100%;
+     white-space: normal;
+     overflow-wrap: anywhere;
+     word-break: normal;
  }
 
  .books-sidebar-nav {
@@ -906,9 +969,22 @@
      align-items: center;
      justify-content: center;
      gap: 0.35rem;
+     min-width: 0;
+     max-width: 100%;
+     height: auto;
+     white-space: normal;
+     flex-wrap: wrap;
+     line-height: 1.2;
+     text-align: center;
+     overflow-wrap: anywhere;
      border: 1px solid transparent;
      box-shadow: none;
      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+ }
+
+ .books-index-sidebar .btn .bi,
+ .books-index-main .btn .bi {
+     flex-shrink: 0;
  }
 
  .books-index-sidebar .btn:hover,
@@ -1022,12 +1098,20 @@
  .books-index-main {
      grid-area: catalog;
      min-width: 0;
+     overflow-x: hidden;
  }
 
  .books-index-welcome {
      border: 1px solid #e5e7eb;
      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+     padding: 3rem 1.5rem;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     min-height: 20rem;
  }
 
  .books-index-welcome-icon {
@@ -1041,8 +1125,35 @@
      margin-right: auto;
      background-color: #f3f4f6;
      border: 1px solid #e5e7eb;
-     font-size: 2rem;
+     font-size: 0;
      line-height: 58px;
+     text-align: center;
+ }
+
+ .books-index-welcome-icon::before {
+     content: "\1F4DA";
+     font-size: 1.8rem;
+     line-height: 1;
+ }
+
+ .books-index-welcome .card-title,
+ .books-index-welcome p {
+     max-width: 42rem;
+     margin-left: auto;
+     margin-right: auto;
+     text-align: center;
+     overflow-wrap: anywhere;
+ }
+
+ .books-index-welcome .badge {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 0.35rem;
+     max-width: 100%;
+     white-space: normal;
+     height: auto;
+     line-height: 1.2;
      text-align: center;
  }
 
@@ -1117,6 +1228,13 @@
  .books-index-main .table-book-list {
      margin-bottom: 0;
  }
+
+ .books-index-main .table-book-list th,
+ .books-index-main .table-book-list td {
+     max-width: 16rem;
+     overflow-wrap: anywhere;
+     word-break: normal;
+  }
 
  .books-index-main .table-book-list thead th {
      background-color: var(--brand-button-bg, #22333b);

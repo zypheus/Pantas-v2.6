@@ -105,12 +105,6 @@
         @yield('content')
     </div>
 
-    {{-- FOOTER --}}
-    <footer>
-        <div class="a51-footer">
-            <h4 style="color: white; font-size:15px">Pantas © 2025. All Rights Reserved.</h4>
-        </div>
-    </footer>
 
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/site-nav.js') }}"></script>

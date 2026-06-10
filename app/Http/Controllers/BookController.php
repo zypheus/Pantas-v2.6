@@ -290,11 +290,16 @@ class BookController extends Controller
         // --- Get programs for filter dropdown ---
         $programs = Program::orderBy('program_name')->get();
 
+        $statusFilter = $request->input('status');
+        $programId = $request->filled('program') ? (int) $request->input('program') : null;
+        $yearFilter = $request->input('year_filter');
+        $validYearFilters = ['exact', 'before', 'after', 'between'];
+
         $hasActiveQuery = $request->boolean('show_all')
             || $request->filled('search')
-            || $request->filled('program')
-            || ($request->filled('year_filter') && $request->filled('year1'))
-            || ($request->has('status') && in_array($request->status, ['Available', 'Borrowed'], true));
+            || $programId
+            || (in_array($yearFilter, $validYearFilters, true) && $request->filled('year1'))
+            || in_array($statusFilter, ['Available', 'Borrowed'], true);
 
         if (! $hasActiveQuery) {
             $books = new LengthAwarePaginator([], 0, 10, 1, [
@@ -311,23 +316,23 @@ class BookController extends Controller
         $filteredQuery = Book::query()->whereNull('archived_at');
     
         // Status filter
-        if ($request->has('status') && in_array($request->status, ['Available', 'Borrowed'])) {
-            $filteredQuery->where('availability', $request->status);
+        if (in_array($statusFilter, ['Available', 'Borrowed'], true)) {
+            $filteredQuery->where('availability', $statusFilter);
         }
     
         // Program filter
-        if ($request->filled('program')) {
-            $filteredQuery->whereHas('programs', function ($q) use ($request) {
-                $q->where('programs.id', $request->program);
+        if ($programId) {
+            $filteredQuery->whereHas('programs', function ($q) use ($programId) {
+                $q->where('programs.id', $programId);
             });
         }
     
         // Year filter
-        if ($request->filled('year_filter') && $request->filled('year1')) {
-            $year1 = (int) $request->year1;
-            $year2 = (int) $request->year2;
+        if (in_array($yearFilter, $validYearFilters, true) && $request->filled('year1')) {
+            $year1 = (int) $request->input('year1');
+            $year2 = (int) $request->input('year2');
     
-            switch ($request->year_filter) {
+            switch ($yearFilter) {
                 case 'exact':
                     $filteredQuery->where('pub_year', $year1);
                     break;
@@ -339,7 +344,7 @@ class BookController extends Controller
                     break;
                 case 'between':
                     if ($request->filled('year2')) {
-                        $filteredQuery->whereBetween('pub_year', [$year1, $year2]);
+                        $filteredQuery->whereBetween('pub_year', [min($year1, $year2), max($year1, $year2)]);
                     }
                     break;
             }
@@ -350,11 +355,11 @@ class BookController extends Controller
     
         // --- Dynamic dropdowns for course/year ---
         $courses = Book::whereNull('archived_at')
-            ->when($request->program, fn($q) => $q->whereHas('programs', fn($p) => $p->where('program_name', $request->program)))
+            ->when($programId, fn($q) => $q->whereHas('programs', fn($p) => $p->where('programs.id', $programId)))
             ->select('course')->distinct()->orderBy('course')->pluck('course');
     
         $years = Book::whereNull('archived_at')
-            ->when($request->program, fn($q) => $q->whereHas('programs', fn($p) => $p->where('program_name', $request->program)))
+            ->when($programId, fn($q) => $q->whereHas('programs', fn($p) => $p->where('programs.id', $programId)))
             ->when($request->course, fn($q) => $q->where('course', $request->course))
             ->select('year')->distinct()->orderBy('year')->pluck('year');
     

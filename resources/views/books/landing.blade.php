@@ -116,7 +116,14 @@
     <section class="opac-new-arrivals-block">
         <div class="opac-arrivals-header">
             <h2 class="opac-arrivals-title">New Arrival Books</h2>
-            <a href="{{ route('landing', ['search' => '', 'view' => 'books']) }}" class="opac-arrivals-viewall">View all books &rarr;</a>
+            <div class="opac-arrivals-controls" aria-label="Scroll new arrivals">
+                <button type="button" class="opac-arrivals-arrow" data-arrivals-scroll="-1" aria-label="Scroll new arrivals left">
+                    <span aria-hidden="true">&larr;</span>
+                </button>
+                <button type="button" class="opac-arrivals-arrow" data-arrivals-scroll="1" aria-label="Scroll new arrivals right">
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
+            </div>
         </div>
 
         <div class="opac-carousel-wrap">
@@ -466,37 +473,6 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    @unless($searchActive)
-    <footer class="opac-footer" role="contentinfo">
-        <div class="opac-footer-inner">
-            <div class="opac-footer-col opac-footer-brand">
-                <img src="{{ asset('images/pantasLogo-box.png') }}" alt="Library Logo" class="opac-footer-logo">
-                <div>
-                    <div class="opac-footer-school">Governor Generoso College of Arts, Sciences and Technology</div>
-                    <div class="opac-footer-tagline">Library Information System</div>
-                </div>
-            </div>
-            <div class="opac-footer-col">
-                <h3 class="opac-footer-heading">Quick Links</h3>
-                <ul class="opac-footer-links">
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li><a href="{{ route('landing') }}">Catalog</a></li>
-                    <li><a href="{{ route('kiosk.scan') }}">Student Lookup</a></li>
-                </ul>
-            </div>
-            <div class="opac-footer-col">
-                <h3 class="opac-footer-heading">Library</h3>
-                <ul class="opac-footer-links opac-footer-info">
-                    <li>Governor Generoso, Davao Oriental</li>
-                    <li>Philippines</li>
-                </ul>
-            </div>
-        </div>
-        <div class="opac-footer-bottom">
-            <span>&copy; {{ date('Y') }} PANTAS Library System. All rights reserved.</span>
-        </div>
-    </footer>
-    @endunless
     </div>
 
     <script>

@@ -113,10 +113,6 @@
             {{-- Footer — sidebar layout provides default; pages can override via @section('footer') --}}
             @hasSection('footer')
                 @yield('footer')
-            @else
-                <footer class="sidebar-footer px-4 py-2 mt-auto border-top">
-                    <small class="text-muted">Pantas &copy; {{ date('Y') }}. All Rights Reserved.</small>
-                </footer>
             @endif
         </main>
 
