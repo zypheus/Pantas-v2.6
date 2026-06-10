@@ -325,9 +325,6 @@
      FOOTER: Profile + Logout
 ========================================================================== --}}
 <div class="sidebar-footer-actions">
-    <span class="btn-profile">
-        <i class="bi bi-person-circle"></i> {{ Auth::user()->name ?? '' }}
-    </span>
     <form method="POST" action="{{ route('logout') }}" class="flex-1 m-0">
         @csrf
         <button type="submit" class="btn-logout w-100">

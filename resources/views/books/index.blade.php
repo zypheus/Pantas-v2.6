@@ -178,7 +178,7 @@
                                                     <a href="{{ route('book.edit', $copy->id) }}" class="dropdown-item2">Edit</a>
                                                     <form action="{{ route('books.archive', $copy->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="dropdown-item2" style="background: none; border: none; width: 100%; text-align:left;">
+                                                        <button type="submit" class="dropdown-item-archive">
                                                             Archive
                                                         </button>
                                                     </form>
@@ -198,7 +198,7 @@
                                                             <button type="button" class="btn-close btn-close-white"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="modal-body">
+                                                        <div class="modal-body text-wraph">
                                                             Are you sure you want to delete <strong>{{ $copy->title_statement }}</strong>?
                                                         </div>
                                                         <div class="modal-footer">
