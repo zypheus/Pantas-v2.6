@@ -33,8 +33,8 @@ class AuthController extends Controller
             $user = Auth::user();
 
             return match ($user->role) {
-                'admin', 'staff' => redirect()->intended(route('book.index')),
-                'student', 'faculty' => redirect()->intended('landing'),
+                'admin', 'staff' => redirect()->route('book.index'),
+                'student', 'faculty' => redirect()->route('landing'),
                 default => redirect()->route('login')->with('error', 'Unauthorized role.'),
             };
         }

@@ -81,6 +81,36 @@
     {{-- jQuery (available globally for existing page scripts) --}}
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all forms that submit to logout
+            const logoutForms = document.querySelectorAll('form[action*="logout"]');
+            logoutForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Are you sure you want to log out?',
+                        text: "You will be returned to the login screen.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#1f4ea7', // matching brand-navy color
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, logout',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
     {{-- Sidebar behaviour: collapse toggle, localStorage state, mobile overlay --}}
     <script src="{{ asset('js/sidebar.js') }}"></script>
 

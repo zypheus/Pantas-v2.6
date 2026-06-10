@@ -70,6 +70,10 @@
                 <a href="#" class="text-primary">Forgot password?</a>
             </div>
 
+            @if(session('error'))
+                <div class="alert alert-danger mt-2">{{ session('error') }}</div>
+            @endif
+
             @error('email')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
             @enderror

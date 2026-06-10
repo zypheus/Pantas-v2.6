@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('css/books/landing.css') }}">
     <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/qz-tray/qz-tray.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="opac-body">
@@ -504,7 +505,22 @@
         window.OPAC_BOOK_DETAIL_BASE = @json(url('/opac/api/book').'/');
 
         function logout() {
-            document.querySelector('header form[action*="logout"]')?.submit();
+            Swal.fire({
+                title: 'Are you sure you want to log out?',
+                text: "You will be returned to the login screen.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#1f4ea7', // matching brand-navy color
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temporarily disable the function to avoid recursion and submit
+                    document.querySelector('header form[action*="logout"]').submit();
+                }
+            });
         }
 
         // Sticky nav elevated shadow on scroll
