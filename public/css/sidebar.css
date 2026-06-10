@@ -37,7 +37,7 @@ html, body {
     color: var(--brand-text-light, #ffffff);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     position: fixed;
     top: 0;
@@ -161,6 +161,7 @@ html, body {
 
 .sidebar-nav {
     flex: 1;
+    min-height: 0;
     padding: 0.75rem 0;
     overflow-y: auto;
 }
@@ -234,6 +235,11 @@ html, body {
 
 .sidebar-group-items.open {
     max-height: 600px; /* large enough for any group */
+}
+
+.sidebar-hydrating .sidebar-group-items,
+.sidebar-hydrating .sidebar-chevron {
+    transition: none !important;
 }
 
 /* --------------------------------------------------------------------------

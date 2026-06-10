@@ -24,7 +24,7 @@
     @yield('styles')
 </head>
 
-<body class="sidebar-layout">
+<body class="sidebar-layout sidebar-hydrating">
 
     {{-- ========================================================
          MOBILE TOP BAR (visible only on small screens)
@@ -49,6 +49,53 @@
         <aside id="sidebar" class="sidebar" role="navigation" aria-label="Dashboard navigation">
             @include('components.sidebar-nav')
         </aside>
+
+        <script>
+            (function () {
+                const groupsKey = 'pantas_sidebar_open_groups';
+                const scrollKey = 'pantas_sidebar_scroll_top';
+
+                function readJson(key, fallback) {
+                    try {
+                        return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+                    } catch (_) {
+                        return fallback;
+                    }
+                }
+
+                function readNumber(key, fallback) {
+                    try {
+                        const value = Number(localStorage.getItem(key) || fallback);
+                        return Number.isFinite(value) ? value : fallback;
+                    } catch (_) {
+                        return fallback;
+                    }
+                }
+
+                const savedOpen = readJson(groupsKey, []);
+
+                document.querySelectorAll('.sidebar-group-label').forEach(function (label) {
+                    const groupId = label.dataset.group;
+                    const items = document.getElementById('sidebar-group-' + groupId);
+                    if (!items) return;
+
+                    const hasActive = items.querySelector('.sidebar-link.active') !== null;
+                    if (hasActive || savedOpen.includes(groupId)) {
+                        label.classList.add('open');
+                        items.classList.add('open');
+                        label.setAttribute('aria-expanded', 'true');
+                    }
+                });
+
+                requestAnimationFrame(function () {
+                    const scroller = document.querySelector('#sidebar .sidebar-nav') || document.getElementById('sidebar');
+                    if (scroller) {
+                        scroller.scrollTop = readNumber(scrollKey, 0);
+                    }
+                    document.body.classList.remove('sidebar-hydrating');
+                });
+            }());
+        </script>
 
         {{-- MAIN CONTENT AREA --}}
         <main class="sidebar-content">

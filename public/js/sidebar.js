@@ -5,7 +5,8 @@
 (function () {
     'use strict';
 
-    const STORAGE_KEY = 'pantas_sidebar_open_groups';
+    const GROUPS_STORAGE_KEY = 'pantas_sidebar_open_groups';
+    const SCROLL_STORAGE_KEY = 'pantas_sidebar_scroll_top';
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -13,7 +14,7 @@
 
     function getSavedGroups() {
         try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            return JSON.parse(localStorage.getItem(GROUPS_STORAGE_KEY) || '[]');
         } catch (_) {
             return [];
         }
@@ -21,7 +22,26 @@
 
     function saveGroups(openIds) {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(openIds));
+            localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(openIds));
+        } catch (_) { /* storage may be unavailable */ }
+    }
+
+    function getScrollTarget() {
+        return document.querySelector('#sidebar .sidebar-nav') || document.getElementById('sidebar');
+    }
+
+    function getSavedScrollTop() {
+        try {
+            const scrollTop = Number(localStorage.getItem(SCROLL_STORAGE_KEY) || 0);
+            return Number.isFinite(scrollTop) ? scrollTop : 0;
+        } catch (_) {
+            return 0;
+        }
+    }
+
+    function saveScrollTop(scrollTop) {
+        try {
+            localStorage.setItem(SCROLL_STORAGE_KEY, String(scrollTop));
         } catch (_) { /* storage may be unavailable */ }
     }
 
@@ -77,6 +97,31 @@
     }
 
     // -------------------------------------------------------------------------
+    // Sidebar scroll restoration
+    // -------------------------------------------------------------------------
+
+    function initScrollRestoration() {
+        const scroller = getScrollTarget();
+        if (!scroller) {
+            document.body.classList.remove('sidebar-hydrating');
+            return;
+        }
+
+        requestAnimationFrame(function () {
+            scroller.scrollTop = getSavedScrollTop();
+            document.body.classList.remove('sidebar-hydrating');
+        });
+
+        scroller.addEventListener('scroll', function () {
+            saveScrollTop(scroller.scrollTop);
+        }, { passive: true });
+
+        window.addEventListener('beforeunload', function () {
+            saveScrollTop(scroller.scrollTop);
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // Mobile sidebar toggle
     // -------------------------------------------------------------------------
 
@@ -127,6 +172,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         initGroups();
+        initScrollRestoration();
         initMobileToggle();
     });
 
