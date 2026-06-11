@@ -273,24 +273,38 @@
 
                                     @if($book->copies == 1)
                                         @php $copy = \App\Models\Book::find($book->sample_id); @endphp
-                                        <td class="{{ $copy->availability === 'Available' ? 'text-success' : 'text-danger' }}">
-                                            {{ $copy->availability }}
+                                        <td class="book-status-cell">
+                                            <span class="book-status-badge {{ $copy->availability === 'Available' ? 'book-status-badge--available' : 'book-status-badge--borrowed' }}">
+                                                <i class="bi {{ $copy->availability === 'Available' ? 'bi-check-circle' : 'bi-clock-history' }}" aria-hidden="true"></i>
+                                                <span>{{ $copy->availability }}</span>
+                                            </span>
                                         </td>
                                         <td class="text-end">
                                             <div class="dropdown1">
-                                                <button type="button" class="dropdown1-button">Actions</button>
+                                                <button type="button" class="btn btn-neutral btn-sm dropdown1-button books-row-action-btn">
+                                                    <i class="bi bi-sliders" aria-hidden="true"></i>
+                                                    <span>Actions</span>
+                                                </button>
                                                 <div class="dropdown1-content">
-                                                    <a href="{{ route('book.show', $copy->id) }}" class="dropdown-item1">View</a>
-                                                    <a href="{{ route('book.edit', $copy->id) }}" class="dropdown-item2">Edit</a>
+                                                    <a href="{{ route('book.show', $copy->id) }}" class="dropdown-item1 books-row-action-item">
+                                                        <i class="bi bi-eye" aria-hidden="true"></i>
+                                                        <span>View</span>
+                                                    </a>
+                                                    <a href="{{ route('book.edit', $copy->id) }}" class="dropdown-item2 books-row-action-item">
+                                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                                        <span>Edit</span>
+                                                    </a>
                                                     <form action="{{ route('books.archive', $copy->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="dropdown-item-archive">
-                                                            Archive
+                                                        <button type="submit" class="dropdown-item-archive books-row-action-item">
+                                                            <i class="bi bi-archive" aria-hidden="true"></i>
+                                                            <span>Archive</span>
                                                         </button>
                                                     </form>
-                                                    <button class="dropdown-item3" type="button" data-bs-toggle="modal"
+                                                    <button class="dropdown-item3 books-row-action-item books-row-action-item--danger" type="button" data-bs-toggle="modal"
                                                         data-bs-target="#deleteModal{{ $copy->id }}">
-                                                        Delete
+                                                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                                                        <span>Delete</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -324,13 +338,19 @@
                                         <td></td>
                                         <td class="text-end">
                                             <div class="dropdown1">
-                                                <button type="button" class="dropdown1-button">Actions</button>
+                                                <button type="button" class="btn btn-neutral btn-sm dropdown1-button books-row-action-btn">
+                                                    <i class="bi bi-sliders" aria-hidden="true"></i>
+                                                    <span>Actions</span>
+                                                </button>
                                                 <div class="dropdown1-content">
                                                     <a href="{{ route('books.copies.staff', [
                                                         'title' => $book->title_statement,
                                                         'author' => $book->main_author,
                                                         'year' => $book->pub_year
-                                                    ]) }}" class="dropdown-item1">View Copies</a>
+                                                    ]) }}" class="dropdown-item1 books-row-action-item">
+                                                        <i class="bi bi-collection" aria-hidden="true"></i>
+                                                        <span>View Copies</span>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </td>

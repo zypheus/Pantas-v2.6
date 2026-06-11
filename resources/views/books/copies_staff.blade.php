@@ -1,5 +1,11 @@
 @extends('layouts.sidebar')
 
+@section('styles')
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="{{ asset('css/books/index.css') }}">
+@endsection
+
 @push('styles')
     <style>
         /* Prevent layout shift when dropdown increases page height (keeps scrollbar stable). */
@@ -37,19 +43,32 @@
                         <td>{{ $copy->accession_no }}</td>
                         <td>{{ $copy->barcode }}</td>
                         <td>{{ $copy->rfid }}</td>
-                        <td class="{{ $copy->availability === 'Available' ? 'text-success' : 'text-danger' }}">
-                            {{ $copy->availability }}
+                        <td class="book-status-cell">
+                            <span class="book-status-badge {{ $copy->availability === 'Available' ? 'book-status-badge--available' : 'book-status-badge--borrowed' }}">
+                                <i class="bi {{ $copy->availability === 'Available' ? 'bi-check-circle' : 'bi-clock-history' }}" aria-hidden="true"></i>
+                                <span>{{ $copy->availability }}</span>
+                            </span>
                         </td>
                         <td>{{ $copy->created_at?->format('Y-m-d') }}</td>
                         <td class="text-end">
                             <div class="dropdown1">
-                                <button type="button" class="dropdown1-button">Actions</button>
+                                <button type="button" class="btn btn-neutral btn-sm dropdown1-button books-row-action-btn">
+                                    <i class="bi bi-sliders" aria-hidden="true"></i>
+                                    <span>Actions</span>
+                                </button>
                                 <div class="dropdown1-content">
-                                    <a href="{{ route('book.show', $copy->id) }}" class="dropdown-item1">View</a>
-                                    <a href="{{ route('book.edit', $copy->id) }}" class="dropdown-item2">Edit</a>
-                                    <button class="dropdown-item3" type="button" data-bs-toggle="modal"
+                                    <a href="{{ route('book.show', $copy->id) }}" class="dropdown-item1 books-row-action-item">
+                                        <i class="bi bi-eye" aria-hidden="true"></i>
+                                        <span>View</span>
+                                    </a>
+                                    <a href="{{ route('book.edit', $copy->id) }}" class="dropdown-item2 books-row-action-item">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        <span>Edit</span>
+                                    </a>
+                                    <button class="dropdown-item3 books-row-action-item books-row-action-item--danger" type="button" data-bs-toggle="modal"
                                         data-bs-target="#deleteModal{{ $copy->id }}">
-                                        Delete
+                                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                                        <span>Delete</span>
                                     </button>
                                 </div>
                             </div>
@@ -93,4 +112,3 @@
         {{ $copies->links('pagination::bootstrap-5') }}
     </div>
 @endsection
-
