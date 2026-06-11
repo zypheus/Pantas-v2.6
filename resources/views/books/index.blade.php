@@ -249,7 +249,7 @@
             </div>
 
             <div class="card p-4">
-                <div class="table-responsive">
+                <div class="table-responsive books-table-responsive">
                     <table class="table table-hover align-middle table-book-list">
                         <thead class="table-dark">
                             <tr>
