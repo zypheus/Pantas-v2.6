@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/books/landing.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/books/landing.css') }}?v=opac-search-responsive-1">
     <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/qz-tray/qz-tray.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

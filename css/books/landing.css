@@ -681,3 +681,43 @@ footer {
         opacity: 1;
     }
 }
+
+/* OPAC search input/icon responsive alignment */
+.opac-search-input-wrap {
+    width: 100%;
+    min-width: 0;
+}
+
+.opac-search-icon {
+    top: 15px;
+}
+
+.opac-search-main-input {
+    min-width: 0;
+    margin-bottom: 0 !important;
+}
+
+@media (max-width: 575px) {
+    .opac-search-input-wrap {
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .opac-search-icon {
+        top: 15px;
+        left: 16px;
+    }
+
+    .opac-search-main-input {
+        flex: 1 0 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .opac-search-submit-btn {
+        flex: 1 0 100%;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+}
