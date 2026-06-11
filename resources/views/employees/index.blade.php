@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-5 employees-page">
     <div class="card">
         <div class="card-header text-center">
             <h4 class="mb-0">Registered Faculty &amp; Staff</h4>
@@ -58,7 +58,7 @@
                 <a href="{{ route('employees.index') }}" class="btn btn-outline-primary btn-sm active">Faculty &amp; Staff</a>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive employees-table-responsive">
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead>
                         <tr>

@@ -220,6 +220,37 @@
             overflow: visible !important;
         }
 
+        .employees-page,
+        .employees-page .card,
+        .employees-page .card-body {
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .employees-page .card {
+            overflow: hidden;
+        }
+
+        .employees-page .employees-table-responsive {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto !important;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .employees-page .employees-table-responsive .table {
+            width: max-content;
+            min-width: 100%;
+            margin-bottom: 0;
+        }
+
+        .employees-page .employees-table-responsive th,
+        .employees-page .employees-table-responsive td {
+            white-space: nowrap;
+        }
+
         .table thead {
             background-color: #ffc966;
         }
