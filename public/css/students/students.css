@@ -251,6 +251,37 @@
             white-space: nowrap;
         }
 
+        .students-page,
+        .students-page .card,
+        .students-page .card-body {
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .students-page .card {
+            overflow: hidden;
+        }
+
+        .students-page .students-table-responsive {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto !important;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .students-page .students-table-responsive .table {
+            width: max-content;
+            min-width: 100%;
+            margin-bottom: 0;
+        }
+
+        .students-page .students-table-responsive th,
+        .students-page .students-table-responsive td {
+            white-space: nowrap;
+        }
+
         .table thead {
             background-color: #ffc966;
         }

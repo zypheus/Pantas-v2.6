@@ -26,7 +26,7 @@
     });
 </script>
 
-    <div class="container mt-5">
+    <div class="container mt-5 students-page">
         <div class="card">
             <div id="rs" class="card-header text-center">
                 <h4>Registered Students</h4>
@@ -99,7 +99,7 @@
                 </div>
 
 
-                <div class="table-responsive">
+                <div class="table-responsive students-table-responsive">
                     <table class="table table-bordered table-hover text-center align-middle">
                         <thead>
                             <tr>
