@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{ asset('img/pantas-10.png') }}">
     <title>PANTAS | Platform</title>
-    <link rel="stylesheet" href="{{ asset('style.css') }}">
+    <link rel="stylesheet" href="{{ asset('style.css') }}?v=responsive-nav-7">
 </head>
 <body>
 
@@ -13,12 +13,17 @@
         <div class="logo-container">
             <img src="{{ asset('img/pantas-logo-landscape-10.png') }}" alt="PANTAS Logo" class="logo">
         </div>
-        <nav class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-controls="primary-navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav class="nav-links" id="primary-navigation">
             <ul>
-                <li><a href="#">ABOUT</a></li>
+                <li><a href="#about">ABOUT</a></li>
                 <li><a href="{{ route('landing') }}" >OPAC</a></li>
                 <li><a href="https://zendy.io/">ZENDY</a></li>
-                <li><a href="#">CONTACT US</a></li>
+                <li><a href="#contact">CONTACT US</a></li>
                 <li><a href="{{ url('/rooms/book') }}">ROOM RESERVATIONS</a></li>
                 <li><a href="{{ route('feedback.create') }}" class="feedback-link" >FEEDBACK</a></li>
                 <li><a href="{{ route('login') }}" class="login-button">LOGIN</a></li>
@@ -32,7 +37,7 @@
         </div>
     </main>
 
-    <section class="about-section fade-in-scroll">
+    <section class="about-section fade-in-scroll" id="about">
         <div class="container">
             <img src="{{ asset('img/pantas-10.png') }}" alt="PANTAS Logo Large" class="about-logo">
             
@@ -46,7 +51,7 @@
         </div>
     </section>
 
-<footer>
+<footer id="contact">
         <div class="footer-container">
             <div class="footer-col branding">
                 <img src="{{ asset('img/pantas-logo-landscape-10.png') }}" alt="Pantas Logo" class="footer-logo">
@@ -57,9 +62,9 @@
                 <h3>QUICK LINKS</h3>
                 <ul>
                     <li><a href="{{ route('home') }}">HOME</a></li>
-                    <li><a href="#">ABOUT</a></li>
-                    <li><a href="contact us.html">CONTACT US</a></li>
-                    <li><a href="#">ROOM RESERVATIONS</a></li>
+                    <li><a href="#about">ABOUT</a></li>
+                    <li><a href="#contact">CONTACT US</a></li>
+                    <li><a href="{{ url('/rooms/book') }}">ROOM RESERVATIONS</a></li>
                 </ul>
             </div>
 
@@ -78,6 +83,6 @@
 
 
 
-    <script src="{{ asset('script.js') }}"></script>
+    <script src="{{ asset('script.js') }}?v=responsive-nav-5"></script>
 </body>
 </html>

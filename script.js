@@ -22,6 +22,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    const header = document.querySelector('header');
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-links');
+    const mobileNavQuery = window.matchMedia('(max-width: 1440px)');
+
+    function closeMobileNav() {
+        if (!header || !navToggle) return;
+        header.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (header && navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            const isOpen = header.classList.toggle('is-open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+
+        mobileNavQuery.addEventListener('change', function(event) {
+            if (!event.matches) {
+                closeMobileNav();
+            }
+        });
+    }
+
     // --- NEW: Staggered Image Load Animation ---
     
     // 1. Select all image cards in the gallery
