@@ -349,6 +349,73 @@
             color: #722323;
         }
 
+        .employees-page .employees-row-dropdown {
+            display: inline-flex;
+            justify-content: center;
+        }
+
+        .employees-page .employees-row-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            min-width: 7.25rem;
+            font-weight: 700;
+            line-height: 1;
+            border-radius: 999px !important;
+        }
+
+        .employees-page .employees-row-btn i {
+            font-size: 0.95rem;
+        }
+
+        .employees-page .employees-row-menu {
+            display: none;
+            min-width: 12rem;
+            padding: 0.35rem;
+            border: 1px solid rgba(34, 51, 59, 0.08);
+            border-radius: 10px !important;
+            box-shadow: 0 14px 32px rgba(34, 51, 59, 0.18);
+        }
+
+        .employees-page .employees-row-menu.show {
+            display: block;
+        }
+
+        .employees-page .employees-row-menu__item {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            color: #22333b;
+            font-weight: 600;
+            border-radius: 8px !important;
+        }
+
+        .employees-page .employees-row-menu__item i {
+            width: 1rem;
+            text-align: center;
+            color: #5E936C;
+        }
+
+        .employees-page .employees-row-menu__item:hover,
+        .employees-page .employees-row-menu__item:focus {
+            background-color: rgba(255, 201, 102, 0.24);
+            color: #22333b;
+        }
+
+        .employees-page .employees-row-menu__item--danger,
+        .employees-page .employees-row-menu__item--danger i {
+            color: #932c27;
+        }
+
+        .employees-page .employees-row-menu__item--danger:hover,
+        .employees-page .employees-row-menu__item--danger:focus {
+            background-color: rgba(147, 44, 39, 0.1);
+            color: #722323;
+        }
+
         .table thead {
             background-color: #ffc966;
         }

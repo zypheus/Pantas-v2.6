@@ -99,27 +99,56 @@
                                 <td>{{ $employee->year_start_work ?? '—' }}</td>
                                 <td><code class="small">{{ $employee->qrcode }}</code></td>
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">Options</button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="{{ route('employees.edit', $employee->id) }}">Edit</a></li>
+                                    <div class="dropdown employees-row-dropdown">
+                                        <button class="btn btn-primary btn-sm employees-row-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-sliders" aria-hidden="true"></i>
+                                            <span>Options</span>
+                                        </button>
+                                        <ul class="dropdown-menu menu menu-sm employees-row-menu">
+                                            <li>
+                                                <a class="dropdown-item employees-row-menu__item" href="{{ route('employees.edit', $employee->id) }}">
+                                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                                    <span>Edit</span>
+                                                </a>
+                                            </li>
                                             <li>
                                                 <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" onsubmit="return confirm('Delete this record?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                                    <button type="submit" class="dropdown-item employees-row-menu__item employees-row-menu__item--danger">
+                                                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                                                        <span>Delete</span>
+                                                    </button>
                                                 </form>
                                             </li>
                                         </ul>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">Generate</button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="{{ route('employees.id.front', $employee->id) }}" target="_blank">Front</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('employees.id.back', $employee->id) }}" target="_blank">Back</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('employees.id.download', $employee->id) }}">Download ZIP</a></li>
+                                    <div class="dropdown employees-row-dropdown">
+                                        <button class="btn btn-success btn-sm employees-row-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-person-vcard" aria-hidden="true"></i>
+                                            <span>Generate</span>
+                                        </button>
+                                        <ul class="dropdown-menu menu menu-sm employees-row-menu">
+                                            <li>
+                                                <a class="dropdown-item employees-row-menu__item" href="{{ route('employees.id.front', $employee->id) }}" target="_blank">
+                                                    <i class="bi bi-credit-card-2-front" aria-hidden="true"></i>
+                                                    <span>Front</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item employees-row-menu__item" href="{{ route('employees.id.back', $employee->id) }}" target="_blank">
+                                                    <i class="bi bi-credit-card-2-back" aria-hidden="true"></i>
+                                                    <span>Back</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item employees-row-menu__item" href="{{ route('employees.id.download', $employee->id) }}">
+                                                    <i class="bi bi-file-earmark-zip" aria-hidden="true"></i>
+                                                    <span>Download ZIP</span>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </td>
