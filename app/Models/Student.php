@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
@@ -42,6 +43,9 @@ class Student extends Model
     {
         return $this->hasMany(AttendanceLog::class, 'student_id');
     }
-    
-   
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
 }

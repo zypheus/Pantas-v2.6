@@ -1,0 +1,50 @@
+<?php
+
+use App\Http\Controllers\Api\Mobile\AuthController;
+use App\Http\Controllers\Api\Mobile\BorrowingController;
+use App\Http\Controllers\Api\Mobile\CatalogController;
+use App\Http\Controllers\Api\Mobile\FeedbackController;
+use App\Http\Controllers\Api\Mobile\NotificationController;
+use App\Http\Controllers\Api\Mobile\RoomReservationController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('mobile')->name('api.mobile.')->group(function () {
+    Route::get('/health', function () {
+        return response()->json([
+            'message' => 'PANTAS mobile API is running.',
+            'data' => [
+                'service' => 'pantas-mobile-api',
+                'status' => 'ok',
+            ],
+        ]);
+    })->name('health');
+
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+    Route::prefix('catalog')->name('catalog.')->group(function () {
+        Route::get('/search', [CatalogController::class, 'search'])->name('search');
+        Route::get('/filters', [CatalogController::class, 'filters'])->name('filters');
+        Route::get('/new-arrivals', [CatalogController::class, 'newArrivals'])->name('new-arrivals');
+        Route::get('/books/{book}', [CatalogController::class, 'book'])->name('books.show');
+        Route::get('/ebooks/{ebook}', [CatalogController::class, 'ebook'])->name('ebooks.show');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
+        Route::get('/me', [AuthController::class, 'me'])->name('me');
+        Route::get('/profile', [AuthController::class, 'me'])->name('profile');
+        Route::get('/borrowed-books', [BorrowingController::class, 'active'])->name('borrowed-books');
+        Route::get('/borrow-history', [BorrowingController::class, 'history'])->name('borrow-history');
+        Route::get('/borrow-limits', [BorrowingController::class, 'limits'])->name('borrow-limits');
+        Route::post('/borrow-cart/submit', [BorrowingController::class, 'submitCart'])->name('borrow-cart.submit');
+        Route::get('/rooms', [RoomReservationController::class, 'rooms'])->name('rooms.index');
+        Route::get('/rooms/availability', [RoomReservationController::class, 'availability'])->name('rooms.availability');
+        Route::get('/rooms/reservations', [RoomReservationController::class, 'index'])->name('rooms.reservations.index');
+        Route::post('/rooms/reservations', [RoomReservationController::class, 'store'])->name('rooms.reservations.store');
+        Route::get('/rooms/reservations/{reservation}', [RoomReservationController::class, 'show'])->name('rooms.reservations.show');
+        Route::delete('/rooms/reservations/{reservation}', [RoomReservationController::class, 'destroy'])->name('rooms.reservations.destroy');
+        Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    });
+});
