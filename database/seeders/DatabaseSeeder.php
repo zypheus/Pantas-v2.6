@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Student;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\MarcFrameworkSeeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,16 +24,40 @@ class DatabaseSeeder extends Seeder
             BookSampleSeeder::class,
         ]);
 
+        $adminPassword = Hash::make('password', [
+            'rounds' => 12,
+        ]);
+
         User::updateOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'admin@test.local'],
             [
-                'fname' => 'Test',
-                'lname' => 'User',
-                'password' => bcrypt('password'),
+                'fname' => 'PANTAS',
+                'lname' => 'Admin',
+                'password' => $adminPassword,
                 'role' => 'admin',
+                'student_id' => null,
             ]
         );
 
-        $this->command?->info('Database seeded: MARC framework, programs, students, books, test user (test@example.com).');
+        $mobileStudent = Student::query()
+            ->where('id_number', '24-10003')
+            ->first();
+
+        if ($mobileStudent) {
+            User::updateOrCreate(
+                ['email' => 'mobile.student@test.local'],
+                [
+                    'fname' => $mobileStudent->firstname,
+                    'lname' => $mobileStudent->lastname,
+                    'password' => Hash::make('password', [
+                        'rounds' => 12,
+                    ]),
+                    'role' => 'student',
+                    'student_id' => $mobileStudent->id,
+                ]
+            );
+        }
+
+        $this->command?->info('Database seeded: MARC framework, programs, students, books, admin user, and mobile student user.');
     }
 }
