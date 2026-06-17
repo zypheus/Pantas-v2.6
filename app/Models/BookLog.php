@@ -167,11 +167,11 @@ class BookLog extends Model
 
     public function getDaysOverdueAttribute()
     {
-        $settings = FineSetting::latest('effective_from')->first();
-
-        if (! $this->due_date || ! $settings) {
+        if (! $this->due_date) {
             return 0;
         }
+
+        $settings = FineSetting::currentOrDefault();
 
         $compareDate = $this->returned_date
             ? Carbon::parse($this->returned_date)
@@ -201,11 +201,11 @@ class BookLog extends Model
             return (float) $this->fine_incurred;
         }
 
-        $settings = FineSetting::latest('effective_from')->first();
-
-        if (! $settings || $this->days_overdue === 0) {
+        if ($this->days_overdue === 0) {
             return 0;
         }
+
+        $settings = FineSetting::currentOrDefault();
 
         $fine = $this->days_overdue * $settings->fine_per_day;
 

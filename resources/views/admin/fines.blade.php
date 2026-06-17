@@ -17,9 +17,18 @@
     <div class="row">
 
         <div class="col-md-6">
+            @php
+                $fineDefaults = $defaults ?? \App\Models\FineSetting::defaultAttributes();
+            @endphp
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if(! $settings)
+                <div class="alert alert-warning">
+                    Fine and due date settings are using default values. Save this form to create the active policy.
+                </div>
             @endif
 
             <form method="POST" action="{{ route('fines.update') }}">
@@ -29,28 +38,28 @@
                     <label class="form-label">Fine per Day (₱)</label>
                     <input type="number" step="0.01" name="fine_per_day"
                            class="form-control"
-                           value="{{ $settings->fine_per_day ?? '' }}" required>
+                           value="{{ old('fine_per_day', $settings->fine_per_day ?? $fineDefaults['fine_per_day']) }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Maximum Fine (₱)</label>
                     <input type="number" step="0.01" name="max_fine"
                            class="form-control"
-                           value="{{ $settings->max_fine ?? '' }}">
+                           value="{{ old('max_fine', $settings->max_fine ?? $fineDefaults['max_fine']) }}">
                 </div>
 
                 <div class="mb-3">
                     <label>Loan Duration (days)</label>
                     <input type="number" name="loan_duration_days"
-                           value="{{ $settings->loan_duration_days }}"
-                           class="form-control">
+                           value="{{ old('loan_duration_days', $settings->loan_duration_days ?? $fineDefaults['loan_duration_days']) }}"
+                           class="form-control" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Grace Period (Days)</label>
                     <input type="number" name="grace_period_days"
                            class="form-control"
-                           value="{{ $settings->grace_period_days ?? 0 }}" required>
+                           value="{{ old('grace_period_days', $settings->grace_period_days ?? $fineDefaults['grace_period_days']) }}" required>
                 </div>
 
                 <button class="btn btn-primary">Save Fine Policy</button>

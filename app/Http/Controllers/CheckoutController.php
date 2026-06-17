@@ -91,14 +91,7 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            $fineSetting = FineSetting::orderBy('created_at', 'desc')->first();
-
-            if (! $fineSetting) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Fine settings not configured.',
-                ]);
-            }
+            $fineSetting = FineSetting::currentOrDefault();
 
             $borrowedAt = Carbon::now();
             $dueDate = null;
@@ -239,10 +232,7 @@ class CheckoutController extends Controller
             ]);
         }
 
-        $fineSetting = FineSetting::latest()->first();
-        if (! $fineSetting) {
-            return response()->json(['success' => false, 'message' => 'Fine settings not configured.']);
-        }
+        $fineSetting = FineSetting::currentOrDefault();
 
         $availableIds = [];
         foreach ($request->book_ids as $bookId) {

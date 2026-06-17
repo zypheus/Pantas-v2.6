@@ -9,8 +9,10 @@ class FineSettingController extends Controller
 {
     public function edit()
     {
-        $settings = FineSetting::latest('created_at')->first();
-        return view('admin.fines', compact('settings'));
+        $settings = FineSetting::current();
+        $defaults = FineSetting::defaultAttributes();
+
+        return view('admin.fines', compact('settings', 'defaults'));
     }
 
     public function update(Request $request)

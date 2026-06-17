@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             EmployeeSampleSeeder::class,
             StudentSampleSeeder::class,
             BookSampleSeeder::class,
+            FineSettingSeeder::class,
         ]);
 
         $adminPassword = Hash::make('password', [

@@ -80,7 +80,7 @@ class BorrowingController extends Controller
         $maxLoans = BookController::MAX_CONCURRENT_BOOK_LOANS_PER_STUDENT;
         $currentLoans = BookLog::countActiveLoansForStudent((int) $student->id);
         $hasOverdue = $this->hasOverdueLoans($student);
-        $fineSetting = FineSetting::current();
+        $fineSetting = FineSetting::currentOrDefault();
 
         return response()->json([
             'message' => 'Borrow limits retrieved.',
@@ -89,11 +89,11 @@ class BorrowingController extends Controller
                 'current_active_loans' => $currentLoans,
                 'remaining_loans' => max(0, $maxLoans - $currentLoans),
                 'has_overdue' => $hasOverdue,
-                'can_borrow' => $currentLoans < $maxLoans && ! $hasOverdue && $fineSetting !== null,
+                'can_borrow' => $currentLoans < $maxLoans && ! $hasOverdue,
                 'reborrow_cooldown_days' => BookController::REBORROW_COOLDOWN_DAYS,
-                'fine_settings_configured' => $fineSetting !== null,
-                'loan_duration_days' => $fineSetting?->loan_duration_days,
-                'grace_period_days' => $fineSetting?->grace_period_days,
+                'fine_settings_configured' => FineSetting::current() !== null,
+                'loan_duration_days' => $fineSetting->loan_duration_days,
+                'grace_period_days' => $fineSetting->grace_period_days,
             ],
         ]);
     }
@@ -118,14 +118,7 @@ class BorrowingController extends Controller
             ], 409);
         }
 
-        $fineSetting = FineSetting::current();
-
-        if (! $fineSetting) {
-            return response()->json([
-                'message' => 'Checkout blocked: fine settings are not configured.',
-                'data' => null,
-            ], 409);
-        }
+        $fineSetting = FineSetting::currentOrDefault();
 
         $bookIds = array_values(array_unique(array_map('intval', $validated['book_ids'])));
         $borrowedAt = Carbon::now('Asia/Manila');
