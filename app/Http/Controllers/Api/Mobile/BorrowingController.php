@@ -11,6 +11,7 @@ use App\Models\BookLog;
 use App\Models\FineSetting;
 use App\Models\Holiday;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -230,25 +231,31 @@ class BorrowingController extends Controller
 
     private function resolveStudent(Request $request): Student|JsonResponse
     {
-        $user = $request->user();
+        $tokenable = $request->user();
 
-        if (in_array($user->role, ['admin', 'staff'], true)) {
-            return response()->json([
-                'message' => 'This account is not allowed to use mobile borrowing.',
-                'data' => null,
-            ], 403);
+        if ($tokenable instanceof Student) {
+            return $tokenable;
         }
 
-        $student = $user->student;
+        if ($tokenable instanceof User) {
+            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+                return response()->json([
+                    'message' => 'This account is not allowed to use mobile borrowing.',
+                    'data' => null,
+                ], 403);
+            }
 
-        if (! $student) {
-            return response()->json([
-                'message' => 'No student profile is linked to this account.',
-                'data' => null,
-            ], 409);
+            $tokenable->loadMissing('student');
+
+            if ($tokenable->student) {
+                return $tokenable->student;
+            }
         }
 
-        return $student;
+        return response()->json([
+            'message' => 'No student profile is linked to this account.',
+            'data' => null,
+        ], 409);
     }
 
     private function activeLoanQuery(Student $student)

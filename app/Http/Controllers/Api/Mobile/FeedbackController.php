@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Feedback;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,19 +19,11 @@ class FeedbackController extends Controller
             'comments' => ['required', 'string', 'max:5000'],
         ]);
 
-        $user = $request->user();
-        $user->loadMissing('student');
-
-        $student = $user->student;
-        $name = trim((string) $user->fname.' '.(string) $user->lname);
-
-        if ($name === '' && $student) {
-            $name = trim((string) $student->firstname.' '.(string) $student->lastname);
-        }
+        [$name, $email] = $this->feedbackIdentity($request);
 
         $feedback = Feedback::query()->create([
             'name' => $name !== '' ? $name : null,
-            'email' => $user->email,
+            'email' => $email,
             'comments' => $validated['comments'],
         ]);
 
@@ -43,5 +37,32 @@ class FeedbackController extends Controller
                 'created_at' => $feedback->created_at?->toDateTimeString(),
             ],
         ], 201);
+    }
+
+    private function feedbackIdentity(Request $request): array
+    {
+        $tokenable = $request->user();
+
+        if ($tokenable instanceof Student) {
+            return [
+                trim((string) $tokenable->firstname.' '.(string) $tokenable->lastname),
+                null,
+            ];
+        }
+
+        if ($tokenable instanceof User) {
+            $tokenable->loadMissing('student');
+
+            $student = $tokenable->student;
+            $name = trim((string) $tokenable->fname.' '.(string) $tokenable->lname);
+
+            if ($name === '' && $student) {
+                $name = trim((string) $student->firstname.' '.(string) $student->lastname);
+            }
+
+            return [$name, $tokenable->email];
+        }
+
+        return ['', null];
     }
 }

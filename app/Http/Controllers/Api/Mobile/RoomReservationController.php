@@ -10,6 +10,7 @@ use App\Models\ReservationStudent;
 use App\Models\Room;
 use App\Models\RoomReservation;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -131,14 +132,17 @@ class RoomReservationController extends Controller
         }
 
         $reservation = DB::transaction(function () use ($date, $end, $request, $room, $start, $student, $validated) {
+            $user = $request->user();
+            $userId = $user instanceof User ? $user->id : null;
+
             $reservation = RoomReservation::query()->create([
                 'room_id' => $room->id,
-                'user_id' => $request->user()->id,
+                'user_id' => $userId,
                 'student_id' => $student->id,
                 'date' => $date,
                 'start_time' => $start,
                 'end_time' => $end,
-                'patron_email' => $request->user()->email,
+                'patron_email' => $this->studentContact($student),
                 'number_of_students' => $validated['number_of_students'],
                 'notes' => $validated['notes'] ?? null,
                 'status' => 'pending',
@@ -153,10 +157,12 @@ class RoomReservationController extends Controller
 
             ReservationLog::query()->create([
                 'reservation_id' => $reservation->id,
-                'user_id' => $request->user()->id,
+                'user_id' => $userId,
                 'action' => 'created',
                 'meta' => [
                     'source' => 'mobile',
+                    'student_id' => $student->id,
+                    'student_number' => $student->id_number,
                     'room_id' => $room->id,
                     'date' => $date,
                     'start_time' => $start,
@@ -183,7 +189,6 @@ class RoomReservationController extends Controller
 
         $reservations = RoomReservation::query()
             ->with(['room', 'students'])
-            ->where('user_id', $request->user()->id)
             ->where('student_id', $student->id)
             ->latest('date')
             ->latest('start_time')
@@ -230,9 +235,12 @@ class RoomReservationController extends Controller
 
         ReservationLog::query()->create([
             'reservation_id' => $owned->id,
-            'user_id' => $request->user()->id,
+            'user_id' => $request->user() instanceof User ? $request->user()->id : null,
             'action' => 'cancelled',
-            'meta' => ['source' => 'mobile'],
+            'meta' => [
+                'source' => 'mobile',
+                'student_id' => $owned->student_id,
+            ],
         ]);
 
         return response()->json([
@@ -243,25 +251,31 @@ class RoomReservationController extends Controller
 
     private function resolveStudent(Request $request): Student|JsonResponse
     {
-        $user = $request->user();
+        $tokenable = $request->user();
 
-        if (in_array($user->role, ['admin', 'staff'], true)) {
-            return response()->json([
-                'message' => 'This account is not allowed to use mobile room reservations.',
-                'data' => null,
-            ], 403);
+        if ($tokenable instanceof Student) {
+            return $tokenable;
         }
 
-        $student = $user->student;
+        if ($tokenable instanceof User) {
+            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+                return response()->json([
+                    'message' => 'This account is not allowed to use mobile room reservations.',
+                    'data' => null,
+                ], 403);
+            }
 
-        if (! $student) {
-            return response()->json([
-                'message' => 'No student profile is linked to this account.',
-                'data' => null,
-            ], 409);
+            $tokenable->loadMissing('student');
+
+            if ($tokenable->student) {
+                return $tokenable->student;
+            }
         }
 
-        return $student;
+        return response()->json([
+            'message' => 'No student profile is linked to this account.',
+            'data' => null,
+        ], 409);
     }
 
     private function ownedReservation(Request $request, RoomReservation $reservation): RoomReservation|JsonResponse
@@ -272,7 +286,7 @@ class RoomReservationController extends Controller
             return $student;
         }
 
-        if ((int) $reservation->user_id !== (int) $request->user()->id || (int) $reservation->student_id !== (int) $student->id) {
+        if ((int) $reservation->student_id !== (int) $student->id) {
             return response()->json([
                 'message' => 'Room reservation not found.',
                 'data' => null,
@@ -280,6 +294,13 @@ class RoomReservationController extends Controller
         }
 
         return $reservation;
+    }
+
+    private function studentContact(Student $student): string
+    {
+        return $student->mobile_number
+            ?: $student->id_number
+            ?: 'student-'.$student->id;
     }
 
     private function parseTime(string $time, string $ampm): Carbon

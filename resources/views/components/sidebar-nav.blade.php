@@ -127,14 +127,14 @@
             </a>
         </li>
         <li>
-            <a href="{{ route('students.pending') }}"
-               class="sidebar-link {{ request()->routeIs('students.pending') ? 'active' : '' }}">
+            <a href="{{ route('pending.index', ['tab' => 'students']) }}"
+               class="sidebar-link {{ request()->routeIs('pending.index') && request('tab', 'students') === 'students' ? 'active' : '' }}">
                 <i class="bi bi-person-plus"></i> Pending Students
             </a>
         </li>
         <li>
-            <a href="{{ route('pending.employees') }}"
-               class="sidebar-link {{ request()->routeIs('pending.employees') ? 'active' : '' }}">
+            <a href="{{ route('pending.index', ['tab' => 'employees']) }}"
+               class="sidebar-link {{ (request()->routeIs('pending.index') && request('tab') === 'employees') || request()->routeIs('pending.employees') ? 'active' : '' }}">
                 <i class="bi bi-person-plus"></i> Pending Employees
             </a>
         </li>
