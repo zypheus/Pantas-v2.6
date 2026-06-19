@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Mobile\AggregateController;
 use App\Http\Controllers\Api\Mobile\AuthController;
 use App\Http\Controllers\Api\Mobile\BorrowingController;
 use App\Http\Controllers\Api\Mobile\CatalogController;
@@ -30,6 +31,9 @@ Route::prefix('mobile')->name('api.mobile.')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/home', [AggregateController::class, 'home'])->name('home');
+        Route::get('/borrow-overview', [AggregateController::class, 'borrowOverview'])->name('borrow-overview');
+        Route::get('/rooms/dashboard', [AggregateController::class, 'roomsDashboard'])->name('rooms.dashboard');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::post('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
         Route::get('/me', [AuthController::class, 'me'])->name('me');
