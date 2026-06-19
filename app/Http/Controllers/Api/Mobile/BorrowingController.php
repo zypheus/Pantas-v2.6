@@ -28,7 +28,7 @@ class BorrowingController extends Controller
         }
 
         $logs = $this->activeLoanQuery($student)
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->orderBy('due_date')
             ->get();
 
@@ -52,7 +52,7 @@ class BorrowingController extends Controller
         ]);
 
         $history = BookLog::query()
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->where('student_id', $student->id)
             ->latest('timestamp')
             ->paginate((int) ($validated['per_page'] ?? 10))
@@ -261,12 +261,12 @@ class BorrowingController extends Controller
     private function activeLoanQuery(Student $student)
     {
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $student->id)
             ->groupBy('book_id');
 
         return BookLog::query()
             ->whereIn('id', $latestIds)
-            ->where('student_id', $student->id)
             ->where('status', 'Checked Out');
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class FineSetting extends Model
 {
@@ -18,7 +19,14 @@ class FineSetting extends Model
 
     public static function current()
     {
-        return self::orderByDesc('effective_from')->first();
+        return Cache::remember('fine-setting:current', now()->addMinutes(30), function () {
+            return self::orderByDesc('effective_from')->first();
+        });
+    }
+
+    public static function clearCache(): void
+    {
+        Cache::forget('fine-setting:current');
     }
 
     public static function currentOrDefault(): self

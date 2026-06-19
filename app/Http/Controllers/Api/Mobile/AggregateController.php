@@ -18,6 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class AggregateController extends Controller
 {
@@ -50,8 +51,14 @@ class AggregateController extends Controller
             return $student;
         }
 
+        BookLog::cachedFineSettings();
+
+        $activeLoans = $this->activeLoans($student);
+        $currentLoans = count($activeLoans);
+        $hasOverdue = collect($activeLoans)->where('is_overdue', true)->isNotEmpty();
+
         $history = BookLog::query()
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->where('student_id', $student->id)
             ->latest('timestamp')
             ->paginate(10)
@@ -60,10 +67,10 @@ class AggregateController extends Controller
         return $this->etagResponse($request, [
             'message' => 'Borrow overview retrieved.',
             'data' => [
-                'active_loans' => $this->activeLoans($student),
+                'active_loans' => $activeLoans,
                 'history' => $history->getCollection()->map(fn (BookLog $log) => $this->formatLoan($log))->values(),
                 'history_meta' => $this->paginationMeta($history),
-                'limits' => $this->borrowLimits($student),
+                'limits' => $this->borrowLimitsFromCache($student, $currentLoans, $hasOverdue),
             ],
         ]);
     }
@@ -77,13 +84,23 @@ class AggregateController extends Controller
         }
 
         $validated = $request->validate([
-            'room_id' => ['nullable', 'integer', 'exists:rooms,id'],
+            'room_id' => ['nullable', 'integer'],
             'date' => ['nullable', 'date'],
         ]);
 
-        $rooms = Room::query()
-            ->orderBy('name')
-            ->get();
+        $rooms = Cache::remember('mobile:rooms', now()->addMinutes(10), function () {
+            return Room::query()
+                ->orderBy('name')
+                ->get();
+        });
+
+        if (isset($validated['room_id']) && !$rooms->contains('id', (int)$validated['room_id'])) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => ['room_id' => ['The selected room id is invalid.']]
+            ], 422);
+        }
+
         $selectedRoom = $rooms->firstWhere('id', (int) ($validated['room_id'] ?? 0)) ?? $rooms->first();
         $date = Carbon::parse($validated['date'] ?? Carbon::now('Asia/Manila'))->toDateString();
 
@@ -100,6 +117,7 @@ class AggregateController extends Controller
 
         if ($selectedRoom instanceof Room) {
             $bookedSlots = RoomReservation::query()
+                ->select('id', 'start_time', 'end_time', 'status')
                 ->where('room_id', $selectedRoom->id)
                 ->whereDate('date', $date)
                 ->whereIn('status', ['pending', 'approved'])
@@ -168,48 +186,50 @@ class AggregateController extends Controller
 
     private function newArrivals(): array
     {
-        $grouped = Book::query()
-            ->whereNull('archived_at')
-            ->select(
-                'title_statement',
-                'main_author',
-                'pub_year',
-                DB::raw('COUNT(*) AS copies'),
-                DB::raw('MIN(id) AS sample_id'),
-                DB::raw("MAX(CASE WHEN availability = 'Available' THEN 1 ELSE 0 END) AS is_available"),
-                DB::raw('MAX(created_at) AS newest_copy_at')
-            )
-            ->groupBy('title_statement', 'main_author', 'pub_year');
+        return Cache::remember('mobile:new-arrivals', now()->addMinutes(5), function () {
+            $grouped = Book::query()
+                ->whereNull('archived_at')
+                ->select(
+                    'title_statement',
+                    'main_author',
+                    'pub_year',
+                    DB::raw('COUNT(*) AS copies'),
+                    DB::raw('MIN(id) AS sample_id'),
+                    DB::raw("MAX(CASE WHEN availability = 'Available' THEN 1 ELSE 0 END) AS is_available"),
+                    DB::raw('MAX(created_at) AS newest_copy_at')
+                )
+                ->groupBy('title_statement', 'main_author', 'pub_year');
 
-        return DB::query()
-            ->fromSub($grouped, 'grouped')
-            ->join('books', 'books.id', '=', 'grouped.sample_id')
-            ->select(
-                'grouped.title_statement',
-                'grouped.main_author',
-                'grouped.pub_year',
-                'grouped.copies',
-                'grouped.sample_id as id',
-                'grouped.is_available',
-                'books.call_number',
-                'books.cover_image',
-                'books.content_type',
-                'books.library_name',
-                'books.course',
-                'books.section'
-            )
-            ->orderByDesc('grouped.newest_copy_at')
-            ->limit(10)
-            ->get()
-            ->map(fn (object $book) => $this->formatBookSearchRow($book))
-            ->values()
-            ->all();
+            return DB::query()
+                ->fromSub($grouped, 'grouped')
+                ->join('books', 'books.id', '=', 'grouped.sample_id')
+                ->select(
+                    'grouped.title_statement',
+                    'grouped.main_author',
+                    'grouped.pub_year',
+                    'grouped.copies',
+                    'grouped.sample_id as id',
+                    'grouped.is_available',
+                    'books.call_number',
+                    'books.cover_image',
+                    'books.content_type',
+                    'books.library_name',
+                    'books.course',
+                    'books.section'
+                )
+                ->orderByDesc('grouped.newest_copy_at')
+                ->limit(10)
+                ->get()
+                ->map(fn (object $book) => $this->formatBookSearchRow($book))
+                ->values()
+                ->all();
+        });
     }
 
     private function activeLoans(Student $student): array
     {
         return $this->activeLoanQuery($student)
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->orderBy('due_date')
             ->get()
             ->map(fn (BookLog $log) => $this->formatLoan($log))
@@ -220,12 +240,12 @@ class AggregateController extends Controller
     private function activeLoanQuery(Student $student)
     {
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $student->id)
             ->groupBy('book_id');
 
         return BookLog::query()
             ->whereIn('id', $latestIds)
-            ->where('student_id', $student->id)
             ->where('status', 'Checked Out');
     }
 
@@ -248,20 +268,19 @@ class AggregateController extends Controller
         ];
     }
 
-    private function borrowLimits(Student $student): array
+    private function borrowLimitsFromCache(Student $student, int $currentLoans, bool $hasOverdue): array
     {
         $maxLoans = BookController::MAX_CONCURRENT_BOOK_LOANS_PER_STUDENT;
-        $currentLoans = BookLog::countActiveLoansForStudent((int) $student->id);
-        $fineSetting = FineSetting::currentOrDefault();
+        $fineSetting = BookLog::cachedFineSettings();
 
         return [
             'max_active_loans' => $maxLoans,
             'current_active_loans' => $currentLoans,
             'remaining_loans' => max(0, $maxLoans - $currentLoans),
-            'has_overdue' => $this->hasOverdueLoans($student),
-            'can_borrow' => $currentLoans < $maxLoans && ! $this->hasOverdueLoans($student),
+            'has_overdue' => $hasOverdue,
+            'can_borrow' => $currentLoans < $maxLoans && ! $hasOverdue,
             'reborrow_cooldown_days' => BookController::REBORROW_COOLDOWN_DAYS,
-            'fine_settings_configured' => FineSetting::current() !== null,
+            'fine_settings_configured' => $fineSetting->exists,
             'loan_duration_days' => $fineSetting->loan_duration_days,
             'grace_period_days' => $fineSetting->grace_period_days,
         ];

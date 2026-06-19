@@ -48,13 +48,13 @@ class NotificationController extends Controller
         $nearDueEnd = $today->copy()->addDays(3);
 
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $student->id)
             ->groupBy('book_id');
 
         return BookLog::query()
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->whereIn('id', $latestIds)
-            ->where('student_id', $student->id)
             ->where('status', 'Checked Out')
             ->whereNotNull('due_date')
             ->whereDate('due_date', '<=', $nearDueEnd->toDateString())
