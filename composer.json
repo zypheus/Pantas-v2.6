@@ -18,6 +18,7 @@
         "maatwebsite/excel": "^3.1",
         "psr/simple-cache": "2.0",
         "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-backup": "^9.3",
         "spatie/simple-excel": "^3.7"
     },
     "require-dev": {
