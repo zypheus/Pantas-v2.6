@@ -71,6 +71,10 @@
             <i class="bi bi-filetype-csv me-2" aria-hidden="true"></i>
             Download combined CSV
         </a>
+        <a href="{{ route('attendance_logs.absences') }}" class="btn btn-warning btn-lg justify-start">
+            <i class="bi bi-person-x-fill me-2" aria-hidden="true"></i>
+            View daily absences
+        </a>
     </div>
 
     <div class="card card-border bg-base-100 shadow-sm mb-4">

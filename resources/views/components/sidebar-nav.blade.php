@@ -360,6 +360,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('attendance_logs.absences') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.absences*') ? 'active' : '' }}">
+                        <i class="bi bi-person-x"></i> Absences
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('attendance_logs.reports.hub') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.reports.hub') ? 'active' : '' }}">
                         <i class="bi bi-bar-chart"></i> Reports Hub
                     </a>

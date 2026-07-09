@@ -40,6 +40,7 @@ Reference plan:
 - [x] Add operational documentation for staff roles, seed accounts, and patron domain separation.
 - [x] Align Super Admin navigation with active module switching.
 - [x] Implement workflow-grouped sidebar navigation and role-specific dashboard pages.
+- [x] Add Attendance Admin daily absence report and CSV export.
 
 ## Confirmed Decisions
 
@@ -234,6 +235,7 @@ Reference plan:
 - Role dashboards now render summary cards, quick actions, recent activity, and Chart.js-powered charts using existing Blade and Bootstrap styling.
 - A read-only Super Admin activity index was added so the System Activity sidebar has a concrete audit-trail destination.
 - Attendance Admin now has a read-only pending-registration page with existing approval actions; full Attendance student/employee management remains a future product decision.
+- Attendance Admin now has a daily absences report that computes registered Attendance students with no IN scan for the selected date and can export the filtered list as CSV.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

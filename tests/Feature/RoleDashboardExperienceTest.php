@@ -81,6 +81,7 @@ class RoleDashboardExperienceTest extends TestCase
             ->assertSee('Scans Today')
             ->assertSee('Attendance Trend')
             ->assertSee('Pending Attendance Registrations')
+            ->assertSee('Absences')
             ->assertSee('Feedback Responses')
             ->assertDontSee('Library Dashboard')
             ->assertDontSee('Staff Accounts');

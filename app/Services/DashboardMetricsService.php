@@ -138,6 +138,7 @@ final class DashboardMetricsService
             'quickActions' => [
                 ['label' => 'Scanner', 'route' => 'attendance.scan', 'icon' => 'bi-upc-scan'],
                 ['label' => 'Logs', 'route' => 'attendance_logs.index', 'icon' => 'bi-list-check'],
+                ['label' => 'Absences', 'route' => 'attendance_logs.absences', 'icon' => 'bi-person-x'],
                 ['label' => 'Reports', 'route' => 'attendance_logs.reports.hub', 'icon' => 'bi-bar-chart'],
                 ['label' => 'Pending Registrations', 'route' => 'attendance.pending.index', 'icon' => 'bi-person-plus'],
             ],
