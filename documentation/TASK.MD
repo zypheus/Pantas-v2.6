@@ -40,6 +40,7 @@ Reference plan:
 - [x] Add operational documentation for staff roles, seed accounts, and patron domain separation.
 - [x] Align Super Admin navigation with active module switching.
 - [x] Implement workflow-grouped sidebar navigation and role-specific dashboard pages.
+- [x] Add richer demo workflow seed data for manual testing.
 
 ## Confirmed Decisions
 
@@ -189,6 +190,7 @@ Reference plan:
 - [ ] Decide whether old Blade views should be renamed by domain or reused with new data contracts.
 - [ ] Decide whether legacy root static files should be removed later.
 - [ ] Decide whether Attendance patron management should expand beyond the new pending-registration index into full student/employee index pages.
+- [x] Add demo seed coverage for dashboards, Attendance patrons/logs, Library visits, circulation, room reservations, feedback, pending approvals, and audit activity.
 - [x] Review Pantas-UI services before mobile API migration.
 - [x] Add documentation for staff role setup.
 - [x] Add documentation for fresh local seed accounts.
@@ -234,6 +236,7 @@ Reference plan:
 - Role dashboards now render summary cards, quick actions, recent activity, and Chart.js-powered charts using existing Blade and Bootstrap styling.
 - A read-only Super Admin activity index was added so the System Activity sidebar has a concrete audit-trail destination.
 - Attendance Admin now has a read-only pending-registration page with existing approval actions; full Attendance student/employee management remains a future product decision.
+- `DemoWorkflowSeeder` now fills manual-testing gaps left by the base sample seeders, including role accounts, dashboard metrics, Library circulation, Library visits, school Attendance records, pending approvals, room workflow examples, feedback, and audit activity.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

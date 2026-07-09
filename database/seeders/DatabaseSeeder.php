@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             RoomSampleSeeder::class,
             FineSettingSeeder::class,
             SuperAdminSeeder::class,
+            DemoWorkflowSeeder::class,
         ]);
 
         $adminPassword = Hash::make('password', [
