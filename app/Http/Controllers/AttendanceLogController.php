@@ -8,6 +8,7 @@ use App\Models\AttendanceProgram;
 use App\Models\AttendanceStudent;
 use App\Services\PatronAttendanceReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -133,6 +134,66 @@ class AttendanceLogController extends Controller
         return Excel::download(new AttendanceLogsExport($logs), 'attendance_logs.xlsx');
     }
 
+    public function absences(Request $request)
+    {
+        $date = $this->absenceDate($request);
+        $absences = $this->absenceQuery($request, $date)
+            ->orderBy('lastname')
+            ->orderBy('firstname')
+            ->paginate(15)
+            ->withQueryString();
+
+        $courses = AttendanceStudent::query()
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
+            ->distinct()
+            ->orderBy('course')
+            ->pluck('course');
+
+        $years = AttendanceStudent::query()
+            ->whereNotNull('year')
+            ->where('year', '!=', '')
+            ->distinct()
+            ->orderBy('year')
+            ->pluck('year');
+
+        return view('attendance_logs.absences', compact('absences', 'courses', 'date', 'years'));
+    }
+
+    public function exportAbsencesCsv(Request $request)
+    {
+        $date = $this->absenceDate($request);
+        $students = $this->absenceQuery($request, $date)
+            ->orderBy('lastname')
+            ->orderBy('firstname')
+            ->get();
+
+        $filename = 'attendance-absences-'.$date.'.csv';
+
+        return response()->streamDownload(function () use ($date, $students): void {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['Attendance absences', $date]);
+            fputcsv($handle, []);
+            fputcsv($handle, ['Student ID', 'Last Name', 'First Name', 'Program', 'Year Level', 'Mobile Number']);
+
+            foreach ($students as $student) {
+                fputcsv($handle, [
+                    $student->student_id,
+                    $student->lastname,
+                    $student->firstname,
+                    $student->course,
+                    $student->year,
+                    $student->mobile_number,
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
     public function reportsHub()
     {
         return view('attendance_logs.reports_hub');
@@ -157,5 +218,37 @@ class AttendanceLogController extends Controller
             $request->query('from'),
             $request->query('to')
         );
+    }
+
+    private function absenceDate(Request $request): string
+    {
+        $validated = $request->validate([
+            'date' => ['nullable', 'date'],
+            'course_code' => ['nullable', 'string'],
+            'year_level' => ['nullable', 'string'],
+            'search' => ['nullable', 'string'],
+        ]);
+
+        return $validated['date'] ?? now('Asia/Manila')->toDateString();
+    }
+
+    private function absenceQuery(Request $request, string $date): Builder
+    {
+        return AttendanceStudent::query()
+            ->when($request->query('course_code'), fn (Builder $query, string $course) => $query->where('course', $course))
+            ->when($request->query('year_level'), fn (Builder $query, string $year) => $query->where('year', $year))
+            ->when($request->query('search'), function (Builder $query, string $search): void {
+                $query->where(function (Builder $inner) use ($search): void {
+                    $inner->where('student_id', 'like', "%{$search}%")
+                        ->orWhere('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%")
+                        ->orWhere('course', 'like', "%{$search}%")
+                        ->orWhere('year', 'like', "%{$search}%");
+                });
+            })
+            ->whereDoesntHave('logs', function (Builder $query) use ($date): void {
+                $query->whereDate('scanned_at', $date)
+                    ->whereRaw('LOWER(status) = ?', ['in']);
+            });
     }
 }

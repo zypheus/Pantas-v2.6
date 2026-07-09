@@ -34,6 +34,8 @@ Route::middleware(['auth', 'attendance.access'])->group(function (): void {
 
 Route::middleware(['auth', 'attendance.admin'])->group(function (): void {
     Route::get('/attendance-logs', [AttendanceLogController::class, 'index'])->name('attendance_logs.index');
+    Route::get('/attendance-logs/absences', [AttendanceLogController::class, 'absences'])->name('attendance_logs.absences');
+    Route::get('/attendance-logs/absences/export', [AttendanceLogController::class, 'exportAbsencesCsv'])->name('attendance_logs.absences.export');
     Route::get('/attendance-logs/reports', [AttendanceLogController::class, 'reportsHub'])->name('attendance_logs.reports.hub');
     Route::get('/attendance-logs/reports/dashboard', [AttendanceLogController::class, 'reportsDashboard'])->name('attendance_logs.reports.dashboard');
     Route::get('/attendance-logs/reports/export', [AttendanceLogController::class, 'reportsExportCsv'])->name('attendance_logs.reports.export');
