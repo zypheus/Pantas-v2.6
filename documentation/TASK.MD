@@ -38,6 +38,8 @@ Reference plan:
 - [x] Complete Milestone 10: focused verification and hardening pass.
 - [x] Review Pantas-UI services against `/api/mobile` response contracts.
 - [x] Add operational documentation for staff roles, seed accounts, and patron domain separation.
+- [x] Align Super Admin navigation with active module switching.
+- [x] Implement workflow-grouped sidebar navigation and role-specific dashboard pages.
 
 ## Confirmed Decisions
 
@@ -132,6 +134,7 @@ Reference plan:
 - [x] Verify `super_admin` can access all modules.
 - [x] Verify single-module users land on the correct dashboard.
 - [x] Add dashboard/module-switch tests.
+- [x] Add role-specific dashboard metrics, quick actions, recent activity, and charts.
 
 ### Milestone 7: Library Attendance System
 
@@ -185,6 +188,7 @@ Reference plan:
 - [ ] Decide whether to keep a compatibility layer for old route names.
 - [ ] Decide whether old Blade views should be renamed by domain or reused with new data contracts.
 - [ ] Decide whether legacy root static files should be removed later.
+- [ ] Decide whether Attendance patron management should expand beyond the new pending-registration index into full student/employee index pages.
 - [x] Review Pantas-UI services before mobile API migration.
 - [x] Add documentation for staff role setup.
 - [x] Add documentation for fresh local seed accounts.
@@ -225,6 +229,11 @@ Reference plan:
 - Mobile registration currently appears UI-local in Pantas-UI; there is no mobile registration API submission yet.
 - Pantas-UI profile can parse QR fields, but `/api/mobile/profile` does not currently return a QR code field; the current profile screen only displays a placeholder QR icon plus student number.
 - Pantas-UI `ApiConfig.androidEmulator` uses `127.0.0.1`; normal Android emulator testing may need `10.0.2.2` or an active tunnel/reverse proxy.
+- Super Admin access remains cross-module, but sidebar navigation now shows only the active module menu: System, Library, or Attendance.
+- Sidebar navigation is now grouped by workflow per active module. Staff sidebars intentionally show operational routes only, while admin/report/settings links remain admin-only.
+- Role dashboards now render summary cards, quick actions, recent activity, and Chart.js-powered charts using existing Blade and Bootstrap styling.
+- A read-only Super Admin activity index was added so the System Activity sidebar has a concrete audit-trail destination.
+- Attendance Admin now has a read-only pending-registration page with existing approval actions; full Attendance student/employee management remains a future product decision.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

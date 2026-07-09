@@ -40,6 +40,7 @@ Route::middleware(['auth', 'attendance.admin'])->group(function (): void {
     Route::get('/attendance-logs/export/excel', [AttendanceLogController::class, 'exportExcel'])->name('attendance_logs.export.excel');
     Route::get('/attendance-logs/export/pdf', [AttendanceLogController::class, 'exportPdf'])->name('attendance_logs.export.pdf');
     Route::get('/admin/attendance-feedbacks', [FeedController::class, 'index'])->name('admin.attendance.feedbacks');
+    Route::get('/attendance/pending', [AttendancePatronAdminController::class, 'index'])->name('attendance.pending.index');
     Route::post('/attendance/pending/students/{id}/approve', [AttendancePatronAdminController::class, 'approveStudent'])->name('attendance.students.approve');
     Route::post('/attendance/pending/employees/{id}/approve', [AttendancePatronAdminController::class, 'approveEmployee'])->name('attendance.employees.approve');
 });

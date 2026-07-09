@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminActivityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,4 +18,5 @@ Route::middleware(['auth', 'super-admin'])->group(function (): void {
     Route::get('/edit-user/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/update-user/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/delete-user/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('/admin-activities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
 });

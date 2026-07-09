@@ -9,9 +9,20 @@ use App\Models\AttendanceStudent;
 use App\Services\AdminActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class AttendancePatronAdminController extends Controller
 {
+    public function index(): View
+    {
+        return view('attendance_patrons.index', [
+            'pendingStudents' => AttendancePendingStudent::query()->latest()->paginate(10, ['*'], 'students_page'),
+            'pendingEmployees' => AttendancePendingEmployee::query()->latest()->paginate(10, ['*'], 'employees_page'),
+            'studentCount' => AttendanceStudent::count(),
+            'employeeCount' => AttendanceEmployee::count(),
+        ]);
+    }
+
     public function approveStudent(int $id, AdminActivityLogger $activities): RedirectResponse
     {
         DB::transaction(function () use ($activities, $id): void {

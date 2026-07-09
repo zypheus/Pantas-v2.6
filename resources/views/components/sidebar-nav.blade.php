@@ -8,6 +8,20 @@
     $canAttendance = $user && $moduleAccess->hasAttendanceAccess($user);
     $canAttendanceAdmin = $user && $moduleAccess->hasAttendanceAdminAccess($user);
     $canSuperAdmin = $user && $moduleAccess->isSuperAdmin($user);
+
+    if ($user && (! is_string($activeModule) || ! $moduleAccess->canAccessModule($user, $activeModule))) {
+        try {
+            $activeModule = $moduleAccess->defaultModule($user);
+        } catch (\InvalidArgumentException) {
+            $activeModule = null;
+        }
+    }
+
+    $showSystemNav = $canSuperAdmin && $activeModule === \App\Services\Auth\ModuleAccessService::SUPER_ADMIN;
+    $showLibraryNav = $canLibrary && $activeModule === \App\Services\Auth\ModuleAccessService::LIBRARY;
+    $showAttendanceNav = $canAttendance && $activeModule === \App\Services\Auth\ModuleAccessService::ATTENDANCE;
+
+    $activeModuleLabel = $activeModule ? str_replace('-', ' ', ucfirst($activeModule)) : 'No module';
 @endphp
 
 <div class="sidebar-header">
@@ -18,6 +32,7 @@
     <div class="sidebar-user-info">
         <span class="sidebar-user-name">{{ $user->name ?? 'User' }}</span>
         <span class="sidebar-role-badge">{{ str_replace('_', ' ', ucfirst($user->role ?? 'staff')) }}</span>
+        <span class="sidebar-role-badge mt-1">Active: {{ $activeModuleLabel }}</span>
     </div>
 
     @if (count($availableModules) > 1)
@@ -37,37 +52,68 @@
 </div>
 
 <nav class="sidebar-nav" aria-label="Sidebar navigation">
-    @if ($canSuperAdmin)
-        <button class="sidebar-group-label" data-group="system" aria-expanded="false" aria-controls="sidebar-group-system">
+    @if ($showSystemNav)
+        <button class="sidebar-group-label" data-group="system-overview" aria-expanded="false" aria-controls="sidebar-group-system-overview">
             <span><i class="bi bi-shield-lock sidebar-group-icon"></i>System</span>
             <i class="bi bi-chevron-down sidebar-chevron"></i>
         </button>
-        <ul class="sidebar-group-items" id="sidebar-group-system" role="list">
+        <ul class="sidebar-group-items" id="sidebar-group-system-overview" role="list">
             <li>
                 <a href="{{ route('dashboard.super-admin') }}" class="sidebar-link {{ request()->routeIs('dashboard.super-admin') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2"></i> Super Admin Dashboard
                 </a>
             </li>
+        </ul>
+
+        <button class="sidebar-group-label" data-group="system-staff" aria-expanded="false" aria-controls="sidebar-group-system-staff">
+            <span><i class="bi bi-person-gear sidebar-group-icon"></i>Staff</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-system-staff" role="list">
             <li>
-                <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                    <i class="bi bi-person-gear"></i> Staff Accounts
+                <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.index', 'users.edit', 'users.update', 'users.destroy') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i> Staff Accounts
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('users.create') }}" class="sidebar-link {{ request()->routeIs('users.create', 'users.store') ? 'active' : '' }}">
+                    <i class="bi bi-person-plus"></i> Create Staff
+                </a>
+            </li>
+        </ul>
+
+        <button class="sidebar-group-label" data-group="system-activity" aria-expanded="false" aria-controls="sidebar-group-system-activity">
+            <span><i class="bi bi-activity sidebar-group-icon"></i>Activity</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-system-activity" role="list">
+            <li>
+                <a href="{{ route('admin.activities.index') }}" class="sidebar-link {{ request()->routeIs('admin.activities.*') ? 'active' : '' }}">
+                    <i class="bi bi-list-check"></i> Admin Activity
                 </a>
             </li>
         </ul>
     @endif
 
-    @if ($canLibrary)
-        <button class="sidebar-group-label" data-group="library" aria-expanded="false" aria-controls="sidebar-group-library">
-            <span><i class="bi bi-book sidebar-group-icon"></i>Library</span>
+    @if ($showLibraryNav)
+        <button class="sidebar-group-label" data-group="library-overview" aria-expanded="false" aria-controls="sidebar-group-library-overview">
+            <span><i class="bi bi-speedometer2 sidebar-group-icon"></i>Overview</span>
             <i class="bi bi-chevron-down sidebar-chevron"></i>
         </button>
-        <ul class="sidebar-group-items" id="sidebar-group-library" role="list">
+        <ul class="sidebar-group-items" id="sidebar-group-library-overview" role="list">
             <li>
                 <a href="{{ route($canLibraryAdmin ? 'dashboard.library-admin' : 'dashboard.library-staff') }}"
                    class="sidebar-link {{ request()->routeIs('dashboard.library-*') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2"></i> Library Dashboard
                 </a>
             </li>
+        </ul>
+
+        <button class="sidebar-group-label" data-group="library-catalog" aria-expanded="false" aria-controls="sidebar-group-library-catalog">
+            <span><i class="bi bi-book sidebar-group-icon"></i>Catalog</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-library-catalog" role="list">
             <li>
                 <a href="{{ route('book.index') }}" class="sidebar-link {{ request()->routeIs('book.*', 'books.*') ? 'active' : '' }}">
                     <i class="bi bi-grid"></i> Books
@@ -78,72 +124,10 @@
                     <i class="bi bi-file-earmark-text"></i> eBooks
                 </a>
             </li>
-            <li>
-                <a href="{{ route('catalog.copy.openlibrary.form') }}" class="sidebar-link {{ request()->routeIs('catalog.copy.*') ? 'active' : '' }}">
-                    <i class="bi bi-copy"></i> Copy Cataloging
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('feedback.index') }}" class="sidebar-link {{ request()->routeIs('feedback.index') ? 'active' : '' }}">
-                    <i class="bi bi-star"></i> Library Feedback
-                </a>
-            </li>
-        </ul>
-
-        @if ($canLibraryAdmin)
-            <button class="sidebar-group-label" data-group="library-admin" aria-expanded="false" aria-controls="sidebar-group-library-admin">
-                <span><i class="bi bi-sliders sidebar-group-icon"></i>Library Admin</span>
-                <i class="bi bi-chevron-down sidebar-chevron"></i>
-            </button>
-            <ul class="sidebar-group-items" id="sidebar-group-library-admin" role="list">
+            @if ($canLibraryAdmin)
                 <li>
-                    <a href="{{ route('logs.index') }}" class="sidebar-link {{ request()->routeIs('logs.*') ? 'active' : '' }}">
-                        <i class="bi bi-journal-text"></i> Circulation Logs
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('students.index') }}" class="sidebar-link {{ request()->routeIs('students.*') ? 'active' : '' }}">
-                        <i class="bi bi-person-badge"></i> Library Students
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('employees.index') }}" class="sidebar-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
-                        <i class="bi bi-person-workspace"></i> Library Employees
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('pending.index', ['tab' => 'students']) }}" class="sidebar-link {{ request()->routeIs('pending.*') ? 'active' : '' }}">
-                        <i class="bi bi-person-plus"></i> Pending Patrons
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('rooms.index') }}" class="sidebar-link {{ request()->routeIs('rooms.index') ? 'active' : '' }}">
-                        <i class="bi bi-building"></i> Rooms
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('rooms.pending') }}" class="sidebar-link {{ request()->routeIs('rooms.pending') ? 'active' : '' }}">
-                        <i class="bi bi-hourglass-split"></i> Pending Room Reservations
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('files.index') }}" class="sidebar-link {{ request()->routeIs('files.*') ? 'active' : '' }}">
-                        <i class="bi bi-folder2-open"></i> Repository
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('prospectus.index') }}" class="sidebar-link {{ request()->routeIs('prospectus.*') ? 'active' : '' }}">
-                        <i class="bi bi-journal-bookmark"></i> Prospectus
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('fines.outstanding') }}" class="sidebar-link {{ request()->routeIs('fines.*') ? 'active' : '' }}">
-                        <i class="bi bi-exclamation-circle"></i> Fines
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('sms.page') }}" class="sidebar-link {{ request()->routeIs('sms.*', 'sms.page') ? 'active' : '' }}">
-                        <i class="bi bi-chat-dots"></i> SMS
+                    <a href="{{ route('catalog.copy.openlibrary.form') }}" class="sidebar-link {{ request()->routeIs('catalog.copy.*') ? 'active' : '' }}">
+                        <i class="bi bi-copy"></i> Copy Cataloging
                     </a>
                 </li>
                 <li>
@@ -156,25 +140,188 @@
                         <i class="bi bi-list-ul"></i> Catalog Options
                     </a>
                 </li>
+            @endif
+        </ul>
+
+        @if ($canLibraryAdmin)
+            <button class="sidebar-group-label" data-group="library-circulation" aria-expanded="false" aria-controls="sidebar-group-library-circulation">
+                <span><i class="bi bi-arrow-left-right sidebar-group-icon"></i>Circulation</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-library-circulation" role="list">
+                <li>
+                    <a href="{{ route('logs.index') }}" class="sidebar-link {{ request()->routeIs('logs.*') ? 'active' : '' }}">
+                        <i class="bi bi-journal-text"></i> Circulation Logs
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('fines.outstanding') }}" class="sidebar-link {{ request()->routeIs('fines.*') ? 'active' : '' }}">
+                        <i class="bi bi-exclamation-circle"></i> Fines
+                    </a>
+                </li>
+            </ul>
+
+            <button class="sidebar-group-label" data-group="library-patrons" aria-expanded="false" aria-controls="sidebar-group-library-patrons">
+                <span><i class="bi bi-people sidebar-group-icon"></i>Patrons</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-library-patrons" role="list">
+                <li>
+                    <a href="{{ route('students.index') }}" class="sidebar-link {{ request()->routeIs('students.*') && ! request()->routeIs('students.pending.requests') ? 'active' : '' }}">
+                        <i class="bi bi-person-badge"></i> Library Students
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('employees.index') }}" class="sidebar-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                        <i class="bi bi-person-workspace"></i> Library Employees
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('pending.index', ['tab' => 'students']) }}" class="sidebar-link {{ request()->routeIs('pending.*', 'students.pending') ? 'active' : '' }}">
+                        <i class="bi bi-person-plus"></i> Pending Patrons
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('students.pending.requests') }}" class="sidebar-link {{ request()->routeIs('students.pending.requests') ? 'active' : '' }}">
+                        <i class="bi bi-pencil-square"></i> Profile Requests
+                    </a>
+                </li>
+            </ul>
+        @else
+            <button class="sidebar-group-label" data-group="library-services" aria-expanded="false" aria-controls="sidebar-group-library-services">
+                <span><i class="bi bi-person-check sidebar-group-icon"></i>Patron Services</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-library-services" role="list">
+                <li>
+                    <a href="{{ route('landing') }}" class="sidebar-link {{ request()->routeIs('landing') ? 'active' : '' }}">
+                        <i class="bi bi-search"></i> OPAC
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kiosk.scan') }}" class="sidebar-link {{ request()->routeIs('kiosk.scan') ? 'active' : '' }}">
+                        <i class="bi bi-qr-code-scan"></i> Kiosk Lookup
+                    </a>
+                </li>
+            </ul>
+        @endif
+
+        <button class="sidebar-group-label" data-group="library-rooms" aria-expanded="false" aria-controls="sidebar-group-library-rooms">
+            <span><i class="bi bi-building sidebar-group-icon"></i>Rooms</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-library-rooms" role="list">
+            @if ($canLibraryAdmin)
+                <li>
+                    <a href="{{ route('rooms.index') }}" class="sidebar-link {{ request()->routeIs('rooms.index', 'rooms.create', 'rooms.edit') ? 'active' : '' }}">
+                        <i class="bi bi-building"></i> Rooms
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('rooms.pending') }}" class="sidebar-link {{ request()->routeIs('rooms.pending') ? 'active' : '' }}">
+                        <i class="bi bi-hourglass-split"></i> Pending Room Reservations
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('rooms.logs') }}" class="sidebar-link {{ request()->routeIs('rooms.logs') ? 'active' : '' }}">
+                        <i class="bi bi-journal-text"></i> Room Logs
+                    </a>
+                </li>
+            @else
+                <li>
+                    <a href="{{ route('rooms.schedule') }}" class="sidebar-link {{ request()->routeIs('rooms.schedule') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-week"></i> Room Schedule
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('rooms.book') }}" class="sidebar-link {{ request()->routeIs('rooms.book') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-plus"></i> Room Booking
+                    </a>
+                </li>
+            @endif
+        </ul>
+
+        <button class="sidebar-group-label" data-group="library-attendance" aria-expanded="false" aria-controls="sidebar-group-library-attendance">
+            <span><i class="bi bi-door-open sidebar-group-icon"></i>Library Attendance</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-library-attendance" role="list">
+            <li>
+                <a href="{{ route('library.attendance.scanner') }}" class="sidebar-link {{ request()->routeIs('library.attendance.scanner') ? 'active' : '' }}">
+                    <i class="bi bi-upc-scan"></i> Library Scanner
+                </a>
+            </li>
+            @if ($canLibraryAdmin)
+                <li>
+                    <a href="{{ route('library.attendance.logs') }}" class="sidebar-link {{ request()->routeIs('library.attendance.logs') ? 'active' : '' }}">
+                        <i class="bi bi-list-check"></i> Visit Logs
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('library.attendance.reports') }}" class="sidebar-link {{ request()->routeIs('library.attendance.reports') ? 'active' : '' }}">
+                        <i class="bi bi-bar-chart"></i> Visit Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('library.attendance.feedback.settings') }}" class="sidebar-link {{ request()->routeIs('library.attendance.feedback.settings') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i> Feedback Settings
+                    </a>
+                </li>
+            @endif
+        </ul>
+
+        @if ($canLibraryAdmin)
+            <button class="sidebar-group-label" data-group="library-utilities" aria-expanded="false" aria-controls="sidebar-group-library-utilities">
+                <span><i class="bi bi-tools sidebar-group-icon"></i>Utilities</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-library-utilities" role="list">
+                <li>
+                    <a href="{{ route('files.index') }}" class="sidebar-link {{ request()->routeIs('files.*') ? 'active' : '' }}">
+                        <i class="bi bi-folder2-open"></i> Repository
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('sms.page') }}" class="sidebar-link {{ request()->routeIs('sms.*', 'sms.page') ? 'active' : '' }}">
+                        <i class="bi bi-chat-dots"></i> SMS
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('feedback.index') }}" class="sidebar-link {{ request()->routeIs('feedback.index') ? 'active' : '' }}">
+                        <i class="bi bi-star"></i> Library Feedback
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('landing') }}" class="sidebar-link {{ request()->routeIs('landing') ? 'active' : '' }}">
+                        <i class="bi bi-search"></i> OPAC
+                    </a>
+                </li>
             </ul>
         @endif
     @endif
 
-    @if ($canAttendance)
-        <button class="sidebar-group-label" data-group="attendance" aria-expanded="false" aria-controls="sidebar-group-attendance">
-            <span><i class="bi bi-clock-history sidebar-group-icon"></i>Attendance</span>
+    @if ($showAttendanceNav)
+        <button class="sidebar-group-label" data-group="attendance-overview" aria-expanded="false" aria-controls="sidebar-group-attendance-overview">
+            <span><i class="bi bi-speedometer2 sidebar-group-icon"></i>Overview</span>
             <i class="bi bi-chevron-down sidebar-chevron"></i>
         </button>
-        <ul class="sidebar-group-items" id="sidebar-group-attendance" role="list">
+        <ul class="sidebar-group-items" id="sidebar-group-attendance-overview" role="list">
             <li>
                 <a href="{{ route($canAttendanceAdmin ? 'dashboard.attendance-admin' : 'dashboard.attendance-staff') }}"
                    class="sidebar-link {{ request()->routeIs('dashboard.attendance-*') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2"></i> Attendance Dashboard
                 </a>
             </li>
+        </ul>
+
+        <button class="sidebar-group-label" data-group="attendance-scanner" aria-expanded="false" aria-controls="sidebar-group-attendance-scanner">
+            <span><i class="bi bi-upc-scan sidebar-group-icon"></i>{{ $canAttendanceAdmin ? 'Scanner' : 'Daily Attendance' }}</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items" id="sidebar-group-attendance-scanner" role="list">
             <li>
                 <a href="{{ route('attendance.scan') }}" class="sidebar-link {{ request()->routeIs('attendance.scan') ? 'active' : '' }}">
-                    <i class="bi bi-upc-scan"></i> Scanner
+                    <i class="bi bi-upc-scan"></i> Attendance Scanner
                 </a>
             </li>
             <li>
@@ -184,35 +331,63 @@
             </li>
             <li>
                 <a href="{{ route('attendance.feedback.settings') }}" class="sidebar-link {{ request()->routeIs('attendance.feedback.settings') ? 'active' : '' }}">
-                    <i class="bi bi-gear"></i> Logout Feedback
+                    <i class="bi bi-gear"></i> Logout Feedback Settings
                 </a>
             </li>
-            @if ($canAttendanceAdmin)
+        </ul>
+
+        @if ($canAttendanceAdmin)
+            <button class="sidebar-group-label" data-group="attendance-patrons" aria-expanded="false" aria-controls="sidebar-group-attendance-patrons">
+                <span><i class="bi bi-people sidebar-group-icon"></i>Patrons</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-attendance-patrons" role="list">
+                <li>
+                    <a href="{{ route('attendance.pending.index') }}" class="sidebar-link {{ request()->routeIs('attendance.pending.index') ? 'active' : '' }}">
+                        <i class="bi bi-person-plus"></i> Pending Attendance Registrations
+                    </a>
+                </li>
+            </ul>
+
+            <button class="sidebar-group-label" data-group="attendance-reports" aria-expanded="false" aria-controls="sidebar-group-attendance-reports">
+                <span><i class="bi bi-bar-chart sidebar-group-icon"></i>Logs & Reports</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-attendance-reports" role="list">
                 <li>
                     <a href="{{ route('attendance_logs.index') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.index') ? 'active' : '' }}">
-                        <i class="bi bi-list-check"></i> Logs
+                        <i class="bi bi-list-check"></i> Attendance Logs
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('attendance_logs.reports.hub') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.reports.*') ? 'active' : '' }}">
-                        <i class="bi bi-bar-chart"></i> Reports
+                    <a href="{{ route('attendance_logs.reports.hub') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.reports.hub') ? 'active' : '' }}">
+                        <i class="bi bi-bar-chart"></i> Reports Hub
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('attendance_logs.reports.dashboard') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.reports.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-graph-up"></i> Report Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('attendance_logs.reports.export') }}" class="sidebar-link {{ request()->routeIs('attendance_logs.reports.export') ? 'active' : '' }}">
+                        <i class="bi bi-download"></i> Export Report
+                    </a>
+                </li>
+            </ul>
+
+            <button class="sidebar-group-label" data-group="attendance-feedback" aria-expanded="false" aria-controls="sidebar-group-attendance-feedback">
+                <span><i class="bi bi-chat-square-text sidebar-group-icon"></i>Feedback</span>
+                <i class="bi bi-chevron-down sidebar-chevron"></i>
+            </button>
+            <ul class="sidebar-group-items" id="sidebar-group-attendance-feedback" role="list">
                 <li>
                     <a href="{{ route('admin.attendance.feedbacks') }}" class="sidebar-link {{ request()->routeIs('admin.attendance.feedbacks') ? 'active' : '' }}">
                         <i class="bi bi-chat-square-text"></i> Feedback Responses
                     </a>
                 </li>
-            @endif
-        </ul>
-    @endif
-
-    <hr class="sidebar-divider">
-
-    @if ($canLibrary)
-        <a href="{{ route('landing') }}" class="sidebar-direct-link {{ request()->routeIs('landing') ? 'active' : '' }}">
-            <i class="bi bi-search"></i> OPAC
-        </a>
+            </ul>
+        @endif
     @endif
 </nav>
 

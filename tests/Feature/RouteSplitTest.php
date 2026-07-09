@@ -65,6 +65,38 @@ class RouteSplitTest extends TestCase
         $this->actingAs($libraryAdmin)->get('/view-users')->assertForbidden();
     }
 
+    public function test_super_admin_sidebar_shows_only_active_module_navigation(): void
+    {
+        $superAdmin = $this->staffUser('super_admin');
+
+        $this->actingAs($superAdmin)
+            ->withSession(['active_module' => 'super-admin'])
+            ->get('/dashboard/super-admin')
+            ->assertOk()
+            ->assertSee('Staff Accounts')
+            ->assertDontSee('Books')
+            ->assertDontSee('Scanner')
+            ->assertDontSee('OPAC');
+
+        $this->actingAs($superAdmin)
+            ->withSession(['active_module' => 'library'])
+            ->get('/dashboard/library-admin')
+            ->assertOk()
+            ->assertSee('Books')
+            ->assertSee('OPAC')
+            ->assertDontSee('Staff Accounts')
+            ->assertDontSee('Attendance Scanner');
+
+        $this->actingAs($superAdmin)
+            ->withSession(['active_module' => 'attendance'])
+            ->get('/dashboard/attendance-admin')
+            ->assertOk()
+            ->assertSee('Scanner')
+            ->assertDontSee('Staff Accounts')
+            ->assertDontSee('Books')
+            ->assertDontSee('OPAC');
+    }
+
     public function test_attendance_dashboard_navigation_is_attendance_only_for_attendance_staff(): void
     {
         $user = $this->staffUser('attendance_staff');
@@ -86,7 +118,7 @@ class RouteSplitTest extends TestCase
             ->assertOk()
             ->assertSee('Books')
             ->assertSee('OPAC')
-            ->assertDontSee('Scanner')
+            ->assertDontSee('Attendance Scanner')
             ->assertDontSee('Attendance Dashboard');
     }
 
