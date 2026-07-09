@@ -328,6 +328,17 @@
     background: #ffffff;
 }
 
+[data-lm-view-panel="login"] form,
+[data-lm-view-panel="login"] .lm-swap {
+    width: min(100%, 360px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+[data-lm-view-panel="login"] .lm-swap {
+    display: block;
+}
+
 .lm-service {
     position: relative;
     display: grid;
