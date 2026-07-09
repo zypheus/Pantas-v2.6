@@ -38,6 +38,8 @@ Reference plan:
 - [x] Complete Milestone 10: focused verification and hardening pass.
 - [x] Review Pantas-UI services against `/api/mobile` response contracts.
 - [x] Add operational documentation for staff roles, seed accounts, and patron domain separation.
+- [x] Add landing-page login/register modal backed by separated Library and Attendance pending registration routes.
+- [x] Harden login rejection for inactive and module-less users.
 
 ## Confirmed Decisions
 
@@ -225,6 +227,8 @@ Reference plan:
 - Mobile registration currently appears UI-local in Pantas-UI; there is no mobile registration API submission yet.
 - Pantas-UI profile can parse QR fields, but `/api/mobile/profile` does not currently return a QR code field; the current profile screen only displays a placeholder QR icon plus student number.
 - Pantas-UI `ApiConfig.androidEmulator` uses `127.0.0.1`; normal Android emulator testing may need `10.0.2.2` or an active tunnel/reverse proxy.
+- The landing page now includes a modal login/register surface. Registration still writes to the existing separated pending tables: `attendance_pending_*` and `library_pending_*`.
+- Attendance employee public registration now generates `AE-...` pending QR-style codes and stores uploaded photos/signatures like the Library registration flow.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

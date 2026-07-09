@@ -6,6 +6,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('img/pantas-10.png') }}">
     <title>PANTAS | Platform</title>
     <link rel="stylesheet" href="{{ asset('style.css') }}?v=responsive-nav-7">
+    <link rel="stylesheet" href="{{ asset('css/auth-modal.css') }}?v=2">
 </head>
 <body>
 
@@ -26,7 +27,7 @@
                 <li><a href="#contact">CONTACT US</a></li>
                 <li><a href="{{ url('/rooms/book') }}">ROOM RESERVATIONS</a></li>
                 <li><a href="{{ route('feedback.create') }}" class="feedback-link" >FEEDBACK</a></li>
-                <li><a href="{{ route('login') }}" class="login-button">LOGIN</a></li>
+                <li><a href="{{ route('login') }}" class="login-button" data-auth-open="login">LOGIN</a></li>
             </ul>
         </nav>
     </header>
@@ -79,10 +80,12 @@
         </div>
     </footer>
 
+
     
 
-
+    @include('partials.auth-modal')
 
     <script src="{{ asset('script.js') }}?v=responsive-nav-5"></script>
+    <script src="{{ asset('js/auth-modal.js') }}?v=2"></script>
 </body>
 </html>

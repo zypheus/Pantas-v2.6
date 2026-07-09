@@ -58,6 +58,7 @@ class AttendancePatronAdminController extends Controller
                 'department',
                 'position',
                 'birth_date',
+                'mobile_number',
                 'sex',
                 'civil_status',
                 'blood_type',
@@ -71,6 +72,7 @@ class AttendancePatronAdminController extends Controller
                 'emergency_contact_relationship',
                 'emergency_contact_number',
                 'address',
+                'emergency_address',
                 'employee_signature',
             ]), [
                 'qrcode' => $pending->qrcode ?: $pending->employee_id,

@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModuleSelectionController;
+use App\Models\AttendanceProgram;
+use App\Models\Program;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,7 +12,11 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    return view('index');
+    return view('index', [
+        'attendancePrograms' => AttendanceProgram::query()->orderBy('program_name')->get(),
+        'libraryPrograms' => Program::query()->orderBy('program_name')->get(),
+        'workStartYears' => range((int) date('Y'), 1980),
+    ]);
 })->name('home');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
