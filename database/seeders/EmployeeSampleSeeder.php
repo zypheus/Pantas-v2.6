@@ -3,12 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\Employee;
+use App\Models\LibraryRole;
 use Illuminate\Database\Seeder;
 
 class EmployeeSampleSeeder extends Seeder
 {
     public function run(): void
     {
+        $employeeRole = LibraryRole::query()->firstOrCreate([
+            'description' => 'Faculty/Staff',
+        ]);
+
         $samples = [
             [
                 'employee_id' => 'FAC-2024-001',
@@ -61,7 +66,7 @@ class EmployeeSampleSeeder extends Seeder
 
         foreach ($samples as $row) {
             $programCode = $row['program'];
-            $row['role_id'] = 2;
+            $row['role_id'] = $employeeRole->id;
             $row['department'] = $programCode;
             $row['position'] = $row['designation'];
 

@@ -67,7 +67,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['catalog_framework_id', 'marc_field_id']);
+            $table->unique(['catalog_framework_id', 'marc_field_id'], 'lib_cat_fw_field_unique');
         });
 
         Schema::create('library_pending_students', function (Blueprint $table) {

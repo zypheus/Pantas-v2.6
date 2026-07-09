@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
                         'rounds' => 12,
                     ]),
                     'role' => 'student',
-                    'student_id' => $mobileStudent->id,
+                    'student_id' => null,
                     'is_active' => true,
                 ]
             );
