@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AdminActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,7 +15,7 @@ class UserController extends Controller
         return view('accounts.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, AdminActivityLogger $activities)
     {
         // Validate input
         $validated = $request->validate([
@@ -35,6 +36,7 @@ class UserController extends Controller
             'is_active' => true,
         ]);
         $user->syncRoles([$validated['role']]);
+        $activities->log('super-admin', 'staff.created', 'Staff account created', $user->email, $user);
 
         return redirect()->route('users.create')->with('success', 'User account created successfully!');
     }
@@ -54,7 +56,7 @@ class UserController extends Controller
         return view('accounts.edit', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, AdminActivityLogger $activities)
     {
         $request->validate([
             'fname' => 'required|string',
@@ -66,14 +68,17 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->update($request->only(['fname', 'lname', 'email', 'role']));
         $user->syncRoles([$request->string('role')->toString()]);
+        $activities->log('super-admin', 'staff.updated', 'Staff account updated', $user->email, $user);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
 
-    public function destroy($id)
+    public function destroy($id, AdminActivityLogger $activities)
     {
         $user = User::findOrFail($id);
+        $email = $user->email;
         $user->delete();
+        $activities->log('super-admin', 'staff.deleted', 'Staff account deleted', $email);
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully!');
     }

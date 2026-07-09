@@ -6,6 +6,7 @@ use App\Mail\ReservationApprovedMail;
 use App\Models\ReservationLog;
 use App\Models\Room;
 use App\Models\RoomReservation;
+use App\Services\AdminActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -119,7 +120,7 @@ class RoomReservationController extends Controller
     /**
      * Approve a reservation
      */
-    public function approve($id)
+    public function approve($id, AdminActivityLogger $activities)
     {
         $reservation = RoomReservation::findOrFail($id);
 
@@ -134,6 +135,7 @@ class RoomReservationController extends Controller
             'user_id' => Auth::id(),
             'action' => 'approved',
         ]);
+        $activities->log('library', 'room.approved', 'Room reservation approved', $reservation->patron_email, $reservation);
 
         $flash = ['success' => 'Reservation approved successfully.'];
 
@@ -194,7 +196,7 @@ class RoomReservationController extends Controller
         return view('rooms.logs', compact('logs'));
     }
 
-    public function reject($id)
+    public function reject($id, AdminActivityLogger $activities)
     {
         $reservation = RoomReservation::findOrFail($id);
         $reservation->status = 'rejected';
@@ -206,6 +208,7 @@ class RoomReservationController extends Controller
             'user_id' => auth()->id(),
             'action' => 'rejected',
         ]);
+        $activities->log('library', 'room.rejected', 'Room reservation rejected', $reservation->patron_email, $reservation);
 
         return redirect()->back()->with('success', 'Reservation rejected successfully.');
     }

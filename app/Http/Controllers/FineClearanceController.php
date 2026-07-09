@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookLog;
+use App\Services\AdminActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +24,7 @@ class FineClearanceController extends Controller
         return view('admin.fines_outstanding', compact('logs', 'totalOutstanding'));
     }
 
-    public function clear(Request $request, BookLog $bookLog)
+    public function clear(Request $request, BookLog $bookLog, AdminActivityLogger $activities)
     {
         $request->validate([
             'fine_clearance_type' => 'required|string|in:paid,waived',
@@ -79,6 +80,7 @@ class FineClearanceController extends Controller
         }
 
         $bookLog->save();
+        $activities->log('library', 'fine.cleared', 'Fine clearance recorded', (string) $amount, $bookLog);
 
         if ($newBalance <= 0) {
             return back()->with('success', 'Fine fully cleared as '.($request->fine_clearance_type === 'paid' ? 'paid' : 'waived').'.');

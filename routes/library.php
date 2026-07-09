@@ -17,10 +17,12 @@ use App\Http\Controllers\FineClearanceController;
 use App\Http\Controllers\FineSettingController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\IdCardController;
+use App\Http\Controllers\LibraryAttendanceController;
 use App\Http\Controllers\OpenLibraryCopyCatalogController;
 use App\Http\Controllers\PendingEmployeeController;
 use App\Http\Controllers\PendingStudentController;
 use App\Http\Controllers\ProspectusController;
+use App\Http\Controllers\PublicRegistrationController;
 use App\Http\Controllers\RFIDScanController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomReservationController;
@@ -32,7 +34,7 @@ Route::get('/index', fn () => redirect()->route('book.index'));
 Route::get('/filter/years', [BookController::class, 'getYears']);
 Route::get('/filter/courses', [BookController::class, 'getCourses']);
 
-Route::get('/register', [PendingStudentController::class, 'create'])->name('patron.register');
+Route::get('/register', [PublicRegistrationController::class, 'choose'])->name('patron.register');
 Route::post('/register', [PendingStudentController::class, 'store'])->name('pending.store');
 Route::post('/register-employee', [PendingEmployeeController::class, 'store'])->name('pendingEmployee.store');
 Route::redirect('/patrons/register', '/register');
@@ -46,6 +48,9 @@ Route::get('/books/copies', [BookController::class, 'viewCopies'])->name('books.
 Route::get('/opac', [BookController::class, 'landingPage'])->name('landing');
 Route::get('/opac/api/book/{book}', [BookController::class, 'opacBookDetails'])->name('opac.book.details');
 Route::get('/kiosk/scan', fn () => view('kiosk.scan'))->name('kiosk.scan');
+Route::get('/library/attendance/scanner', [LibraryAttendanceController::class, 'scanner'])->name('library.attendance.scanner');
+Route::post('/library/attendance/scanner', [LibraryAttendanceController::class, 'scan'])->name('library.attendance.scan');
+Route::post('/library/attendance/feedback', [LibraryAttendanceController::class, 'feedback'])->name('library.attendance.feedback.store');
 Route::get('/student/qr/{qrcode}', [StudentController::class, 'profile'])->name('student.qr.profile');
 Route::post('/students/profile/request', [StudentController::class, 'submitEditRequest'])->name('students.profile.request');
 
@@ -83,6 +88,8 @@ Route::middleware(['auth', 'library.access'])->group(function (): void {
 
     Route::get('/rfid-scanner', [RFIDScanController::class, 'index'])->name('rfid.scanner');
     Route::post('/rfid-scan', [RFIDScanController::class, 'scan'])->name('rfid.scan');
+    Route::get('/library/attendance/logout-feedback', [LibraryAttendanceController::class, 'feedbackSettings'])->name('library.attendance.feedback.settings');
+    Route::post('/library/attendance/logout-feedback', [LibraryAttendanceController::class, 'updateFeedbackSettings'])->name('library.attendance.feedback.settings.update');
 
     Route::resource('ebooks', EbookController::class);
     Route::get('/program/{program?}/courses', [EbookController::class, 'getCourses'])->name('program.courses');
@@ -111,6 +118,8 @@ Route::middleware(['auth', 'library.admin'])->group(function (): void {
     Route::get('/logs', [BookLogController::class, 'index'])->name('logs.index');
     Route::post('/logs', [BookLogController::class, 'store'])->name('logs.store');
     Route::post('/logs/{book}/renew', [BookLogController::class, 'renew'])->name('logs.renew');
+    Route::get('/library/attendance/logs', [LibraryAttendanceController::class, 'logs'])->name('library.attendance.logs');
+    Route::get('/library/attendance/logs/reports', [LibraryAttendanceController::class, 'reports'])->name('library.attendance.reports');
 
     Route::prefix('prospectus')->name('prospectus.')->group(function (): void {
         Route::get('/', [ProspectusController::class, 'index'])->name('index');

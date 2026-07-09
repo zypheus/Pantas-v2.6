@@ -1,0 +1,108 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature;
+
+use App\Models\AttendancePendingStudent;
+use App\Models\User;
+use Database\Seeders\RoleSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class PublicRegistrationSplitTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(RoleSeeder::class);
+    }
+
+    public function test_public_registration_page_offers_library_and_attendance_paths(): void
+    {
+        $response = $this->get('/register');
+
+        $response->assertOk()
+            ->assertSee('Library Registration')
+            ->assertSee('Attendance Registration')
+            ->assertSee(route('library.register', absolute: false))
+            ->assertSee(route('attendance.register', absolute: false));
+    }
+
+    public function test_attendance_registration_creates_attendance_pending_student_only(): void
+    {
+        $response = $this->post('/register/attendance', [
+            'student_id' => 'ATT-PENDING-001',
+            'firstname' => 'Alan',
+            'lastname' => 'Turing',
+            'course' => 'BSCS',
+            'year' => '1',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('attendance_pending_students', [
+            'student_id' => 'ATT-PENDING-001',
+            'firstname' => 'Alan',
+        ]);
+        $this->assertDatabaseMissing('library_pending_students', [
+            'student_id' => 'ATT-PENDING-001',
+        ]);
+    }
+
+    public function test_library_registration_creates_library_pending_student_only(): void
+    {
+        $response = $this->post('/register/library', [
+            'id_number' => 'LIB-PENDING-001',
+            'firstname' => 'Mary',
+            'lastname' => 'Jackson',
+            'course' => 'BSIT',
+            'year' => '2',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('library_pending_students', [
+            'id_number' => 'LIB-PENDING-001',
+            'firstname' => 'Mary',
+        ]);
+        $this->assertDatabaseMissing('attendance_pending_students', [
+            'student_id' => 'LIB-PENDING-001',
+        ]);
+    }
+
+    public function test_attendance_admin_approval_moves_pending_student_and_logs_activity(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'attendance_admin',
+            'is_active' => true,
+        ]);
+        $admin->assignRole('attendance_admin');
+
+        $pending = AttendancePendingStudent::query()->create([
+            'student_id' => 'ATT-APPROVE-001',
+            'firstname' => 'Dorothy',
+            'lastname' => 'Vaughan',
+            'course' => 'BSCS',
+        ]);
+
+        $response = $this->actingAs($admin)->post("/attendance/pending/students/{$pending->id}/approve");
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('attendance_students', [
+            'student_id' => 'ATT-APPROVE-001',
+            'qrcode' => 'ATT-APPROVE-001',
+        ]);
+        $this->assertDatabaseMissing('attendance_pending_students', [
+            'id' => $pending->id,
+        ]);
+        $this->assertDatabaseHas('admin_activities', [
+            'user_id' => $admin->id,
+            'module' => 'attendance',
+            'type' => 'patron.approved',
+            'title' => 'Attendance student approved',
+            'body' => 'ATT-APPROVE-001',
+        ]);
+    }
+}

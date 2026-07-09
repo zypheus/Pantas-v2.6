@@ -8,6 +8,7 @@ use App\Models\PendingStudent;
 use App\Models\Program;
 use App\Models\Student;
 use App\Models\StudentEditRequest;
+use App\Services\AdminActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -267,7 +268,7 @@ class StudentController extends Controller
     }
 
     // Approve pending student → move to students table
-    public function approve($id)
+    public function approve($id, AdminActivityLogger $activities)
     {
         DB::beginTransaction();
 
@@ -278,7 +279,7 @@ class StudentController extends Controller
                 throw new \Exception('ID Number already exists in students table.');
             }
 
-            Student::create([
+            $student = Student::create([
                 'id_number' => strtoupper($pending->id_number),
                 'lastname' => strtoupper($pending->lastname),
                 'firstname' => strtoupper($pending->firstname),
@@ -292,6 +293,7 @@ class StudentController extends Controller
             ]);
 
             $pending->delete();
+            $activities->log('library', 'patron.approved', 'Library student approved', $student->id_number, $student);
 
             DB::commit();
 
@@ -305,10 +307,12 @@ class StudentController extends Controller
     }
 
     // Reject pending student
-    public function reject($id)
+    public function reject($id, AdminActivityLogger $activities)
     {
         $pending = PendingStudent::findOrFail($id);
+        $idNumber = $pending->id_number;
         $pending->delete();
+        $activities->log('library', 'patron.rejected', 'Library student rejected', $idNumber);
 
         return back()->with('success', 'Registration rejected.');
     }

@@ -16,7 +16,25 @@ class AttendancePatronAdminController extends Controller
     {
         DB::transaction(function () use ($activities, $id): void {
             $pending = AttendancePendingStudent::query()->findOrFail($id);
-            $student = AttendanceStudent::query()->create(array_merge($pending->toArray(), [
+            $student = AttendanceStudent::query()->create(array_merge($pending->only([
+                'student_id',
+                'lastname',
+                'firstname',
+                'middle_initial',
+                'birth_date',
+                'blood_type',
+                'qrcode',
+                'course',
+                'year',
+                'mobile_number',
+                'address',
+                'emergency_person',
+                'emergency_relationship',
+                'emergency_number',
+                'emergency_address',
+                'profile_picture',
+                'student_signature',
+            ]), [
                 'qrcode' => $pending->qrcode ?: $pending->student_id,
             ]));
             $pending->delete();
@@ -31,7 +49,30 @@ class AttendancePatronAdminController extends Controller
     {
         DB::transaction(function () use ($activities, $id): void {
             $pending = AttendancePendingEmployee::query()->findOrFail($id);
-            $employee = AttendanceEmployee::query()->create(array_merge($pending->toArray(), [
+            $employee = AttendanceEmployee::query()->create(array_merge($pending->only([
+                'employee_id',
+                'employee_number',
+                'firstname',
+                'lastname',
+                'middle_initial',
+                'department',
+                'position',
+                'birth_date',
+                'sex',
+                'civil_status',
+                'blood_type',
+                'tin_id_number',
+                'philhealth_number',
+                'sss_number',
+                'hdmf_number',
+                'qrcode',
+                'formal_picture',
+                'emergency_contact_name',
+                'emergency_contact_relationship',
+                'emergency_contact_number',
+                'address',
+                'employee_signature',
+            ]), [
                 'qrcode' => $pending->qrcode ?: $pending->employee_id,
             ]));
             $pending->delete();

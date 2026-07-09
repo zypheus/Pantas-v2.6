@@ -2,18 +2,18 @@
 
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceLogController;
+use App\Http\Controllers\AttendancePatronAdminController;
+use App\Http\Controllers\AttendanceRegistrationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedController;
-use App\Http\Controllers\PendingEmployeeController;
-use App\Http\Controllers\PendingStudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/attendance', [AttendanceController::class, 'showScanner'])->name('attendance.scan');
 Route::post('/attendance', [AttendanceController::class, 'scan'])->name('attendance.process');
 Route::post('/attendance-feedback', [FeedController::class, 'store'])->name('attendance.feedback.store');
-Route::get('/register/attendance', [PendingStudentController::class, 'create'])->name('attendance.register');
-Route::post('/register/attendance', [PendingStudentController::class, 'store'])->name('attendance.pending.store');
-Route::post('/register/attendance/employee', [PendingEmployeeController::class, 'store'])->name('attendance.pendingEmployee.store');
+Route::get('/register/attendance', [AttendanceRegistrationController::class, 'create'])->name('attendance.register');
+Route::post('/register/attendance', [AttendanceRegistrationController::class, 'storeStudent'])->name('attendance.pending.store');
+Route::post('/register/attendance/employee', [AttendanceRegistrationController::class, 'storeEmployee'])->name('attendance.pendingEmployee.store');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard/attendance-admin', [DashboardController::class, 'attendanceAdmin'])
@@ -40,4 +40,6 @@ Route::middleware(['auth', 'attendance.admin'])->group(function (): void {
     Route::get('/attendance-logs/export/excel', [AttendanceLogController::class, 'exportExcel'])->name('attendance_logs.export.excel');
     Route::get('/attendance-logs/export/pdf', [AttendanceLogController::class, 'exportPdf'])->name('attendance_logs.export.pdf');
     Route::get('/admin/attendance-feedbacks', [FeedController::class, 'index'])->name('admin.attendance.feedbacks');
+    Route::post('/attendance/pending/students/{id}/approve', [AttendancePatronAdminController::class, 'approveStudent'])->name('attendance.students.approve');
+    Route::post('/attendance/pending/employees/{id}/approve', [AttendancePatronAdminController::class, 'approveEmployee'])->name('attendance.employees.approve');
 });

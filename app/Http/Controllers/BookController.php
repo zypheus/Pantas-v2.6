@@ -7,6 +7,7 @@ use App\Models\BookMarcField;
 use App\Models\Ebook;
 use App\Models\Program;
 use App\Models\ProgramCourse;
+use App\Services\AdminActivityLogger;
 use App\Services\BookMarcDisplay;
 use App\Support\PublicStoragePublisher;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -931,7 +932,7 @@ class BookController extends Controller
         return response()->json($names);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, AdminActivityLogger $activities)
     {
         $this->normalizeProgramIdsOnRequest($request);
 
@@ -1030,6 +1031,8 @@ class BookController extends Controller
                 ->with('error', 'Could not save the book: '.$e->getMessage());
         }
 
+        $activities->log('library', 'catalog.created', 'Catalog record created', $book->title_statement ?: $book->accession_no, $book);
+
         if (in_array($request->input('catalog_source'), ['openlibrary', 'googlebooks'], true)) {
             $returnIsbn = $book->isbn ?: $request->input('openlibrary_return_isbn');
             if ($returnIsbn) {
@@ -1104,7 +1107,7 @@ class BookController extends Controller
         return view('books.edit', compact('book', 'programs', 'frameworkFields', 'marcValues'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, AdminActivityLogger $activities)
     {
         $book = Book::findOrFail($id);
 
@@ -1150,6 +1153,8 @@ class BookController extends Controller
             // No program selected → detach all
             $book->programs()->detach();
         }
+
+        $activities->log('library', 'catalog.updated', 'Catalog record updated', $book->title_statement ?: $book->accession_no, $book);
 
         return redirect()->route('book.index')->with('success', 'Book updated successfully!');
     }

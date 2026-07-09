@@ -7,6 +7,7 @@ use App\Models\PendingEmployee;
 use App\Models\PendingStudent;
 use App\Models\Program;
 use App\Models\Role;
+use App\Services\AdminActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -95,7 +96,7 @@ class PendingEmployeeController extends Controller
             ->with('success', 'Faculty & staff registration submitted. Please wait for library approval.');
     }
 
-    public function approve($id)
+    public function approve($id, AdminActivityLogger $activities)
     {
         DB::beginTransaction();
 
@@ -112,7 +113,7 @@ class PendingEmployeeController extends Controller
 
             $newQr = 'E-'.str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT);
 
-            Employee::create([
+            $employee = Employee::create([
                 'employee_id' => $pending->employee_id,
                 'formal_picture' => $pending->formal_picture,
                 'department' => $pending->department,
@@ -143,6 +144,7 @@ class PendingEmployeeController extends Controller
             ]);
 
             $pending->delete();
+            $activities->log('library', 'patron.approved', 'Library employee approved', $employee->employee_id, $employee);
 
             DB::commit();
 
@@ -154,9 +156,12 @@ class PendingEmployeeController extends Controller
         }
     }
 
-    public function reject($id)
+    public function reject($id, AdminActivityLogger $activities)
     {
-        PendingEmployee::findOrFail($id)->delete();
+        $pending = PendingEmployee::findOrFail($id);
+        $employeeId = $pending->employee_id;
+        $pending->delete();
+        $activities->log('library', 'patron.rejected', 'Library employee rejected', $employeeId);
 
         return back()->with('success', 'Registration rejected.');
     }

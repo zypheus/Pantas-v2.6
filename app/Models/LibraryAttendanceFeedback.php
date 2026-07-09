@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LibraryAttendanceFeedback extends Model
 {
+    protected $table = 'library_attendance_feedbacks';
+
     protected $guarded = [];
 
     public function student(): BelongsTo

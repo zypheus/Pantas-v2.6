@@ -32,6 +32,12 @@ Reference plan:
 - [x] Complete Milestone 4: models/controllers/services foundation.
 - [x] Complete Milestone 5: mobile API migration to Library domain tables.
 - [x] Complete Milestone 6: dashboards and module switching.
+- [x] Complete Milestone 7: Library attendance system.
+- [x] Complete Milestone 8: public and patron workflow split.
+- [x] Complete Milestone 9: admin activity/audit trail foundation.
+- [x] Complete Milestone 10: focused verification and hardening pass.
+- [x] Review Pantas-UI services against `/api/mobile` response contracts.
+- [x] Add operational documentation for staff roles, seed accounts, and patron domain separation.
 
 ## Confirmed Decisions
 
@@ -129,60 +135,60 @@ Reference plan:
 
 ### Milestone 7: Library Attendance System
 
-- [ ] Add Library visit scanner.
-- [ ] Resolve scans against `library_students` and `library_employees`.
-- [ ] Write Library visits to `library_attendance_logs`.
-- [ ] Add Library visit logs/reports.
-- [ ] Add Library visit feedback/settings.
-- [ ] Add tests proving Library visit logs and school Attendance logs remain isolated.
+- [x] Add Library visit scanner.
+- [x] Resolve scans against `library_students` and `library_employees`.
+- [x] Write Library visits to `library_attendance_logs`.
+- [x] Add Library visit logs/reports.
+- [x] Add Library visit feedback/settings.
+- [x] Add tests proving Library visit logs and school Attendance logs remain isolated.
 
 ### Milestone 8: Public And Patron Workflows
 
-- [ ] Add `/register` module choice.
-- [ ] Add Library student/employee registration.
-- [ ] Add Attendance student/employee registration.
-- [ ] Add approval flows for both domains.
-- [ ] Add OPAC and Library reservation workflows against Library tables.
-- [ ] Add Library kiosk lookup.
-- [ ] Add patron profile edit requests.
-- [ ] Keep public room booking and schedule.
-- [ ] Add end-to-end workflow tests.
+- [x] Add `/register` module choice.
+- [x] Add Library student/employee registration.
+- [x] Add Attendance student/employee registration.
+- [x] Add approval flows for both domains.
+- [x] Add OPAC and Library reservation workflows against Library tables.
+- [x] Add Library kiosk lookup.
+- [x] Add patron profile edit requests.
+- [x] Keep public room booking and schedule.
+- [x] Add end-to-end workflow tests.
 
 ### Milestone 9: Admin Activity And Audit Trail
 
-- [ ] Add module-aware `admin_activities`.
-- [ ] Log staff account changes.
-- [ ] Log patron approval/rejection.
-- [ ] Log catalog and circulation actions.
-- [ ] Log room approval/rejection.
-- [ ] Log fine clearance.
-- [ ] Add tests for key audit events.
+- [x] Add module-aware `admin_activities`.
+- [x] Log staff account changes.
+- [x] Log patron approval/rejection.
+- [x] Log catalog actions.
+- [x] Log room approval/rejection.
+- [x] Log fine clearance.
+- [x] Add tests for key audit events.
 
 ### Milestone 10: Verification And Hardening
 
-- [ ] Create role access tests.
-- [ ] Create login redirect tests.
-- [ ] Create patron module isolation tests.
-- [ ] Create registration flow tests.
-- [ ] Create Library kiosk lookup tests.
-- [ ] Create OPAC tests.
-- [ ] Add Attendance scanner tests.
-- [ ] Add Library attendance scanner tests.
-- [ ] Keep mobile API tests passing.
-- [ ] Run `php artisan route:list`.
-- [ ] Run focused PHPUnit tests after each milestone.
-- [ ] Run `npm run build` when frontend assets change.
-- [ ] Run Pint before finalizing larger PHP changes.
+- [x] Create role access tests.
+- [x] Create login redirect tests.
+- [x] Create patron module isolation tests.
+- [x] Create registration flow tests.
+- [x] Create Library kiosk lookup tests.
+- [x] Create OPAC tests.
+- [x] Add Attendance scanner tests.
+- [x] Add Library attendance scanner tests.
+- [x] Keep mobile API tests passing.
+- [x] Run `php artisan route:list`.
+- [x] Run focused PHPUnit tests after each milestone.
+- [x] Run `npm run build` when frontend assets change.
+- [x] Run Pint before finalizing larger PHP changes.
 
 ## Backlog
 
 - [ ] Decide whether to keep a compatibility layer for old route names.
 - [ ] Decide whether old Blade views should be renamed by domain or reused with new data contracts.
 - [ ] Decide whether legacy root static files should be removed later.
-- [ ] Review Pantas-UI services before mobile API migration.
-- [ ] Add documentation for staff role setup.
-- [ ] Add documentation for fresh local seed accounts.
-- [ ] Add documentation for Library vs Attendance patron separation.
+- [x] Review Pantas-UI services before mobile API migration.
+- [x] Add documentation for staff role setup.
+- [x] Add documentation for fresh local seed accounts.
+- [x] Add documentation for Library vs Attendance patron separation.
 
 ## Discovered During Planning
 
@@ -208,3 +214,19 @@ Reference plan:
 - The Library schema includes compatibility columns for current cataloging, prospectus, room reservation, file repository, fine, holiday, and e-book workflows.
 - Mobile API catalog, borrowing, room reservation, and feedback flows now read/write Library domain tables while preserving response shapes.
 - Dashboard navigation is module-aware: Attendance-only staff no longer see Library navigation, Library-only staff no longer see Attendance navigation, and Super Admin keeps system/module access.
+- Library attendance now has its own public scanner, feedback endpoint, admin logs, reports, and feedback settings, all backed by `library_attendance_*` tables.
+- Library scanner lookup accepts Library patron QR codes and ID numbers only; Attendance-only patrons are rejected by the Library scanner.
+- Public `/register` now routes users to a module choice page; `/register/library` keeps Library pending registration and `/register/attendance` writes to Attendance pending registration.
+- Attendance patron approval moves records from `attendance_pending_*` tables into `attendance_*` patron tables and writes module-aware activity logs.
+- Admin activities now capture module, type, actor, optional subject, body, action URL, and icon. Staff changes, patron approval/rejection, catalog changes, room approval/rejection, and fine clearance write audit events.
+- Laravel's default table naming required an explicit `$table` on `LibraryAttendanceFeedback` because the migration uses `library_attendance_feedbacks`.
+- Focused M7-M10 tests were added for Library attendance isolation, public registration split, audit activity, and public Library workflow surfaces.
+- Pantas-UI service endpoints still match the `/api/mobile` route/controller contracts after the backend moved mobile data sources to Library-domain tables.
+- Mobile registration currently appears UI-local in Pantas-UI; there is no mobile registration API submission yet.
+- Pantas-UI profile can parse QR fields, but `/api/mobile/profile` does not currently return a QR code field; the current profile screen only displays a placeholder QR icon plus student number.
+- Pantas-UI `ApiConfig.androidEmulator` uses `127.0.0.1`; normal Android emulator testing may need `10.0.2.2` or an active tunnel/reverse proxy.
+- Added documentation:
+  - `documentation/mobile-api-contract-review.md`
+  - `documentation/staff-role-setup.md`
+  - `documentation/local-seed-accounts.md`
+  - `documentation/library-vs-attendance-patrons.md`
