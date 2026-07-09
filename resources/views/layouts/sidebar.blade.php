@@ -124,26 +124,34 @@
     {{-- jQuery (available globally for existing page scripts) --}}
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 
-    {{-- SweetAlert2 --}}
+    {{-- SweetAlert2 (used for shared confirmation dialogs) --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Find all forms that submit to logout
             const logoutForms = document.querySelectorAll('form[action*="logout"]');
+
             logoutForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
+
+                    if (typeof Swal === 'undefined') {
+                        if (window.confirm('Are you sure you want to log out?')) {
+                            form.submit();
+                        }
+
+                        return;
+                    }
+
                     Swal.fire({
                         title: 'Are you sure you want to log out?',
-                        text: "You will be returned to the login screen.",
+                        text: 'You will need to sign in again to continue.',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#1f4ea7', // matching brand-navy color
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Yes, logout',
-                        cancelButtonText: 'Cancel',
-                        reverseButtons: true
+                        cancelButtonText: 'Cancel'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();

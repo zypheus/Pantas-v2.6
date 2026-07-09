@@ -58,23 +58,25 @@ class BookLog extends Model
         'total_fine',
     ];
 
+    private static ?FineSetting $cachedFineSetting = null;
+
+    public static function cachedFineSettings(): FineSetting
+    {
+        return self::$cachedFineSetting ??= FineSetting::currentOrDefault();
+    }
+
     /**
      * Latest log per book is Checked Out for this student (includes room use).
      */
     public static function countActiveLoansForStudent(int $studentId): int
     {
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
-            ->groupBy('book_id')
-            ->pluck('id');
-
-        if ($latestIds->isEmpty()) {
-            return 0;
-        }
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $studentId)
+            ->groupBy('book_id');
 
         return (int) static::query()
             ->whereIn('id', $latestIds)
-            ->where('student_id', $studentId)
             ->where('status', 'Checked Out')
             ->count();
     }
@@ -167,11 +169,11 @@ class BookLog extends Model
 
     public function getDaysOverdueAttribute()
     {
-        $settings = FineSetting::latest('effective_from')->first();
-
-        if (! $this->due_date || ! $settings) {
+        if (! $this->due_date) {
             return 0;
         }
+
+        $settings = self::cachedFineSettings();
 
         $compareDate = $this->returned_date
             ? Carbon::parse($this->returned_date)
@@ -201,11 +203,11 @@ class BookLog extends Model
             return (float) $this->fine_incurred;
         }
 
-        $settings = FineSetting::latest('effective_from')->first();
-
-        if (! $settings || $this->days_overdue === 0) {
+        if ($this->days_overdue === 0) {
             return 0;
         }
+
+        $settings = self::cachedFineSettings();
 
         $fine = $this->days_overdue * $settings->fine_per_day;
 

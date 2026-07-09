@@ -162,9 +162,9 @@
                         if ($isCheckIn && $log->due_date && $log->returned_date) {
                             $daysLate = max(0, $log->due_date->diffInDays($log->returned_date, false));
                             $daysLateWhole = floor($daysLate);
-                            $settings = \App\Models\FineSetting::latest('created_at')->first();
-                            $gracePeriod = $settings->grace_period_days ?? 0;
-                            $finePerDay = $settings->fine_per_day ?? 0;
+                            $settings = \App\Models\FineSetting::currentOrDefault();
+                            $gracePeriod = $settings->grace_period_days;
+                            $finePerDay = $settings->fine_per_day;
                             $effectiveLate = max(0, $daysLateWhole - $gracePeriod);
                             $isOverdue = $effectiveLate > 0;
                             if ($isOverdue) {

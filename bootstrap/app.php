@@ -19,6 +19,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('attendance:close-stale-ins')
             ->dailyAt('00:05')
             ->timezone('Asia/Manila');
+
+        $schedule->command('backup:run --only-db')
+            ->dailyAt('01:00')
+            ->timezone('Asia/Manila');
+
+        $schedule->command('backup:clean')
+            ->dailyAt('01:30')
+            ->timezone('Asia/Manila');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {

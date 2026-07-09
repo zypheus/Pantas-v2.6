@@ -249,14 +249,14 @@ class BookLogController extends Controller
             $circulationType = $lastLog->circulation_type ?? BookLog::CIRCULATION_CHECKOUT;
         }
 
-        $settings = FineSetting::latest('created_at')->first();
+        $settings = FineSetting::currentOrDefault();
 
         $dueDate = null;
         $returnedDate = null;
         $fineIncurred = null;
 
         if ($isOutbound && $action === 'checked_out') {
-            $loanDays = $settings->loan_duration_days ?? 7;
+            $loanDays = $settings->loan_duration_days;
             $dueDate = $this->addBusinessDays(Carbon::now('Asia/Manila'), $loanDays);
         }
 
@@ -266,8 +266,8 @@ class BookLogController extends Controller
             if ($lastLog && $lastLog->due_date) {
                 $dueDate = $lastLog->due_date;
 
-                $gracePeriod = $settings->grace_period_days ?? 0;
-                $finePerDay = $settings->fine_per_day ?? 0;
+                $gracePeriod = $settings->grace_period_days;
+                $finePerDay = $settings->fine_per_day;
                 $maxFine = $settings->max_fine;
 
                 $overdueDays = $this->calculateOverdueDays(
@@ -350,8 +350,8 @@ class BookLogController extends Controller
             return back()->with('error', 'Renewal limit reached (max '.BookController::MAX_RENEWALS_PER_LOAN.' renewals).');
         }
 
-        $settings = FineSetting::latest('created_at')->first();
-        $loanDays = (int) ($settings->loan_duration_days ?? 7);
+        $settings = FineSetting::currentOrDefault();
+        $loanDays = (int) $settings->loan_duration_days;
 
         $base = Carbon::parse($lastLog->due_date, 'Asia/Manila');
         $newDue = $this->addBusinessDays($base, $loanDays);

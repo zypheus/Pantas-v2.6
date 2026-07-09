@@ -16,50 +16,45 @@ class AuthController extends Controller
 {
     public function login(Request $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+        $validated = $request->validate([
+            'student_id' => ['required', 'string', 'max:255'],
         ]);
 
-        $user = User::query()
-            ->where('email', $credentials['email'])
+        $student = Student::query()
+            ->where('id_number', trim($validated['student_id']))
             ->first();
 
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        if (! $student) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'student_id' => ['The provided Student ID was not found.'],
             ]);
         }
 
-        if (in_array($user->role, ['admin', 'staff'], true)) {
-            throw ValidationException::withMessages([
-                'email' => ['This account is not allowed to use the mobile app.'],
-            ]);
-        }
-
-        $user->loadMissing('student');
-
-        $token = $user->createToken('pantas-mobile')->plainTextToken;
+        $token = $student->createToken('pantas-mobile')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',
             'data' => [
                 'token' => $token,
-                'user' => $this->formatUser($user),
-                'student' => $this->formatStudent($user->student),
+                'user' => $this->formatUser($student),
+                'student' => $this->formatStudent($student),
             ],
         ]);
     }
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->loadMissing('student');
+        $student = $this->resolveStudent($request);
+
+        if ($student instanceof JsonResponse) {
+            return $student;
+        }
 
         return response()->json([
             'message' => 'Authenticated user retrieved.',
             'data' => [
-                'user' => $this->formatUser($user),
-                'student' => $this->formatStudent($user->student),
+                'user' => $this->formatUser($student),
+                'student' => $this->formatStudent($student),
             ],
         ]);
     }
@@ -76,6 +71,13 @@ class AuthController extends Controller
 
     public function changePassword(Request $request): JsonResponse
     {
+        if ($request->user() instanceof Student) {
+            return response()->json([
+                'message' => 'Password changes are not supported for student ID mobile login.',
+                'data' => null,
+            ], 409);
+        }
+
         $validated = $request->validate([
             'current_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -101,8 +103,48 @@ class AuthController extends Controller
         ]);
     }
 
-    private function formatUser(User $user): array
+    private function resolveStudent(Request $request): Student|JsonResponse
     {
+        $tokenable = $request->user();
+
+        if ($tokenable instanceof Student) {
+            return $tokenable;
+        }
+
+        if ($tokenable instanceof User) {
+            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+                return response()->json([
+                    'message' => 'This account is not allowed to use the mobile app.',
+                    'data' => null,
+                ], 403);
+            }
+
+            $tokenable->loadMissing('student');
+
+            if ($tokenable->student) {
+                return $tokenable->student;
+            }
+        }
+
+        return response()->json([
+            'message' => 'No student profile is linked to this account.',
+            'data' => null,
+        ], 409);
+    }
+
+    private function formatUser(User|Student $user): array
+    {
+        if ($user instanceof Student) {
+            return [
+                'id' => $user->id,
+                'name' => trim((string) $user->firstname.' '.(string) $user->lastname),
+                'fname' => $user->firstname,
+                'lname' => $user->lastname,
+                'email' => null,
+                'role' => 'student',
+            ];
+        }
+
         return [
             'id' => $user->id,
             'name' => trim((string) $user->fname.' '.(string) $user->lname),

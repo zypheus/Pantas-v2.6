@@ -232,7 +232,7 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get('/idcard/front/{id}', [IdCardController::class, 'front']);
     Route::get('/idcard/back/{id}', [IdCardController::class, 'back'])->name('idcard.back');
 
-    Route::get('/admin/pending', [StudentController::class, 'pending'])->name('students.pending');
+    Route::get('/admin/pending', [PendingStudentController::class, 'index'])->name('students.pending');
     Route::post('/admin/pending/{id}/approve', [StudentController::class, 'approve'])->name('students.approve');
     Route::post('/admin/pending/{id}/reject', [StudentController::class, 'reject'])->name('students.reject');
     Route::get('/pending', [PendingStudentController::class, 'index'])->name('pending.index');

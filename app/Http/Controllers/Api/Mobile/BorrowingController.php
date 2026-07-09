@@ -11,6 +11,7 @@ use App\Models\BookLog;
 use App\Models\FineSetting;
 use App\Models\Holiday;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class BorrowingController extends Controller
         }
 
         $logs = $this->activeLoanQuery($student)
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->orderBy('due_date')
             ->get();
 
@@ -51,7 +52,7 @@ class BorrowingController extends Controller
         ]);
 
         $history = BookLog::query()
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->where('student_id', $student->id)
             ->latest('timestamp')
             ->paginate((int) ($validated['per_page'] ?? 10))
@@ -80,7 +81,7 @@ class BorrowingController extends Controller
         $maxLoans = BookController::MAX_CONCURRENT_BOOK_LOANS_PER_STUDENT;
         $currentLoans = BookLog::countActiveLoansForStudent((int) $student->id);
         $hasOverdue = $this->hasOverdueLoans($student);
-        $fineSetting = FineSetting::current();
+        $fineSetting = FineSetting::currentOrDefault();
 
         return response()->json([
             'message' => 'Borrow limits retrieved.',
@@ -89,11 +90,11 @@ class BorrowingController extends Controller
                 'current_active_loans' => $currentLoans,
                 'remaining_loans' => max(0, $maxLoans - $currentLoans),
                 'has_overdue' => $hasOverdue,
-                'can_borrow' => $currentLoans < $maxLoans && ! $hasOverdue && $fineSetting !== null,
+                'can_borrow' => $currentLoans < $maxLoans && ! $hasOverdue,
                 'reborrow_cooldown_days' => BookController::REBORROW_COOLDOWN_DAYS,
-                'fine_settings_configured' => $fineSetting !== null,
-                'loan_duration_days' => $fineSetting?->loan_duration_days,
-                'grace_period_days' => $fineSetting?->grace_period_days,
+                'fine_settings_configured' => FineSetting::current() !== null,
+                'loan_duration_days' => $fineSetting->loan_duration_days,
+                'grace_period_days' => $fineSetting->grace_period_days,
             ],
         ]);
     }
@@ -118,14 +119,7 @@ class BorrowingController extends Controller
             ], 409);
         }
 
-        $fineSetting = FineSetting::current();
-
-        if (! $fineSetting) {
-            return response()->json([
-                'message' => 'Checkout blocked: fine settings are not configured.',
-                'data' => null,
-            ], 409);
-        }
+        $fineSetting = FineSetting::currentOrDefault();
 
         $bookIds = array_values(array_unique(array_map('intval', $validated['book_ids'])));
         $borrowedAt = Carbon::now('Asia/Manila');
@@ -237,36 +231,42 @@ class BorrowingController extends Controller
 
     private function resolveStudent(Request $request): Student|JsonResponse
     {
-        $user = $request->user();
+        $tokenable = $request->user();
 
-        if (in_array($user->role, ['admin', 'staff'], true)) {
-            return response()->json([
-                'message' => 'This account is not allowed to use mobile borrowing.',
-                'data' => null,
-            ], 403);
+        if ($tokenable instanceof Student) {
+            return $tokenable;
         }
 
-        $student = $user->student;
+        if ($tokenable instanceof User) {
+            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+                return response()->json([
+                    'message' => 'This account is not allowed to use mobile borrowing.',
+                    'data' => null,
+                ], 403);
+            }
 
-        if (! $student) {
-            return response()->json([
-                'message' => 'No student profile is linked to this account.',
-                'data' => null,
-            ], 409);
+            $tokenable->loadMissing('student');
+
+            if ($tokenable->student) {
+                return $tokenable->student;
+            }
         }
 
-        return $student;
+        return response()->json([
+            'message' => 'No student profile is linked to this account.',
+            'data' => null,
+        ], 409);
     }
 
     private function activeLoanQuery(Student $student)
     {
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $student->id)
             ->groupBy('book_id');
 
         return BookLog::query()
             ->whereIn('id', $latestIds)
-            ->where('student_id', $student->id)
             ->where('status', 'Checked Out');
     }
 

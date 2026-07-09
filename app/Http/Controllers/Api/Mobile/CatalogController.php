@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class CatalogController extends Controller
 {
@@ -98,13 +99,15 @@ class CatalogController extends Controller
     {
         return response()->json([
             'message' => 'Catalog filters retrieved.',
-            'data' => [
-                'courses' => $this->distinctBookValues('course'),
-                'content_types' => $this->distinctBookValues('content_type'),
-                'sections' => $this->distinctBookValues('section'),
-                'subject_topics' => $this->distinctBookValues('subject_topic'),
-                'genres' => $this->distinctBookValues('genre'),
-            ],
+            'data' => Cache::remember('mobile:catalog-filters', now()->addMinutes(15), function () {
+                return [
+                    'courses' => $this->distinctBookValues('course'),
+                    'content_types' => $this->distinctBookValues('content_type'),
+                    'sections' => $this->distinctBookValues('section'),
+                    'subject_topics' => $this->distinctBookValues('subject_topic'),
+                    'genres' => $this->distinctBookValues('genre'),
+                ];
+            }),
         ]);
     }
 

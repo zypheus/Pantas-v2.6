@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BookLog;
 use App\Models\RoomReservation;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,13 +48,13 @@ class NotificationController extends Controller
         $nearDueEnd = $today->copy()->addDays(3);
 
         $latestIds = DB::table('book_logs')
-            ->selectRaw('MAX(id) as id')
+            ->select(DB::raw('MAX(id) as id'))
+            ->where('student_id', $student->id)
             ->groupBy('book_id');
 
         return BookLog::query()
-            ->with('book')
+            ->with('book:id,title_statement,main_author,call_number,accession_no,barcode')
             ->whereIn('id', $latestIds)
-            ->where('student_id', $student->id)
             ->where('status', 'Checked Out')
             ->whereNotNull('due_date')
             ->whereDate('due_date', '<=', $nearDueEnd->toDateString())
@@ -90,7 +91,6 @@ class NotificationController extends Controller
     {
         return RoomReservation::query()
             ->with('room')
-            ->where('user_id', $request->user()->id)
             ->where('student_id', $student->id)
             ->whereIn('status', ['pending', 'approved', 'rejected', 'cancelled'])
             ->latest('updated_at')
@@ -126,24 +126,30 @@ class NotificationController extends Controller
 
     private function resolveStudent(Request $request): Student|JsonResponse
     {
-        $user = $request->user();
+        $tokenable = $request->user();
 
-        if (in_array($user->role, ['admin', 'staff'], true)) {
-            return response()->json([
-                'message' => 'This account is not allowed to use mobile notifications.',
-                'data' => null,
-            ], 403);
+        if ($tokenable instanceof Student) {
+            return $tokenable;
         }
 
-        $student = $user->student;
+        if ($tokenable instanceof User) {
+            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+                return response()->json([
+                    'message' => 'This account is not allowed to use mobile notifications.',
+                    'data' => null,
+                ], 403);
+            }
 
-        if (! $student) {
-            return response()->json([
-                'message' => 'No student profile is linked to this account.',
-                'data' => null,
-            ], 409);
+            $tokenable->loadMissing('student');
+
+            if ($tokenable->student) {
+                return $tokenable->student;
+            }
         }
 
-        return $student;
+        return response()->json([
+            'message' => 'No student profile is linked to this account.',
+            'data' => null,
+        ], 409);
     }
 }

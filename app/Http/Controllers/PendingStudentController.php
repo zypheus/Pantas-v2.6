@@ -13,12 +13,13 @@ use Illuminate\Support\Str;
 class PendingStudentController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        $pendingEmployees = \App\Models\PendingEmployee::with('role')->get();
-        $pendingStudents = PendingStudent::with('role')->paginate(10);
+        $activeTab = $request->query('tab') === 'employees' ? 'employees' : 'students';
+        $pendingEmployees = PendingEmployee::with('role')->latest()->get();
+        $pendingStudents = PendingStudent::with('role')->latest()->paginate(10)->withQueryString();
         
-        return view('pending.index', compact('pendingStudents', 'pendingEmployees'));
+        return view('pending.index', compact('pendingStudents', 'pendingEmployees', 'activeTab'));
     }
 
     public function create()

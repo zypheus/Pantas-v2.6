@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             EmployeeSampleSeeder::class,
             StudentSampleSeeder::class,
             BookSampleSeeder::class,
+            RoomSampleSeeder::class,
+            FineSettingSeeder::class,
         ]);
 
         $adminPassword = Hash::make('password', [
@@ -58,6 +60,6 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        $this->command?->info('Database seeded: MARC framework, programs, students, books, admin user, and mobile student user.');
+        $this->command?->info('Database seeded: MARC framework, programs, students, books, rooms, admin user, and mobile student user.');
     }
 }
