@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StudentEditRequest extends Model
 {
+    protected $table = 'library_student_edit_requests';
+
     protected $fillable = [
         'student_id',
         'lastname',

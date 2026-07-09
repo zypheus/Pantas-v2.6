@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramCourse extends Model
 {
+    protected $table = 'library_program_courses';
+
     protected $fillable = [
-        'program_year_id', 'course_code', 'course_name'
+        'program_year_id', 'course_code', 'course_name',
     ];
 
     public function year()

@@ -48,7 +48,7 @@ class NotificationController extends Controller
         $today = Carbon::now('Asia/Manila')->startOfDay();
         $nearDueEnd = $today->copy()->addDays(3);
 
-        $latestIds = DB::table('book_logs')
+        $latestIds = DB::table('library_book_logs')
             ->select(DB::raw('MAX(id) as id'))
             ->where('student_id', $student->id)
             ->groupBy('book_id');

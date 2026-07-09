@@ -37,7 +37,7 @@ class PendingEmployeeController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:16',
-            'employee_id' => 'required|string|max:255|unique:pending_employees,employee_id',
+            'employee_id' => 'required|string|max:255|unique:library_pending_employees,employee_id',
             'designation' => 'required|string|max:255',
             'program' => 'required|string|max:64',
             'year_start_work' => 'required|string|max:16',

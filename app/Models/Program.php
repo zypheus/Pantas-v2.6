@@ -9,14 +9,15 @@ class Program extends Model
 {
     use HasFactory;
 
+    protected $table = 'library_programs';
+
     protected $fillable = ['program_code', 'program_name', 'total_years'];
 
-  
     public function years()
     {
         return $this->hasMany(ProgramYear::class);
     }
-    
+
     protected static function boot()
     {
         parent::boot();
@@ -29,8 +30,9 @@ class Program extends Model
             }
         });
     }
-    
-    public function books() {
-        return $this->belongsToMany(Book::class, 'book_program');
+
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'library_book_program');
     }
 }

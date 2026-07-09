@@ -22,9 +22,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('library_program_courses', function (Blueprint $table) {
+        Schema::create('library_program_years', function (Blueprint $table) {
             $table->id();
             $table->foreignId('program_id')->constrained('library_programs')->cascadeOnDelete();
+            $table->unsignedTinyInteger('year_level');
+            $table->timestamps();
+
+            $table->unique(['program_id', 'year_level']);
+        });
+
+        Schema::create('library_program_courses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('program_id')->nullable()->constrained('library_programs')->cascadeOnDelete();
+            $table->foreignId('program_year_id')->nullable()->constrained('library_program_years')->nullOnDelete();
             $table->unsignedTinyInteger('year_number')->nullable();
             $table->string('course_code')->nullable();
             $table->string('course_name');
@@ -95,7 +105,8 @@ return new class extends Migration
 
         Schema::create('library_holidays', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->unique();
+            $table->date('date')->nullable()->unique();
+            $table->date('holiday_date')->nullable()->unique();
             $table->string('name')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
@@ -105,6 +116,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('loan_duration_days')->default(7);
             $table->decimal('daily_fine', 8, 2)->default(0);
+            $table->decimal('fine_per_day', 8, 2)->default(0);
+            $table->decimal('max_fine', 8, 2)->nullable();
+            $table->integer('grace_period_days')->default(0);
+            $table->date('effective_from')->nullable();
             $table->unsignedInteger('max_renewals')->default(0);
             $table->unsignedInteger('renewal_duration_days')->default(7);
             $table->timestamps();
@@ -122,6 +137,9 @@ return new class extends Migration
             $table->foreignId('book_id')->constrained('library_books')->cascadeOnDelete();
             $table->string('tag', 10);
             $table->string('subfield', 10)->nullable();
+            $table->string('indicator1', 10)->nullable();
+            $table->string('indicator2', 10)->nullable();
+            $table->unsignedInteger('occurrence')->default(0);
             $table->text('value')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
@@ -181,6 +199,11 @@ return new class extends Migration
             $table->string('title');
             $table->string('author')->nullable();
             $table->string('publisher')->nullable();
+            $table->string('publication_year')->nullable();
+            $table->string('source')->nullable();
+            $table->string('link')->nullable();
+            $table->foreignId('program_id')->nullable()->constrained('library_programs')->nullOnDelete();
+            $table->foreignId('course_id')->nullable()->constrained('library_program_courses')->nullOnDelete();
             $table->string('pub_year')->nullable();
             $table->string('course')->nullable();
             $table->string('program')->nullable();
@@ -202,6 +225,7 @@ return new class extends Migration
         Schema::create('library_room_reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id')->constrained('library_rooms')->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('student_id')->nullable()->constrained('library_students')->nullOnDelete();
             $table->foreignId('employee_id')->nullable()->constrained('library_employees')->nullOnDelete();
             $table->string('status');
@@ -244,7 +268,8 @@ return new class extends Migration
 
         Schema::create('library_reservation_students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_reservation_id')->constrained('library_room_reservations')->cascadeOnDelete();
+            $table->foreignId('room_reservation_id')->nullable()->constrained('library_room_reservations')->cascadeOnDelete();
+            $table->foreignId('reservation_id')->nullable()->constrained('library_room_reservations')->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
         });
@@ -252,7 +277,9 @@ return new class extends Migration
         Schema::create('library_reservation_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_reservation_id')->nullable()->constrained('library_room_reservations')->nullOnDelete();
+            $table->foreignId('reservation_id')->nullable()->constrained('library_room_reservations')->nullOnDelete();
             $table->string('action');
+            $table->text('meta')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
@@ -260,12 +287,23 @@ return new class extends Migration
 
         Schema::create('library_files', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('original_name');
-            $table->string('path');
+            $table->string('folder')->nullable();
+            $table->string('filename')->nullable();
+            $table->string('filepath')->nullable();
+            $table->string('title')->nullable();
+            $table->string('original_name')->nullable();
+            $table->string('path')->nullable();
             $table->string('mime_type')->nullable();
             $table->unsignedBigInteger('size')->nullable();
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+        });
+
+        Schema::create('library_feedback', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->text('comments');
             $table->timestamps();
         });
 
@@ -314,6 +352,7 @@ return new class extends Migration
             'library_attendance_feedbacks',
             'library_attendance_settings',
             'library_files',
+            'library_feedback',
             'library_reservation_logs',
             'library_reservation_students',
             'library_employee_edit_requests',
@@ -338,6 +377,7 @@ return new class extends Migration
             'library_marc_fields',
             'library_catalog_frameworks',
             'library_program_courses',
+            'library_program_years',
             'library_programs',
             'library_roles',
         ] as $table) {
@@ -383,6 +423,11 @@ return new class extends Migration
         $table->string('sex', 20)->nullable();
         $table->string('civil_status', 50)->nullable();
         $table->string('blood_type', 10)->nullable();
+        $table->string('designation')->nullable();
+        $table->string('program')->nullable();
+        $table->string('year_start_work')->nullable();
+        $table->string('employee_number')->nullable()->unique();
+        $table->string('mobile_number', 20)->nullable();
         $table->string('tin_id_number')->nullable();
         $table->string('philhealth_number')->nullable();
         $table->string('sss_number')->nullable();
@@ -394,6 +439,7 @@ return new class extends Migration
         $table->string('emergency_contact_relationship')->nullable();
         $table->string('emergency_contact_number', 20)->nullable();
         $table->text('address')->nullable();
+        $table->text('emergency_address')->nullable();
         $table->string('employee_signature')->nullable();
 
         if (! $pending) {

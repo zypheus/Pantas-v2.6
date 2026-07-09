@@ -9,6 +9,8 @@ class Employee extends Model
 {
     use HasFactory;
 
+    protected $table = 'library_employees';
+
     protected $casts = [
         'birth_date' => 'date',
     ];

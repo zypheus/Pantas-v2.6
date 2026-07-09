@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class File extends Model
 {
+    protected $table = 'library_files';
+
     protected $fillable = [
         'folder',
         'filename',
@@ -29,7 +31,7 @@ class File extends Model
 
     public function absolutePath(): string
     {
-        return storage_path('app/public/' . $this->publicDiskPath());
+        return storage_path('app/public/'.$this->publicDiskPath());
     }
 
     public function folderLabel(): string

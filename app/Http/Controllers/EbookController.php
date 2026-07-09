@@ -15,37 +15,37 @@ class EbookController extends Controller
     public function index(Request $request)
     {
         $query = Ebook::with(['program', 'course']);
-    
+
         // Apply filters based on dropdown selections
         if ($request->filled('title')) {
             $query->where('title', $request->title);
         }
-    
+
         if ($request->filled('author')) {
             $query->where('author', $request->author);
         }
-    
+
         if ($request->filled('year')) {
             $query->where('publication_year', $request->year);
         }
-    
+
         if ($request->filled('publisher')) {
             $query->where('publisher', $request->publisher);
         }
-    
+
         if ($request->filled('source')) {
             $query->where('source', $request->source);
         }
-    
+
         // New: program & course filters
         if ($request->filled('program_id')) {
             $query->where('program_id', $request->program_id);
         }
-    
+
         if ($request->filled('course_id')) {
             $query->where('course_id', $request->course_id);
         }
-    
+
         $ebooks = $query->latest()->paginate(15)->withQueryString();
 
         return view('ebooks.index', [
@@ -61,7 +61,6 @@ class EbookController extends Controller
         ]);
     }
 
-
     /**
      * Show the form for creating a new resource.
      */
@@ -71,7 +70,6 @@ class EbookController extends Controller
 
         return view('ebooks.create', compact('programs'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -85,8 +83,8 @@ class EbookController extends Controller
             'publisher' => 'nullable|string|max:255',
             'source' => 'nullable|string|max:255',
             'link' => 'nullable|url|max:255',
-            'program_id' => 'nullable|exists:programs,id',
-            'course_id' => 'nullable|exists:program_courses,id',
+            'program_id' => 'nullable|exists:library_programs,id',
+            'course_id' => 'nullable|exists:library_program_courses,id',
         ]);
 
         // Handle "all" for program
@@ -111,8 +109,8 @@ class EbookController extends Controller
             'publisher' => 'nullable|string|max:255',
             'source' => 'nullable|string|max:255',
             'link' => 'nullable|url|max:255',
-            'program_id' => 'nullable|exists:programs,id',
-            'course_id' => 'nullable|exists:program_courses,id',
+            'program_id' => 'nullable|exists:library_programs,id',
+            'course_id' => 'nullable|exists:library_program_courses,id',
         ]);
 
         // Handle "all" for program
@@ -125,7 +123,6 @@ class EbookController extends Controller
         return redirect()->route('ebooks.index')
             ->with('success', 'E-Book updated successfully.');
     }
-
 
     /**
      * Display the specified resource.
@@ -180,6 +177,4 @@ class EbookController extends Controller
 
         return response()->json($courses);
     }
-
-
 }

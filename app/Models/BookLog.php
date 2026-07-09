@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\FineSetting;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 class BookLog extends Model
 {
     use HasFactory;
+
+    protected $table = 'library_book_logs';
 
     public const CIRCULATION_CHECKOUT = 'checkout';
 
@@ -70,7 +70,7 @@ class BookLog extends Model
      */
     public static function countActiveLoansForStudent(int $studentId): int
     {
-        $latestIds = DB::table('book_logs')
+        $latestIds = DB::table('library_book_logs')
             ->select(DB::raw('MAX(id) as id'))
             ->where('student_id', $studentId)
             ->groupBy('book_id');

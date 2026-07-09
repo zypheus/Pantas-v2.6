@@ -11,6 +11,8 @@ class Student extends Authenticatable
 {
     use HasApiTokens, HasFactory;
 
+    protected $table = 'library_students';
+
     protected $fillable = [
         'id_number',
         'lastname',
@@ -42,7 +44,7 @@ class Student extends Authenticatable
 
     public function attendanceLogs()
     {
-        return $this->hasMany(AttendanceLog::class, 'student_id');
+        return $this->hasMany(LibraryAttendanceLog::class, 'student_id');
     }
 
     public function user(): HasOne

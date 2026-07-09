@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\AttendanceLog;
-use App\Models\Student;
+use App\Models\AttendanceStudent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +25,7 @@ class AttendanceSessionService
      * If the patron's last scan is still IN from a **previous** calendar day (Manila),
      * insert one OUT at end of that IN day so the next real scan starts as IN again.
      */
-    public function closeStaleOpenInForStudent(Student $student): bool
+    public function closeStaleOpenInForStudent(AttendanceStudent $student): bool
     {
         $last = AttendanceLog::query()
             ->where('student_id', $student->id)
@@ -79,7 +79,7 @@ class AttendanceSessionService
         $closed = 0;
 
         foreach ($staleStudentIds as $sid) {
-            $student = Student::query()->find($sid);
+            $student = AttendanceStudent::query()->find($sid);
             if (! $student) {
                 continue;
             }

@@ -16,7 +16,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
-    
     private function generateNextQrCode()
     {
         $lastStudent = Student::whereNotNull('qrcode')
@@ -29,32 +28,32 @@ class StudentController extends Controller
             $nextNumber = (int) $matches[1] + 1;
         }
 
-        return 'S-' . str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
+        return 'S-'.str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
     }
-    
+
     // Show all students
     public function index(Request $request)
     {
         $query = Student::query();
         $programs = Program::orderBy('program_code')->get();
-    
+
         // 🔍 Search
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('lastname', 'like', "%{$search}%")
-                  ->orWhere('firstname', 'like', "%{$search}%")
-                  ->orWhere('course', 'like', "%{$search}%")
-                  ->orWhere('qrcode', 'like', "%{$search}%")
-                  ->orWhere('id_number', 'like', "%{$search}%");
+                    ->orWhere('firstname', 'like', "%{$search}%")
+                    ->orWhere('course', 'like', "%{$search}%")
+                    ->orWhere('qrcode', 'like', "%{$search}%")
+                    ->orWhere('id_number', 'like', "%{$search}%");
             });
         }
-    
+
         // 🎓 Filter by Course
         if ($request->filled('course')) {
             $query->where('course', $request->course);
         }
-    
+
         // 📚 Filter by Year
         if ($request->filled('year')) {
             $query->where('year', $request->year);
@@ -62,7 +61,7 @@ class StudentController extends Controller
         if ($request->filled('program_id')) {
             $query->where('course', $request->program_id);
         }
-    
+
         $students = $query->orderBy('lastname', 'asc')->paginate(15)->appends($request->all());
 
         return view('students.students', compact('students', 'programs'));
@@ -72,6 +71,7 @@ class StudentController extends Controller
     public function create()
     {
         $programs = Program::orderBy('program_name')->get();
+
         return view('students.create', compact('programs'));
     }
 
@@ -79,7 +79,7 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_number' => 'required|string|max:255|unique:students,id_number',
+            'id_number' => 'required|string|max:255|unique:library_students,id_number',
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:255',
@@ -103,33 +103,33 @@ class StudentController extends Controller
             // Profile Picture
             if ($request->hasFile('profile_picture')) {
                 $file = $request->file('profile_picture');
-                $filename = time() . '_profile_' . Str::slug($file->getClientOriginalName());
+                $filename = time().'_profile_'.Str::slug($file->getClientOriginalName());
                 $dest = public_path('images/profile_pictures');
-                if (!file_exists($dest)) {
+                if (! file_exists($dest)) {
                     mkdir($dest, 0755, true);
                 }
                 $file->move($dest, $filename);
-                $validated['profile_picture'] = 'images/profile_pictures/' . $filename;
+                $validated['profile_picture'] = 'images/profile_pictures/'.$filename;
             }
 
             // Signature (base64)
-            if (!empty($validated['student_signature']) && str_starts_with($validated['student_signature'], 'data:')) {
+            if (! empty($validated['student_signature']) && str_starts_with($validated['student_signature'], 'data:')) {
 
                 [$meta, $contents] = explode(',', $validated['student_signature'], 2);
                 $ext = preg_match('/jpeg|jpg/i', $meta) ? 'jpg' : 'png';
-                $sigName = time() . '_sig.' . $ext;
+                $sigName = time().'_sig.'.$ext;
 
                 $sigDest = public_path('images/student_signatures');
-                if (!file_exists($sigDest)) {
+                if (! file_exists($sigDest)) {
                     mkdir($sigDest, 0755, true);
                 }
 
                 file_put_contents(
-                    $sigDest . DIRECTORY_SEPARATOR . $sigName,
+                    $sigDest.DIRECTORY_SEPARATOR.$sigName,
                     base64_decode($contents)
                 );
 
-                $validated['student_signature'] = 'images/student_signatures/' . $sigName;
+                $validated['student_signature'] = 'images/student_signatures/'.$sigName;
             }
 
             // ✅ Generate QR ONCE
@@ -144,14 +144,16 @@ class StudentController extends Controller
 
         } catch (\Throwable $e) {
             DB::rollBack();
+
             return back()->with('error', $e->getMessage());
         }
     }
-    
+
     // Edit form
     public function edit($id)
     {
         $student = Student::findOrFail($id);
+
         return view('students.edit', compact('student'));
     }
 
@@ -161,23 +163,23 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
 
         $validated = $request->validate([
-            'id_number' => 'nullable|string|unique:students,id_number,' . $id,
+            'id_number' => 'nullable|string|unique:library_students,id_number,'.$id,
             'lastname' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:255',
             'birthday' => 'nullable|date',
-        
+
             'course' => 'nullable|string|max:255',
             'year' => 'nullable|string|max:255',
-        
+
             'mobile_number' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-        
+
             'emergency_person' => 'nullable|string|max:255',
             'emergency_relationship' => 'nullable|string|max:255',
             'emergency_number' => 'nullable|string|max:255',
             'emergency_address' => 'nullable|string',
-        
+
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'student_signature' => 'nullable|string',
         ]);
@@ -193,32 +195,32 @@ class StudentController extends Controller
                 }
 
                 $image = $request->file('profile_picture');
-                $filename = time() . '_' . Str::slug($image->getClientOriginalName());
+                $filename = time().'_'.Str::slug($image->getClientOriginalName());
                 $dest = public_path('images/profile_pictures');
-                if (!file_exists($dest)) {
+                if (! file_exists($dest)) {
                     mkdir($dest, 0755, true);
                 }
                 $image->move($dest, $filename);
-                $validated['profile_picture'] = 'images/profile_pictures/' . $filename;
+                $validated['profile_picture'] = 'images/profile_pictures/'.$filename;
             }
 
-            if (!empty($validated['student_signature']) && str_starts_with($validated['student_signature'], 'data:')) {
+            if (! empty($validated['student_signature']) && str_starts_with($validated['student_signature'], 'data:')) {
 
                 [$meta, $contents] = explode(',', $validated['student_signature'], 2);
                 $ext = preg_match('/jpeg|jpg/i', $meta) ? 'jpg' : 'png';
-                $sigName = time() . '_sig.' . $ext;
+                $sigName = time().'_sig.'.$ext;
 
                 $sigDest = public_path('images/student_signatures');
-                if (!file_exists($sigDest)) {
+                if (! file_exists($sigDest)) {
                     mkdir($sigDest, 0755, true);
                 }
 
                 file_put_contents(
-                    $sigDest . DIRECTORY_SEPARATOR . $sigName,
+                    $sigDest.DIRECTORY_SEPARATOR.$sigName,
                     base64_decode($contents)
                 );
 
-                $validated['student_signature'] = 'images/student_signatures/' . $sigName;
+                $validated['student_signature'] = 'images/student_signatures/'.$sigName;
             }
 
             // ❌ DO NOT TOUCH QR HERE
@@ -252,6 +254,7 @@ class StudentController extends Controller
     public function show($id)
     {
         $student = Student::findOrFail($id);
+
         return view('students.show', compact('student'));
     }
 
@@ -259,6 +262,7 @@ class StudentController extends Controller
     public function pending()
     {
         $pendingStudents = PendingStudent::orderBy('lastname')->get();
+
         return view('students.pending', compact('pendingStudents'));
     }
 
@@ -419,7 +423,7 @@ class StudentController extends Controller
             'firstname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:255',
             'birthday' => 'nullable|date',
-            'program_id' => 'nullable|exists:programs,id',
+            'program_id' => 'nullable|exists:library_programs,id',
             'year' => 'nullable|string|max:10',
             'mobile_number' => 'nullable|string|max:20',
             'address' => 'nullable|string',

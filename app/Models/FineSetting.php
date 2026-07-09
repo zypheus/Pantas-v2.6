@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 
 class FineSetting extends Model
 {
+    protected $table = 'library_fine_settings';
+
     protected $fillable = [
         'fine_per_day',
         'max_fine',

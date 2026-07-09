@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\AttendanceLog;
-use App\Models\Program;
+use App\Models\AttendanceProgram;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -64,38 +64,38 @@ class PatronAttendanceReportService
         $inExpr = "LOWER(TRIM(attendance_logs.status)) = 'in'";
 
         $topStudentsByIns = DB::table('attendance_logs')
-            ->join('students', 'students.id', '=', 'attendance_logs.student_id')
+            ->join('attendance_students', 'attendance_students.id', '=', 'attendance_logs.student_id')
             ->whereRaw($inExpr)
             ->when($fromDt && $toDt, fn ($q) => $q->whereBetween('attendance_logs.scanned_at', [$fromDt, $toDt]))
             ->select(
-                'students.id',
-                'students.lastname',
-                'students.firstname',
-                'students.course',
+                'attendance_students.id',
+                'attendance_students.lastname',
+                'attendance_students.firstname',
+                'attendance_students.course',
                 DB::raw('COUNT(*) as ins_count')
             )
-            ->groupBy('students.id', 'students.lastname', 'students.firstname', 'students.course')
+            ->groupBy('attendance_students.id', 'attendance_students.lastname', 'attendance_students.firstname', 'attendance_students.course')
             ->orderByDesc('ins_count')
             ->limit(10)
             ->get();
 
         $topStudentsByDistinctInDays = DB::table('attendance_logs')
-            ->join('students', 'students.id', '=', 'attendance_logs.student_id')
+            ->join('attendance_students', 'attendance_students.id', '=', 'attendance_logs.student_id')
             ->whereRaw($inExpr)
             ->when($fromDt && $toDt, fn ($q) => $q->whereBetween('attendance_logs.scanned_at', [$fromDt, $toDt]))
             ->select(
-                'students.id',
-                'students.lastname',
-                'students.firstname',
-                'students.course',
+                'attendance_students.id',
+                'attendance_students.lastname',
+                'attendance_students.firstname',
+                'attendance_students.course',
                 DB::raw('COUNT(DISTINCT DATE(attendance_logs.scanned_at)) as distinct_in_days')
             )
-            ->groupBy('students.id', 'students.lastname', 'students.firstname', 'students.course')
+            ->groupBy('attendance_students.id', 'attendance_students.lastname', 'attendance_students.firstname', 'attendance_students.course')
             ->orderByDesc('distinct_in_days')
             ->limit(10)
             ->get();
 
-        $registeredByCourse = DB::table('students')
+        $registeredByCourse = DB::table('attendance_students')
             ->whereNotNull('course')
             ->where('course', '!=', '')
             ->select('course', DB::raw('COUNT(*) as student_count'))
@@ -104,13 +104,13 @@ class PatronAttendanceReportService
             ->keyBy('course');
 
         $insByCourse = DB::table('attendance_logs')
-            ->join('students', 'students.id', '=', 'attendance_logs.student_id')
+            ->join('attendance_students', 'attendance_students.id', '=', 'attendance_logs.student_id')
             ->whereRaw($inExpr)
             ->when($fromDt && $toDt, fn ($q) => $q->whereBetween('attendance_logs.scanned_at', [$fromDt, $toDt]))
-            ->whereNotNull('students.course')
-            ->where('students.course', '!=', '')
-            ->select('students.course', DB::raw('COUNT(*) as ins_count'))
-            ->groupBy('students.course')
+            ->whereNotNull('attendance_students.course')
+            ->where('attendance_students.course', '!=', '')
+            ->select('attendance_students.course', DB::raw('COUNT(*) as ins_count'))
+            ->groupBy('attendance_students.course')
             ->get()
             ->keyBy('course');
 
@@ -234,7 +234,7 @@ class PatronAttendanceReportService
     public function streamCsvResponse(?string $from = null, ?string $to = null): StreamedResponse
     {
         $reports = $this->build($from, $to);
-        $programNameByCode = Program::query()->pluck('program_name', 'program_code');
+        $programNameByCode = AttendanceProgram::query()->pluck('program_name', 'program_code');
         $filename = 'patron-attendance-reports-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($reports, $programNameByCode) {

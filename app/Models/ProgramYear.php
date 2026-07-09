@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramYear extends Model
 {
+    protected $table = 'library_program_years';
+
     protected $fillable = ['program_id', 'year_level'];
 
     public function program()

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\AttendanceFeedback;
+use Illuminate\Http\Request;
 
 class FeedController extends Controller
 {
-   
     public function store(Request $request)
     {
         if (! \App\Models\Setting::logoutFeedbackEnabled()) {
@@ -15,7 +14,7 @@ class FeedController extends Controller
         }
 
         $validated = $request->validate([
-            'student_id' => 'required|integer|exists:students,id',
+            'student_id' => 'required|integer|exists:attendance_students,id',
             'rating' => 'nullable|string|in:excellent,good,medium,poor,very_bad',
             'declined' => 'nullable|boolean',
         ]);
@@ -30,35 +29,35 @@ class FeedController extends Controller
 
         return response()->json(['success' => true]);
     }
-    
+
     public function index(Request $request)
     {
         $query = AttendanceFeedback::with('student')->latest();
-    
+
         // 🔥 FILTERING LOGIC
         if ($request->rating) {
-    
+
             if ($request->rating === 'declined') {
                 $query->where('declined', 1);
             } else {
                 $query->where('rating', $request->rating)
-                      ->where('declined', 0);
+                    ->where('declined', 0);
             }
         }
-    
+
         $feedbacks = $query->get();
-    
+
         // Breakdown counts (ALWAYS full dataset)
         $all = AttendanceFeedback::all();
-    
-        $total     = $all->count();
+
+        $total = $all->count();
         $excellent = $all->where('rating', 'excellent')->count();
-        $good      = $all->where('rating', 'good')->count();
-        $medium    = $all->where('rating', 'medium')->count();
-        $poor      = $all->where('rating', 'poor')->count();
-        $veryBad   = $all->where('rating', 'very_bad')->count();
-        $declined  = $all->where('declined', 1)->count();
-    
+        $good = $all->where('rating', 'good')->count();
+        $medium = $all->where('rating', 'medium')->count();
+        $poor = $all->where('rating', 'poor')->count();
+        $veryBad = $all->where('rating', 'very_bad')->count();
+        $declined = $all->where('declined', 1)->count();
+
         return view('admin.feedbacks', compact(
             'feedbacks',
             'total',

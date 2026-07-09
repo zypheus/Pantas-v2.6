@@ -110,7 +110,7 @@ class BorrowingController extends Controller
 
         $validated = $request->validate([
             'book_ids' => ['required', 'array', 'min:1', 'max:10'],
-            'book_ids.*' => ['required', 'integer', 'distinct', 'exists:books,id'],
+            'book_ids.*' => ['required', 'integer', 'distinct', 'exists:library_books,id'],
         ]);
 
         if ($this->hasOverdueLoans($student)) {
@@ -264,7 +264,7 @@ class BorrowingController extends Controller
 
     private function activeLoanQuery(Student $student)
     {
-        $latestIds = DB::table('book_logs')
+        $latestIds = DB::table('library_book_logs')
             ->select(DB::raw('MAX(id) as id'))
             ->where('student_id', $student->id)
             ->groupBy('book_id');

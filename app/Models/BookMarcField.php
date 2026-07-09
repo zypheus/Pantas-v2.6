@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BookMarcField extends Model
 {
-    protected $table = 'book_marc_fields';
+    protected $table = 'library_book_marc_fields';
 
     protected $fillable = [
         'book_id',
@@ -18,4 +18,3 @@ class BookMarcField extends Model
         'value',
     ];
 }
-

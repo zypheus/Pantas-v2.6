@@ -23,7 +23,7 @@ class ProspectusSeeder extends Seeder
 
     private function clearProspectus(): void
     {
-        DB::table('book_program')->delete();
+        DB::table('library_book_program')->delete();
         Ebook::query()->update(['program_id' => null, 'course_id' => null]);
         ProgramCourse::query()->delete();
         ProgramYear::query()->delete();

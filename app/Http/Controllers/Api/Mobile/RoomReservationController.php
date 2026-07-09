@@ -40,7 +40,7 @@ class RoomReservationController extends Controller
     public function availability(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'room_id' => ['required', 'integer', 'exists:rooms,id'],
+            'room_id' => ['required', 'integer', 'exists:library_rooms,id'],
             'date' => ['required', 'date'],
         ]);
 
@@ -75,7 +75,7 @@ class RoomReservationController extends Controller
         }
 
         $validated = $request->validate([
-            'room_id' => ['required', 'integer', 'exists:rooms,id'],
+            'room_id' => ['required', 'integer', 'exists:library_rooms,id'],
             'date' => ['required', 'date', 'after_or_equal:today'],
             'start_time' => ['required', 'string'],
             'start_ampm' => ['required', 'string', 'in:AM,PM'],

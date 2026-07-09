@@ -26,6 +26,12 @@ Reference plan:
 - [x] Create this task tracker.
 - [x] Clarify remaining product/technical decisions before coding.
 - [x] Start Milestone 1: auth/module foundation.
+- [x] Start Milestone 3: route split.
+- [x] Complete Milestone 3: route split.
+- [x] Start Milestone 4: separated domain model foundation.
+- [x] Complete Milestone 4: models/controllers/services foundation.
+- [x] Complete Milestone 5: mobile API migration to Library domain tables.
+- [x] Complete Milestone 6: dashboards and module switching.
 
 ## Confirmed Decisions
 
@@ -44,7 +50,7 @@ Reference plan:
 - [x] Module switching: staff with multiple roles can switch active modules from the application shell.
 - [x] User roles: Spatie roles are authoritative; keep `users.role` temporarily as a compatibility bridge during migration.
 - [x] Default `super_admin` seed credentials for local development: `super_admin@pantas.test` / `password`.
-- [ ] Route naming: preserve current `pantas-v2.5` route names where possible, or switch to new module-prefixed names?
+- [x] Route naming: preserve current `pantas-v2.5` route names where possible; use module-prefixed names for new module-only routes.
 - [x] Milestone 1 scope: auth/module foundation only.
 
 ## Milestones
@@ -87,39 +93,39 @@ Reference plan:
 
 ### Milestone 3: Route Split
 
-- [ ] Keep `routes/web.php` for public/shared routes.
-- [ ] Add `routes/library.php`.
-- [ ] Add `routes/attendance.php`.
-- [ ] Add `routes/super-admin.php`.
-- [ ] Keep `routes/api.php` for `/api/mobile`.
-- [ ] Verify public routes still resolve.
-- [ ] Verify role-gated routes return expected access behavior.
+- [x] Keep `routes/web.php` for public/shared routes.
+- [x] Add `routes/library.php`.
+- [x] Add `routes/attendance.php`.
+- [x] Add `routes/super-admin.php`.
+- [x] Keep `routes/api.php` for `/api/mobile`.
+- [x] Verify public routes still resolve.
+- [x] Verify role-gated routes return expected access behavior.
 
 ### Milestone 4: Models, Controllers, And Services
 
-- [ ] Move Library workflows to Library-prefixed models/tables.
-- [ ] Add Attendance-prefixed models/tables for school attendance.
-- [ ] Keep existing behavior where possible.
-- [ ] Use services for circulation, attendance scanning, reports, SMS, and patron lookup where workflow complexity grows.
-- [ ] Add relationship and workflow tests.
+- [x] Move Library workflows to Library-prefixed models/tables.
+- [x] Add Attendance-prefixed models/tables for school attendance.
+- [x] Keep existing behavior where possible for route access and school attendance scanning.
+- [x] Use services for attendance scanning and attendance reports where workflow complexity grows.
+- [x] Add relationship and workflow tests for route split, Attendance scanner workflow, Attendance domain models, and Library domain model relationships.
 
 ### Milestone 5: Mobile API Migration
 
-- [ ] Update catalog endpoints to use Library books/e-books.
-- [ ] Update borrowing endpoints to use Library circulation logs.
-- [ ] Update room endpoints to use Library rooms/reservations.
-- [ ] Update feedback endpoints to use Library feedback records.
-- [ ] Confirm mobile user/profile linkage to Library patrons.
-- [ ] Run existing mobile API tests.
-- [ ] Review Pantas-UI API expectations before changing response shapes.
+- [x] Update catalog endpoints to use Library books/e-books.
+- [x] Update borrowing endpoints to use Library circulation logs.
+- [x] Update room endpoints to use Library rooms/reservations.
+- [x] Update feedback endpoints to use Library feedback records.
+- [x] Confirm mobile user/profile linkage to Library patrons.
+- [x] Run existing mobile API tests.
+- [x] Review Pantas-UI API expectations before changing response shapes.
 
 ### Milestone 6: Dashboards And Module Switching
 
-- [ ] Build module-aware dashboards.
-- [ ] Implement module switching if confirmed.
-- [ ] Verify `super_admin` can access all modules.
-- [ ] Verify single-module users land on the correct dashboard.
-- [ ] Add dashboard/module-switch tests.
+- [x] Build module-aware dashboards.
+- [x] Implement module switching if confirmed.
+- [x] Verify `super_admin` can access all modules.
+- [x] Verify single-module users land on the correct dashboard.
+- [x] Add dashboard/module-switch tests.
 
 ### Milestone 7: Library Attendance System
 
@@ -193,3 +199,12 @@ Reference plan:
 - Milestone 2 keeps legacy tables in place for compatibility, while adding fresh `library_*` and `attendance_*` domain tables.
 - School attendance logs now reference `attendance_students` and `attendance_employees`.
 - Library visit logs now live in `library_attendance_logs` and reference `library_students` and `library_employees`.
+- Milestone 3 moved public/shared routes into `web.php`, Library routes into `routes/library.php`, Attendance routes into `routes/attendance.php`, and staff-management routes into `routes/super-admin.php`.
+- Existing route names are preserved where possible so current Blade links and redirects continue to resolve.
+- Milestone 4 now has separated Eloquent models for the new `attendance_*` and `library_*` tables.
+- School attendance scanner, logs, reports, and feedback now use `AttendanceStudent` / `AttendanceEmployee` domain tables.
+- Existing Library workflow model names now point to `library_*` tables so controllers keep their current route/view contracts while storage moves into the separated Library domain.
+- Library validation rules and raw query joins now use Library-prefixed tables for books, circulation, programs, rooms, reservations, files, fines, holidays, patrons, e-books, and mobile feedback.
+- The Library schema includes compatibility columns for current cataloging, prospectus, room reservation, file repository, fine, holiday, and e-book workflows.
+- Mobile API catalog, borrowing, room reservation, and feedback flows now read/write Library domain tables while preserving response shapes.
+- Dashboard navigation is module-aware: Attendance-only staff no longer see Library navigation, Library-only staff no longer see Attendance navigation, and Super Admin keeps system/module access.

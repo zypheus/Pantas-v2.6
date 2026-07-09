@@ -13,7 +13,7 @@ class LinkMobileStudentUser extends Command
 {
     protected $signature = 'mobile:link-student-user
         {email : User email address for the mobile login account}
-        {--student-id= : Internal students.id value}
+        {--student-id= : Internal library_students.id value}
         {--id-number= : Student id_number value}
         {--create : Create the user when the email does not exist}
         {--password= : Password to use when creating the user}

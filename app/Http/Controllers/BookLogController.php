@@ -8,7 +8,6 @@ use App\Models\FineSetting;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BookLogController extends Controller
 {
@@ -184,7 +183,7 @@ class BookLogController extends Controller
             'copy_identifier' => 'nullable|string|max:255',
             'rfid' => 'nullable|string|max:255',
             'status' => 'required|string|in:checked_out,room_use,checked_in',
-            'student_id' => 'required|integer|exists:students,id',
+            'student_id' => 'required|integer|exists:library_students,id',
         ]);
 
         if ($copyCode === '') {
@@ -319,7 +318,7 @@ class BookLogController extends Controller
     public function renew(Request $request, Book $book)
     {
         $request->validate([
-            'student_id' => 'required|integer|exists:students,id',
+            'student_id' => 'required|integer|exists:library_students,id',
         ]);
 
         $studentId = (int) $request->student_id;

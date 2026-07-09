@@ -9,6 +9,8 @@ class ReservationLog extends Model
 {
     use HasFactory;
 
+    protected $table = 'library_reservation_logs';
+
     protected $fillable = [
         'reservation_id',
         'user_id',

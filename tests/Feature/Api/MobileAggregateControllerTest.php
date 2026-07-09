@@ -112,6 +112,93 @@ class MobileAggregateControllerTest extends TestCase
             ->assertJsonCount(1, 'data.availability.booked_slots');
     }
 
+    public function test_mobile_checkout_writes_to_library_circulation_tables(): void
+    {
+        $student = $this->student();
+        $book = $this->book();
+
+        Sanctum::actingAs($student);
+
+        $this->postJson('/api/mobile/borrow-cart/submit', [
+            'book_ids' => [$book->id],
+        ])
+            ->assertCreated()
+            ->assertJsonCount(1, 'data.processed');
+
+        $this->assertDatabaseHas('library_book_logs', [
+            'book_id' => $book->id,
+            'student_id' => $student->id,
+            'status' => 'Checked Out',
+        ]);
+        $this->assertDatabaseHas('library_books', [
+            'id' => $book->id,
+            'availability' => 'Borrowed',
+        ]);
+        $this->assertDatabaseMissing('book_logs', [
+            'book_id' => $book->id,
+            'student_id' => $student->id,
+        ]);
+    }
+
+    public function test_mobile_room_reservation_writes_to_library_room_tables(): void
+    {
+        $student = $this->student();
+        $room = Room::query()->create([
+            'name' => 'Mobile Room',
+            'description' => 'Bookable from mobile',
+            'capacity' => 4,
+        ]);
+
+        Sanctum::actingAs($student);
+
+        $this->postJson('/api/mobile/rooms/reservations', [
+            'room_id' => $room->id,
+            'date' => Carbon::now('Asia/Manila')->addDay()->toDateString(),
+            'start_time' => '9:00',
+            'start_ampm' => 'AM',
+            'end_time' => '10:00',
+            'end_ampm' => 'AM',
+            'number_of_students' => 1,
+            'student_names' => ['Test Student'],
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.room.id', $room->id);
+
+        $this->assertDatabaseHas('library_room_reservations', [
+            'room_id' => $room->id,
+            'student_id' => $student->id,
+            'status' => 'pending',
+        ]);
+        $this->assertDatabaseHas('library_reservation_students', [
+            'name' => 'Test Student',
+        ]);
+        $this->assertDatabaseMissing('room_reservations', [
+            'room_id' => $room->id,
+            'student_id' => $student->id,
+        ]);
+    }
+
+    public function test_mobile_feedback_writes_to_library_feedback_table(): void
+    {
+        $student = $this->student();
+
+        Sanctum::actingAs($student);
+
+        $this->postJson('/api/mobile/feedback', [
+            'comments' => 'The mobile library flow is working.',
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.comments', 'The mobile library flow is working.');
+
+        $this->assertDatabaseHas('library_feedback', [
+            'name' => 'Test Student',
+            'comments' => 'The mobile library flow is working.',
+        ]);
+        $this->assertDatabaseMissing('feedback', [
+            'comments' => 'The mobile library flow is working.',
+        ]);
+    }
+
     public function test_staff_user_is_rejected_from_student_aggregates(): void
     {
         $user = User::query()->create([

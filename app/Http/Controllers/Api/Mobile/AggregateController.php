@@ -202,7 +202,7 @@ class AggregateController extends Controller
 
             return DB::query()
                 ->fromSub($grouped, 'grouped')
-                ->join('books', 'books.id', '=', 'grouped.sample_id')
+                ->join('library_books', 'library_books.id', '=', 'grouped.sample_id')
                 ->select(
                     'grouped.title_statement',
                     'grouped.main_author',
@@ -210,12 +210,12 @@ class AggregateController extends Controller
                     'grouped.copies',
                     'grouped.sample_id as id',
                     'grouped.is_available',
-                    'books.call_number',
-                    'books.cover_image',
-                    'books.content_type',
-                    'books.library_name',
-                    'books.course',
-                    'books.section'
+                    'library_books.call_number',
+                    'library_books.cover_image',
+                    'library_books.content_type',
+                    'library_books.library_name',
+                    'library_books.course',
+                    'library_books.section'
                 )
                 ->orderByDesc('grouped.newest_copy_at')
                 ->limit(10)
@@ -239,7 +239,7 @@ class AggregateController extends Controller
 
     private function activeLoanQuery(Student $student)
     {
-        $latestIds = DB::table('book_logs')
+        $latestIds = DB::table('library_book_logs')
             ->select(DB::raw('MAX(id) as id'))
             ->where('student_id', $student->id)
             ->groupBy('book_id');

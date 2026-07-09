@@ -9,6 +9,8 @@ class ReservationStudent extends Model
 {
     use HasFactory;
 
+    protected $table = 'library_reservation_students';
+
     protected $fillable = [
         'reservation_id',
         'name',

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PendingEmployee extends Model
 {
-    protected $table = 'pending_employees';
+    protected $table = 'library_pending_employees';
 
     protected $fillable = [
         'firstname',

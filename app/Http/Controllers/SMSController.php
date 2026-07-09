@@ -121,7 +121,7 @@ class SMSController extends Controller
     }
 
     /**
-     * Single-number send (RFID scanner) or blast to filtered students.
+     * Single-number send (RFID scanner) or blast to filtered library_students.
      */
     public function send(Request $request)
     {
@@ -277,7 +277,7 @@ class SMSController extends Controller
     public function sendOneStudent(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|integer|exists:students,id',
+            'student_id' => 'required|integer|exists:library_students,id',
             'message' => 'required|string|max:2000',
         ]);
 
@@ -356,29 +356,29 @@ class SMSController extends Controller
             return back()->with('error', 'No valid mobile numbers to send to.'.($skipped > 0 ? " ({$skipped} skipped.)" : ''));
         }
 
-        $msg = count($payload).' message(s) queued for patrons with overdue books.';
+        $msg = count($payload).' message(s) queued for patrons with overdue library_books.';
         if ($skipped > 0) {
             $msg .= " {$skipped} skipped (invalid number).";
         }
 
         return $this->modemFlashAfterPost($this->postToSmsModem($payload), $msg);
     }
-    
+
     public function sendDirect(string $number, string $message): bool
     {
         $number = $this->normalizePhilippineMobile($number);
-    
+
         if ($number === '') {
             return false;
         }
-    
+
         $modemResponse = $this->postToSmsModem([
             [
                 'number' => $number,
                 'message' => $message,
-            ]
+            ],
         ]);
-    
+
         return $modemResponse && $modemResponse->successful();
     }
 }

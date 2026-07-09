@@ -67,7 +67,7 @@ class MarcField extends Model
     }
 
     /**
-     * Options for cataloging select: framework list + values already used on books.
+     * Options for cataloging select: framework list + values already used on library_books.
      *
      * @return list<string>
      */
@@ -92,4 +92,3 @@ class MarcField extends Model
             ->all();
     }
 }
-

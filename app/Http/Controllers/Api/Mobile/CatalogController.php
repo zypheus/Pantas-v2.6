@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CatalogController extends Controller
 {
@@ -148,7 +148,7 @@ class CatalogController extends Controller
 
         return DB::query()
             ->fromSub($grouped, 'grouped')
-            ->join('books', 'books.id', '=', 'grouped.sample_id')
+            ->join('library_books', 'library_books.id', '=', 'grouped.sample_id')
             ->select(
                 'grouped.title_statement',
                 'grouped.main_author',
@@ -157,12 +157,12 @@ class CatalogController extends Controller
                 'grouped.sample_id as id',
                 'grouped.is_available',
                 'grouped.newest_copy_at',
-                'books.call_number',
-                'books.cover_image',
-                'books.content_type',
-                'books.library_name',
-                'books.course',
-                'books.section'
+                'library_books.call_number',
+                'library_books.cover_image',
+                'library_books.content_type',
+                'library_books.library_name',
+                'library_books.course',
+                'library_books.section'
             )
             ->when(
                 $newestFirst,
@@ -249,8 +249,8 @@ class CatalogController extends Controller
                     ->orWhere('source_vendor', 'like', $like)
                     ->orWhere('source_date', 'like', $like)
                     ->orWhereHas('programs', function (Builder $program) use ($token) {
-                        $program->where('programs.program_name', 'like', "%{$token}%")
-                            ->orWhere('programs.program_code', 'like', "%{$token}%");
+                        $program->where('library_programs.program_name', 'like', "%{$token}%")
+                            ->orWhere('library_programs.program_code', 'like', "%{$token}%");
                     });
             });
         }

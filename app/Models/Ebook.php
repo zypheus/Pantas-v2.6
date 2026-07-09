@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ebook extends Model
 {
+    protected $table = 'library_ebooks';
+
     //
     protected $fillable = [
         'title',
@@ -17,15 +19,14 @@ class Ebook extends Model
         'program_id',
         'course_id',
     ];
-    
+
     public function program()
     {
         return $this->belongsTo(Program::class, 'program_id');
     }
-    
+
     public function course()
     {
         return $this->belongsTo(ProgramCourse::class, 'course_id');
     }
-
 }
