@@ -32,6 +32,20 @@ class PublicRegistrationSplitTest extends TestCase
             ->assertSee(route('attendance.register', absolute: false));
     }
 
+    public function test_landing_page_contains_login_register_modal_for_both_services(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertOk()
+            ->assertSee('data-auth-open="login"', false)
+            ->assertSee('Attendance Registration', false)
+            ->assertSee('Library Registration', false)
+            ->assertSee(route('attendance.pending.store', absolute: false))
+            ->assertSee(route('attendance.pendingEmployee.store', absolute: false))
+            ->assertSee(route('library.pending.store', absolute: false))
+            ->assertSee(route('library.pendingEmployee.store', absolute: false));
+    }
+
     public function test_attendance_registration_creates_attendance_pending_student_only(): void
     {
         $response = $this->post('/register/attendance', [
@@ -49,6 +63,29 @@ class PublicRegistrationSplitTest extends TestCase
         ]);
         $this->assertDatabaseMissing('library_pending_students', [
             'student_id' => 'ATT-PENDING-001',
+        ]);
+    }
+
+    public function test_attendance_employee_registration_creates_pending_employee_with_qr_style_code(): void
+    {
+        $response = $this->post('/register/attendance/employee', [
+            'employee_id' => 'ATT-EMP-001',
+            'firstname' => 'Grace',
+            'lastname' => 'Hopper',
+            'department' => 'Computer Science',
+            'position' => 'Faculty',
+            'mobile_number' => '09171234567',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('attendance_pending_employees', [
+            'employee_id' => 'ATT-EMP-001',
+            'firstname' => 'Grace',
+            'mobile_number' => '09171234567',
+            'qrcode' => 'AE-00000001',
+        ]);
+        $this->assertDatabaseMissing('library_pending_employees', [
+            'employee_id' => 'ATT-EMP-001',
         ]);
     }
 

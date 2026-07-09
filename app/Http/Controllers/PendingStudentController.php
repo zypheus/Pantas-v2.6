@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Program;
 use App\Models\PendingEmployee;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PendingStudentController extends Controller
@@ -85,7 +86,11 @@ class PendingStudentController extends Controller
 
         PendingStudent::create($validated);
 
-        return back()->with('success', 'Registration submitted. Awaiting admin approval.');
+        return back()
+            ->with('auth_modal', 'register')
+            ->with('auth_service', 'library')
+            ->with('auth_type', 'student')
+            ->with('success', 'Registration submitted. Awaiting admin approval.');
     }
 
     /**

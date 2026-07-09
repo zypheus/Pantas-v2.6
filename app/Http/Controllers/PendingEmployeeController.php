@@ -91,8 +91,10 @@ class PendingEmployeeController extends Controller
 
         PendingEmployee::create($validated);
 
-        return redirect()
-            ->route('patron.register')
+        return back()
+            ->with('auth_modal', 'register')
+            ->with('auth_service', 'library')
+            ->with('auth_type', 'employee')
             ->with('success', 'Faculty & staff registration submitted. Please wait for library approval.');
     }
 

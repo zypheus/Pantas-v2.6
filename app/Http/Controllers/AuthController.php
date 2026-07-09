@@ -31,6 +31,17 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
+            if (! $user->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->withInput($request->only('email', 'remember'))
+                    ->with('auth_modal', 'login')
+                    ->with('error', 'This account is inactive. Please contact an administrator.');
+            }
+
             try {
                 $module = $this->moduleAccess->defaultModule($user);
                 $request->session()->put('active_module', $module);
@@ -41,13 +52,19 @@ class AuthController extends Controller
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('login')->with('error', 'No dashboard is available for this account.');
+                return back()
+                    ->withInput($request->only('email', 'remember'))
+                    ->with('auth_modal', 'login')
+                    ->with('error', 'No dashboard is available for this account.');
             }
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ]);
+        return back()
+            ->withInput($request->only('email', 'remember'))
+            ->with('auth_modal', 'login')
+            ->withErrors([
+                'email' => 'Invalid credentials.',
+            ]);
     }
 
     public function logout(Request $request)
