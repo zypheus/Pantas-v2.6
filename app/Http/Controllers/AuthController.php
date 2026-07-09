@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Auth\ModuleAccessService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly ModuleAccessService $moduleAccess) {}
+
     public function showLogin()
     {
         if (auth()->check()) {
-            $role = auth()->user()->role;
-            return match ($role) {
-                'admin', 'staff' => redirect()->route('book.index'),
-                'student', 'faculty' => redirect()->route('landing'),
-                default => redirect()->route('login')->with('error', 'Unauthorized role.'),
-            };
+            return redirect()->route('dashboard');
         }
+
         return view('auth.login');
     }
 
@@ -27,16 +26,23 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            return match ($user->role) {
-                'admin', 'staff' => redirect()->route('book.index'),
-                'student', 'faculty' => redirect()->route('landing'),
-                default => redirect()->route('login')->with('error', 'Unauthorized role.'),
-            };
+            try {
+                $module = $this->moduleAccess->defaultModule($user);
+                $request->session()->put('active_module', $module);
+
+                return redirect()->route($this->moduleAccess->dashboardRouteForModule($user, $module));
+            } catch (\InvalidArgumentException) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->with('error', 'No dashboard is available for this account.');
+            }
         }
 
         return back()->withErrors([
@@ -49,6 +55,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }

@@ -10,7 +10,7 @@
         <div>
             <p class="accounts-page__eyebrow">User management</p>
             <h1 class="accounts-page__title">Create account</h1>
-            <p class="accounts-page__subtitle">Add a staff, faculty, or admin login for the library system.</p>
+            <p class="accounts-page__subtitle">Add a module-aware staff login for the Library and Attendance system.</p>
         </div>
         <div class="accounts-page__hero-actions">
             <a href="{{ route('users.index') }}" class="accounts-btn accounts-btn--outline">View users</a>
@@ -55,10 +55,11 @@
                 <label class="form-label d-block mb-2">Role</label>
                 <select id="role" name="role" class="form-select" required>
                     <option value="">Select role</option>
-                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="staff" {{ old('role') === 'staff' ? 'selected' : '' }}>Staff</option>
-                    <option value="faculty" {{ old('role') === 'faculty' ? 'selected' : '' }}>Faculty</option>
-                    <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
+                    <option value="super_admin" {{ old('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                    <option value="library_admin" {{ old('role') === 'library_admin' ? 'selected' : '' }}>Library Admin</option>
+                    <option value="library_staff" {{ old('role') === 'library_staff' ? 'selected' : '' }}>Library Staff</option>
+                    <option value="attendance_admin" {{ old('role') === 'attendance_admin' ? 'selected' : '' }}>Attendance Admin</option>
+                    <option value="attendance_staff" {{ old('role') === 'attendance_staff' ? 'selected' : '' }}>Attendance Staff</option>
                 </select>
                 <p class="accounts-form-hint">Admin: full access · Staff: daily operations · Faculty/Student: limited.</p>
             </div>

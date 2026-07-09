@@ -14,7 +14,8 @@ return new class extends Migration
 
         Schema::create('attendance_feedback', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
+            $table->foreignId('student_id')->nullable()->constrained('attendance_students')->cascadeOnDelete();
+            $table->foreignId('employee_id')->nullable()->constrained('attendance_employees')->cascadeOnDelete();
             $table->string('rating', 32)->nullable();
             $table->boolean('declined')->default(false);
             $table->timestamps();

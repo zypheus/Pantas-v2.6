@@ -13,7 +13,7 @@
         <div>
             <p class="accounts-page__eyebrow">User management</p>
             <h1 class="accounts-page__title">User accounts</h1>
-            <p class="accounts-page__subtitle">Manage logins for staff, faculty, and administrators.</p>
+            <p class="accounts-page__subtitle">Manage module-aware staff logins.</p>
         </div>
         <div class="accounts-page__hero-actions">
             <a href="{{ route('users.create') }}" class="accounts-btn accounts-btn--primary">+ Create account</a>
@@ -30,16 +30,16 @@
             <div class="accounts-stat__label">Total users</div>
         </div>
         <div class="accounts-stat">
-            <div class="accounts-stat__value">{{ $roleCounts->get('admin', 0) }}</div>
-            <div class="accounts-stat__label">Admins</div>
+            <div class="accounts-stat__value">{{ $roleCounts->get('super_admin', 0) }}</div>
+            <div class="accounts-stat__label">Super Admins</div>
         </div>
         <div class="accounts-stat">
-            <div class="accounts-stat__value">{{ $roleCounts->get('staff', 0) }}</div>
-            <div class="accounts-stat__label">Staff</div>
+            <div class="accounts-stat__value">{{ $roleCounts->get('library_admin', 0) + $roleCounts->get('library_staff', 0) }}</div>
+            <div class="accounts-stat__label">Library Staff</div>
         </div>
         <div class="accounts-stat">
-            <div class="accounts-stat__value">{{ $roleCounts->get('faculty', 0) + $roleCounts->get('student', 0) }}</div>
-            <div class="accounts-stat__label">Faculty / Student</div>
+            <div class="accounts-stat__value">{{ $roleCounts->get('attendance_admin', 0) + $roleCounts->get('attendance_staff', 0) }}</div>
+            <div class="accounts-stat__label">Attendance Staff</div>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
                     <tbody>
                         @foreach($users as $user)
                             @php
-                                $roleClass = in_array($user->role, ['admin', 'staff', 'faculty', 'student'], true)
+                                $roleClass = in_array($user->role, ['super_admin', 'library_admin', 'library_staff', 'attendance_admin', 'attendance_staff'], true)
                                     ? $user->role
                                     : 'default';
                             @endphp

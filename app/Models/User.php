@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'password',
         'role',
         'student_id',
+        'is_active',
     ];
 
     /**
@@ -47,8 +49,26 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return trim((string) $this->fname.' '.(string) $this->lname);
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->full_name !== '' ? $this->full_name : (string) $this->email;
+    }
+
+    public function getRoleAttribute(?string $value): ?string
+    {
+        $spatieRole = $this->roles->first()?->name;
+
+        return $spatieRole ?: $value;
     }
 
     public function student(): BelongsTo

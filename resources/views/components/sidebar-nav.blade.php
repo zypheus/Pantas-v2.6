@@ -15,7 +15,7 @@
     </a>
     <div class="sidebar-user-info">
         <span class="sidebar-user-name">{{ Auth::user()->name ?? 'User' }}</span>
-        <span class="sidebar-role-badge">{{ ucfirst(Auth::user()->role ?? 'staff') }}</span>
+        <span class="sidebar-role-badge">{{ str_replace('_', ' ', ucfirst(Auth::user()->role ?? 'staff')) }}</span>
     </div>
 </div>
 

@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Middleware\EnsureActiveStaff;
+use App\Http\Middleware\EnsureAttendanceAccess;
+use App\Http\Middleware\EnsureAttendanceAdmin;
+use App\Http\Middleware\EnsureLibraryAccess;
+use App\Http\Middleware\EnsureLibraryAdmin;
+use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,7 +19,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->web(append: [
+            EnsureActiveStaff::class,
+        ]);
+
+        $middleware->alias([
+            'attendance.access' => EnsureAttendanceAccess::class,
+            'attendance.admin' => EnsureAttendanceAdmin::class,
+            'library.access' => EnsureLibraryAccess::class,
+            'library.admin' => EnsureLibraryAdmin::class,
+            'super-admin' => EnsureSuperAdmin::class,
+        ]);
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('attendance:close-stale-ins')

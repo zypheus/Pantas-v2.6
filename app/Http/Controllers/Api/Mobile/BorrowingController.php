@@ -12,6 +12,7 @@ use App\Models\FineSetting;
 use App\Models\Holiday;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\Auth\ModuleAccessService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -143,6 +144,7 @@ class BorrowingController extends Controller
                         'book_id' => $bookId,
                         'reason' => 'Book is not available for checkout.',
                     ];
+
                     continue;
                 }
 
@@ -152,6 +154,7 @@ class BorrowingController extends Controller
                         'title' => $book->title_statement,
                         'reason' => 'Book is not available.',
                     ];
+
                     continue;
                 }
 
@@ -163,6 +166,7 @@ class BorrowingController extends Controller
                         'title' => $book->title_statement,
                         'reason' => $cooldownMessage,
                     ];
+
                     continue;
                 }
 
@@ -238,7 +242,7 @@ class BorrowingController extends Controller
         }
 
         if ($tokenable instanceof User) {
-            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+            if (app(ModuleAccessService::class)->availableModules($tokenable) !== []) {
                 return response()->json([
                     'message' => 'This account is not allowed to use mobile borrowing.',
                     'data' => null,

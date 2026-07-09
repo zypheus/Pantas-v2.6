@@ -1,47 +1,46 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\BookLogController;
-use App\Http\Controllers\RFIDScanController;
-use App\Http\Controllers\BookImportController; 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EbookController;
-use App\Http\Controllers\ProspectusController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AttendanceLogController;
-use App\Http\Controllers\ExportController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\IdCardController;
-use Spatie\SimpleExcel\SimpleExcelWriter;
-use App\Http\Controllers\PendingStudentController;
-use App\Http\Controllers\PendingEmployeeController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\RoomReservationController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\SMSController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\FeedController;
-use App\Http\Controllers\FineSettingController;
-use App\Http\Controllers\FineClearanceController;
-use App\Http\Controllers\HolidayController;
-use App\Http\Controllers\OpenLibraryCopyCatalogController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookImportController;
+use App\Http\Controllers\BookLogController;
 use App\Http\Controllers\CatalogFrameworkAdminController;
 use App\Http\Controllers\CatalogMarcSelectOptionsController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EbookController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeIdCardController;
-use Carbon\Carbon;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\FineClearanceController;
+use App\Http\Controllers\FineSettingController;
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\IdCardController;
+use App\Http\Controllers\ModuleSelectionController;
+use App\Http\Controllers\OpenLibraryCopyCatalogController;
+use App\Http\Controllers\PendingEmployeeController;
+use App\Http\Controllers\PendingStudentController;
+use App\Http\Controllers\ProspectusController;
+use App\Http\Controllers\RFIDScanController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomReservationController;
+use App\Http\Controllers\SMSController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UserController;
 use App\Models\Book;
+use Illuminate\Support\Facades\Route;
 
 // =============================
 // Public Routes
 // =============================
 Route::get('/', function () {
-    if (auth()->check() && in_array(auth()->user()->role, ['admin', 'staff'], true)) {
-        return redirect()->route('book.index');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
     }
 
     return view('index');
@@ -52,7 +51,13 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/index', fn() => redirect()->route('book.index'));
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
+Route::post('/switch-module', [ModuleSelectionController::class, 'store'])
+    ->middleware('auth')
+    ->name('module.switch');
+Route::get('/index', fn () => redirect()->route('book.index'));
 Route::get('/filter/years', [BookController::class, 'getYears']);
 Route::get('/filter/courses', [BookController::class, 'getCourses']);
 Route::get('/rooms/book', [RoomReservationController::class, 'create'])->name('rooms.book');
@@ -66,12 +71,11 @@ Route::post('/register-employee', [PendingEmployeeController::class, 'store'])->
 Route::redirect('/patrons/register', '/register');
 // Feedback Form (User-facing)
 Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
-Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store'); 
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 Route::get('/books/copies', [BookController::class, 'viewCopies'])->name('books.copies');
 
 Route::get('/attendance', [AttendanceController::class, 'showScanner'])->name('attendance.scan');
 Route::post('/attendance', [AttendanceController::class, 'scan'])->name('attendance.process');
-
 
 Route::post('/attendance-feedback', [FeedController::class, 'store'])
     ->name('attendance.feedback.store');
@@ -96,12 +100,11 @@ Route::post('/checkout/bulk', [CheckoutController::class, 'bulk'])
 // Student / Faculty only
 // =============================
 
-
 // =============================
 // Admin + Staff
 // =============================
 Route::middleware(['auth', 'can:isAdminOrStaff'])->group(function () {
-    
+
     Route::resource('book', BookController::class);
     Route::get('/book/catalog/courses-for-programs', [BookController::class, 'coursesForPrograms'])
         ->name('books.coursesForPrograms');
@@ -127,25 +130,24 @@ Route::middleware(['auth', 'can:isAdminOrStaff'])->group(function () {
     Route::get('/export-books', [ExportController::class, 'exportBooks'])->name('export.books');
     Route::get('/export-transactions', [ExportController::class, 'exportTransactions'])->name('transactions.export');
 
-
     // Attendance Scanner and Book Reports (Admin + Staff)
-    
+
     Route::get('/download-book-report', [BookController::class, 'downloadBookReport'])->name('book.report.download');
     Route::get('/book-report-by-course', [BookController::class, 'bookReportByCourse'])->name('book.report.by.course');
     Route::get('/attendance/change-video', [AttendanceController::class, 'showChangeVideo'])->name('attendance.changeVideo');
     Route::post('/attendance/upload-video', [AttendanceController::class, 'uploadVideo'])->name('attendance.uploadVideo');
     Route::get('/attendance/logout-feedback', [AttendanceController::class, 'feedbackSettings'])->name('attendance.feedback.settings');
     Route::post('/attendance/logout-feedback', [AttendanceController::class, 'updateFeedbackSettings'])->name('attendance.feedback.settings.update');
-    
+
     Route::get('/patron-suggestions', [BookLogController::class, 'patronSuggestions'])->name('patron.suggestions');
     Route::get('/book-suggestions', [BookLogController::class, 'bookSuggestions'])->name('book.suggestions');
     Route::get('/book-title-log-suggestions', [BookLogController::class, 'bookTitleLogSuggestions'])->name('book.title.log.suggestions');
     Route::get('/catalog/copy/openlibrary', [OpenLibraryCopyCatalogController::class, 'searchForm'])
-    ->name('catalog.copy.openlibrary.form');
-    
+        ->name('catalog.copy.openlibrary.form');
+
     Route::match(['get', 'post'], '/catalog/copy/openlibrary/search', [OpenLibraryCopyCatalogController::class, 'search'])
         ->name('catalog.copy.openlibrary.search');
-    
+
     Route::post('/catalog/copy/openlibrary/store', [OpenLibraryCopyCatalogController::class, 'store'])
         ->name('catalog.copy.openlibrary.store');
 
@@ -224,7 +226,7 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get('/edit-user/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/update-user/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/delete-user/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-    
+
     Route::get('/create-user', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
 
@@ -236,11 +238,11 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::post('/admin/pending/{id}/approve', [StudentController::class, 'approve'])->name('students.approve');
     Route::post('/admin/pending/{id}/reject', [StudentController::class, 'reject'])->name('students.reject');
     Route::get('/pending', [PendingStudentController::class, 'index'])->name('pending.index');
-    
+
     Route::get('/pending/employees', [PendingEmployeeController::class, 'index'])->name('pending.employees');
     Route::post('/pending/employees/approve/{id}', [PendingEmployeeController::class, 'approve'])->name('employees.approve');
     Route::post('/pending/employees/reject/{id}', [PendingEmployeeController::class, 'reject'])->name('employees.reject');
-    
+
     Route::prefix('employees')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
         Route::get('/create', [EmployeeController::class, 'create'])->name('employees.create');
@@ -254,21 +256,21 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         Route::get('/back/{id}', [EmployeeIdCardController::class, 'back'])->name('employees.id.back');
         Route::get('/download/{id}', [EmployeeIdCardController::class, 'download'])->name('employees.id.download');
     });
-    
+
     Route::get('/rooms/pending', [RoomReservationController::class, 'pending'])->name('rooms.pending');
     Route::post('/rooms/{id}/approve', [RoomReservationController::class, 'approve'])->name('rooms.approve');
     Route::post('/rooms/reject/{id}', [RoomReservationController::class, 'reject'])->name('rooms.reject');
     Route::delete('/resrooms/{id}', [RoomReservationController::class, 'destroy'])->name('resrooms.destroy');
     Route::get('/rooms/check-availability', [RoomReservationController::class, 'checkAvailability'])->name('rooms.check');
     Route::get('/rooms/logs', [RoomReservationController::class, 'logs'])->name('rooms.logs');
-    
+
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::get('/rooms/{id}/edit', [RoomController::class, 'edit'])->name('rooms.edit');
     Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('rooms.update');
     Route::delete('/rooms/{id}', [RoomController::class, 'destroy'])->name('rooms.destroy');
-    
+
     Route::get('/admin/fines', [FineSettingController::class, 'edit'])->name('fines.edit');
     Route::post('/admin/fines', [FineSettingController::class, 'update'])->name('fines.update');
     Route::get('/admin/fines/outstanding', [FineClearanceController::class, 'index'])->name('fines.outstanding');
@@ -300,3 +302,7 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
         ->name('admin.catalog_select_options.destroy');
 
 });
+
+require __DIR__.'/attendance.php';
+require __DIR__.'/library.php';
+require __DIR__.'/super-admin.php';

@@ -50,10 +50,11 @@
                     <div class="mb-4">
                         <label for="role" class="form-label">Role</label>
                         <select name="role" id="role" class="form-select" required>
-                            <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="staff" {{ old('role', $user->role) === 'staff' ? 'selected' : '' }}>Staff</option>
-                            <option value="faculty" {{ old('role', $user->role) === 'faculty' ? 'selected' : '' }}>Faculty</option>
-                            <option value="student" {{ old('role', $user->role) === 'student' ? 'selected' : '' }}>Student</option>
+                            <option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                            <option value="library_admin" {{ old('role', $user->role) === 'library_admin' ? 'selected' : '' }}>Library Admin</option>
+                            <option value="library_staff" {{ old('role', $user->role) === 'library_staff' ? 'selected' : '' }}>Library Staff</option>
+                            <option value="attendance_admin" {{ old('role', $user->role) === 'attendance_admin' ? 'selected' : '' }}>Attendance Admin</option>
+                            <option value="attendance_staff" {{ old('role', $user->role) === 'attendance_staff' ? 'selected' : '' }}>Attendance Staff</option>
                         </select>
                     </div>
 
@@ -74,7 +75,7 @@
                     <dt class="text-muted small">Current role</dt>
                     <dd class="mb-2">
                         @php
-                            $roleClass = in_array($user->role, ['admin', 'staff', 'faculty', 'student'], true)
+                            $roleClass = in_array($user->role, ['super_admin', 'library_admin', 'library_staff', 'attendance_admin', 'attendance_staff'], true)
                                 ? $user->role
                                 : 'default';
                         @endphp

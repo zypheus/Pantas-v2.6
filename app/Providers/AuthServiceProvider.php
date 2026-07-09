@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Services\Auth\ModuleAccessService;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use App\Models\User;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,16 +15,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('isAdmin', fn(User $user) => $user->role === 'admin');
+        Gate::define('isAdmin', fn (User $user) => app(ModuleAccessService::class)->hasLibraryAdminAccess($user));
 
-        Gate::define('isStaff', fn(User $user) => $user->role === 'staff');
+        Gate::define('isStaff', fn (User $user) => app(ModuleAccessService::class)->hasLibraryAccess($user));
 
-        Gate::define('isAdminOrStaff', fn(User $user) =>
-            in_array($user->role, ['admin', 'staff'])
-        );
+        Gate::define('isAdminOrStaff', fn (User $user) => app(ModuleAccessService::class)->hasLibraryAccess($user));
 
-        Gate::define('isStudent', fn(User $user) =>
-            in_array($user->role, ['student', 'faculty']) // treat faculty same
+        Gate::define('isStudent', fn (User $user) => in_array($user->role, ['student', 'faculty']) // treat faculty same
         );
     }
 }

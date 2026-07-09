@@ -6,7 +6,6 @@ use App\Models\Student;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\MarcFrameworkSeeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            RoleSeeder::class,
             MarcFrameworkSeeder::class,
             ProspectusSeeder::class,
             EmployeeSampleSeeder::class,
@@ -24,22 +24,25 @@ class DatabaseSeeder extends Seeder
             BookSampleSeeder::class,
             RoomSampleSeeder::class,
             FineSettingSeeder::class,
+            SuperAdminSeeder::class,
         ]);
 
         $adminPassword = Hash::make('password', [
             'rounds' => 12,
         ]);
 
-        User::updateOrCreate(
+        $adminUser = User::updateOrCreate(
             ['email' => 'admin@test.local'],
             [
                 'fname' => 'PANTAS',
                 'lname' => 'Admin',
                 'password' => $adminPassword,
-                'role' => 'admin',
+                'role' => 'library_admin',
                 'student_id' => null,
+                'is_active' => true,
             ]
         );
+        $adminUser->syncRoles(['library_admin']);
 
         $mobileStudent = Student::query()
             ->where('id_number', '24-10003')
@@ -56,6 +59,7 @@ class DatabaseSeeder extends Seeder
                     ]),
                     'role' => 'student',
                     'student_id' => $mobileStudent->id,
+                    'is_active' => true,
                 ]
             );
         }

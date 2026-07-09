@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\RoomReservation;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\Auth\ModuleAccessService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -258,7 +259,7 @@ class RoomReservationController extends Controller
         }
 
         if ($tokenable instanceof User) {
-            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+            if (app(ModuleAccessService::class)->availableModules($tokenable) !== []) {
                 return response()->json([
                     'message' => 'This account is not allowed to use mobile room reservations.',
                     'data' => null,

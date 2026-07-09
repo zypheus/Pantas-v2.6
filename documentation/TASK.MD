@@ -24,8 +24,8 @@ Reference plan:
 - [x] Confirm separated Attendance + Library architecture direction.
 - [x] Create detailed migration plan.
 - [x] Create this task tracker.
-- [ ] Clarify remaining product/technical decisions before coding.
-- [ ] Start Milestone 1: auth/module foundation.
+- [x] Clarify remaining product/technical decisions before coding.
+- [x] Start Milestone 1: auth/module foundation.
 
 ## Confirmed Decisions
 
@@ -40,50 +40,50 @@ Reference plan:
 
 ## Open Questions
 
-- [ ] Frontend direction: keep `pantas-v2.5` Blade + Tailwind/Flowbite/daisyUI, or migrate to a new frontend architecture?
-- [ ] Module switching: should staff with multiple roles switch active modules from the application shell?
-- [ ] User roles: remove `users.role` entirely in favor of Spatie roles, or keep it temporarily during migration?
-- [ ] Default `super_admin` seed credentials for local development.
+- [x] Frontend direction: keep `pantas-v2.5` Blade + Tailwind/Flowbite/daisyUI for Milestone 1.
+- [x] Module switching: staff with multiple roles can switch active modules from the application shell.
+- [x] User roles: Spatie roles are authoritative; keep `users.role` temporarily as a compatibility bridge during migration.
+- [x] Default `super_admin` seed credentials for local development: `super_admin@pantas.test` / `password`.
 - [ ] Route naming: preserve current `pantas-v2.5` route names where possible, or switch to new module-prefixed names?
-- [ ] Milestone 1 scope: auth/module foundation only, or include first separated domain tables?
+- [x] Milestone 1 scope: auth/module foundation only.
 
 ## Milestones
 
 ### Milestone 1: Auth And Module Foundation
 
-- [ ] Add or standardize Spatie role usage.
-- [ ] Seed roles:
+- [x] Add or standardize Spatie role usage.
+- [x] Seed roles:
   - `super_admin`
   - `library_admin`
   - `library_staff`
   - `attendance_admin`
   - `attendance_staff`
-- [ ] Seed a default `super_admin`.
-- [ ] Add `users.is_active`.
-- [ ] Add module access service.
-- [ ] Add module middleware:
+- [x] Seed a default `super_admin`.
+- [x] Add `users.is_active`.
+- [x] Add module access service.
+- [x] Add module middleware:
   - `super-admin`
   - `library.access`
   - `library.admin`
   - `attendance.access`
   - `attendance.admin`
-- [ ] Add role-aware login redirect behavior.
-- [ ] Add dashboard routes:
+- [x] Add role-aware login redirect behavior.
+- [x] Add dashboard routes:
   - Super Admin
   - Library Admin
   - Library Staff
   - Attendance Admin
   - Attendance Staff
-- [ ] Add tests for role access, login redirects, and inactive staff behavior.
+- [x] Add tests for role access, login redirects, and inactive staff behavior.
 
 ### Milestone 2: Fresh Separated Domain Schema
 
-- [ ] Create Library domain tables.
-- [ ] Create Attendance domain tables.
-- [ ] Create or update shared/system tables.
-- [ ] Ensure Library attendance logs reference only Library patrons.
-- [ ] Ensure school Attendance logs reference only Attendance patrons.
-- [ ] Add migration/schema tests.
+- [x] Create Library domain tables.
+- [x] Create Attendance domain tables.
+- [x] Create or update shared/system tables.
+- [x] Ensure Library attendance logs reference only Library patrons.
+- [x] Ensure school Attendance logs reference only Attendance patrons.
+- [x] Add migration/schema tests.
 
 ### Milestone 3: Route Split
 
@@ -187,3 +187,9 @@ Reference plan:
 - Current `pantas-v2.5` uses simple `users.role` values such as `admin`, `staff`, `student`, and `faculty`.
 - `pantas-v2.5` owns `/api/mobile`, so schema changes must account for Pantas-UI.
 - Library attendance and school Attendance must be explicitly isolated in schema, routes, controllers, and tests.
+- Spatie permission config/migrations existed, but the package dependency was missing and the existing role migration was not Spatie-compatible.
+- The test suite was configured to use the local MySQL database. It now uses SQLite in-memory for safer repeatable tests.
+- Full-suite testing still exposes older Breeze/profile/password-reset tests for routes not currently registered by this app.
+- Milestone 2 keeps legacy tables in place for compatibility, while adding fresh `library_*` and `attendance_*` domain tables.
+- School attendance logs now reference `attendance_students` and `attendance_employees`.
+- Library visit logs now live in `library_attendance_logs` and reference `library_students` and `library_employees`.

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\Auth\ModuleAccessService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -112,7 +113,7 @@ class AuthController extends Controller
         }
 
         if ($tokenable instanceof User) {
-            if (in_array($tokenable->role, ['admin', 'staff'], true)) {
+            if (app(ModuleAccessService::class)->availableModules($tokenable) !== []) {
                 return response()->json([
                     'message' => 'This account is not allowed to use the mobile app.',
                     'data' => null,

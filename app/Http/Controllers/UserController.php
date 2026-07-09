@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -21,31 +22,35 @@ class UserController extends Controller
             'fname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'role' => 'required|in:admin,staff,faculty,student',
+            'role' => 'required|in:super_admin,library_admin,library_staff,attendance_admin,attendance_staff',
         ]);
 
         // Create user
-        User::create([
+        $user = User::create([
             'lname' => $validated['lname'],
             'fname' => $validated['fname'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'is_active' => true,
         ]);
+        $user->syncRoles([$validated['role']]);
 
         return redirect()->route('users.create')->with('success', 'User account created successfully!');
     }
-    
+
     // show user
-   public function index()
+    public function index()
     {
         $users = User::orderBy('lname')->orderBy('fname')->get();
+
         return view('accounts.index', compact('users'));
     }
 
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         return view('accounts.edit', compact('user'));
     }
 
@@ -55,11 +60,12 @@ class UserController extends Controller
             'fname' => 'required|string',
             'lname' => 'required|string',
             'email' => 'required|email',
-            'role' => 'required|in:admin,staff,faculty,student',
+            'role' => 'required|in:super_admin,library_admin,library_staff,attendance_admin,attendance_staff',
         ]);
 
         $user = User::findOrFail($id);
         $user->update($request->only(['fname', 'lname', 'email', 'role']));
+        $user->syncRoles([$request->string('role')->toString()]);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
