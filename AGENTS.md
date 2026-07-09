@@ -1,4 +1,4 @@
-# AGENTS.md — pantas-v2.5
+# AGENTS.md - pantas-v2.5
 
 Laravel 12 library management backend (Pantas v2.6 line). **Mobile API owner** for Pantas-UI.
 
@@ -15,16 +15,31 @@ Run all commands from this directory (`pantas-v2.5/`).
 
 ## Key Paths
 
-- `app/Http/Controllers/` — request handling
-- `app/Models/` — Eloquent models
-- `database/migrations/` — schema changes
-- `database/seeders/` — seed data (including MARC/catalog)
-- `resources/views/` — Blade templates
-- `routes/web.php` — web routes
-- `routes/api.php` — mobile API under `/api/mobile`
-- `tests/` — PHPUnit tests
+- `app/Http/Controllers/` - request handling
+- `app/Models/` - Eloquent models
+- `database/migrations/` - schema changes
+- `database/seeders/` - seed data (including MARC/catalog)
+- `documentation/architecture-migration-plan.md` - canonical architecture migration plan
+- `documentation/TASK.MD` - current task tracker, milestones, backlog, and discoveries
+- `resources/views/` - Blade templates
+- `routes/web.php` - web routes
+- `routes/api.php` - mobile API under `/api/mobile`
+- `tests/` - PHPUnit tests
 
 Legacy static files (`about.html`, `style.css`, etc.) exist at repo root. Prefer Laravel routes, Blade, and Vite assets for new work.
+
+## Required Planning Context
+
+Before planning or implementing any architecture, role, route, migration, attendance, library, mobile API, dashboard, or patron workflow change, read:
+
+1. `documentation/architecture-migration-plan.md`
+2. `documentation/TASK.MD`
+
+Treat these files as the current source of truth for the separated Attendance + Library migration. Keep `documentation/TASK.MD` updated when work starts, subtasks change, new risks are discovered, or milestones are completed.
+
+Always ask clarifying questions before implementation when context, desired behavior, migration scope, data ownership, route compatibility, mobile API contracts, frontend direction, role permissions, or workflow rules are not fully specified. Do not proceed from assumptions on these topics.
+
+If a user asks to implement a task from the migration plan, first restate the target milestone/subtask, identify the files likely to change, list any open questions, and wait for confirmation when the change affects schema, roles, module access, attendance logs, library attendance logs, mobile API contracts, patron registration, circulation, fines, room reservations, or reports.
 
 ## Mobile API
 
