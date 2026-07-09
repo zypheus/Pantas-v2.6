@@ -29,6 +29,7 @@ class AttendanceRegistrationController extends Controller
             'lastname' => ['required', 'string', 'max:255'],
             'middle_initial' => ['nullable', 'string', 'max:10'],
             'birth_date' => ['nullable', 'date'],
+            'educational_level' => ['nullable', 'string', 'max:255'],
             'blood_type' => ['nullable', 'string', 'max:10'],
             'course' => ['nullable', 'string', 'max:255'],
             'year' => ['nullable', 'string', 'max:255'],

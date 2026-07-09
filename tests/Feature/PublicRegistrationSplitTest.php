@@ -129,7 +129,7 @@ class PublicRegistrationSplitTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('attendance_students', [
             'student_id' => 'ATT-APPROVE-001',
-            'qrcode' => 'ATT-APPROVE-001',
+            'qrcode' => 'S-00000001',
         ]);
         $this->assertDatabaseMissing('attendance_pending_students', [
             'id' => $pending->id,

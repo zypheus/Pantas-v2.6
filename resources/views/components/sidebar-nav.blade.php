@@ -343,8 +343,18 @@
             </button>
             <ul class="sidebar-group-items" id="sidebar-group-attendance-patrons" role="list">
                 <li>
-                    <a href="{{ route('attendance.pending.index') }}" class="sidebar-link {{ request()->routeIs('attendance.pending.index') ? 'active' : '' }}">
-                        <i class="bi bi-person-plus"></i> Pending Attendance Registrations
+                    <a href="{{ route('attendance.pending.index') }}" class="sidebar-link {{ request()->routeIs('attendance.pending.index', 'attendance.patrons.*') ? 'active' : '' }}">
+                        <i class="bi bi-people"></i> Attendance Patrons
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('attendance.pending.students') }}" class="sidebar-link {{ request()->routeIs('attendance.pending.students') ? 'active' : '' }}">
+                        <i class="bi bi-person-plus"></i> Pending Attendance Registrations - Students
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('attendance.pending.employees') }}" class="sidebar-link {{ request()->routeIs('attendance.pending.employees') ? 'active' : '' }}">
+                        <i class="bi bi-person-workspace"></i> Pending Attendance Registrations - Employees
                     </a>
                 </li>
             </ul>

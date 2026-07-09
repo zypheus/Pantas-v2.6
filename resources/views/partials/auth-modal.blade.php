@@ -133,6 +133,7 @@
                                                 <div><label>Last name <span class="lm-req">*</span></label><input class="lm-input" name="lastname" value="{{ old('lastname') }}" required></div>
                                                 <div><label>Student ID <span class="lm-req">*</span></label><input class="lm-input" name="student_id" value="{{ old('student_id') }}" required></div>
                                                 <div><label>Birth date</label><input class="lm-input" type="date" name="birth_date" value="{{ old('birth_date') }}"></div>
+                                                <div><label>Educational level</label><input class="lm-input" name="educational_level" value="{{ old('educational_level') }}" placeholder="College"></div>
                                                 <div><label>Mobile number</label><input class="lm-input" name="mobile_number" value="{{ old('mobile_number') }}"></div>
                                                 <div>
                                                     <label>Course</label>
