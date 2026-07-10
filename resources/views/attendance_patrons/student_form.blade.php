@@ -14,7 +14,7 @@
         <div class="alert alert-danger"><ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
 
-    <form method="POST" enctype="multipart/form-data" action="{{ $mode === 'create' ? route('attendance.patrons.students.store') : route('attendance.patrons.students.update', $student) }}" class="card border-0 shadow-sm">
+    <form id="attendanceStudentForm" method="POST" enctype="multipart/form-data" action="{{ $mode === 'create' ? route('attendance.patrons.students.store') : route('attendance.patrons.students.update', $student) }}" class="card border-0 shadow-sm">
         @csrf
         @if ($mode === 'edit') @method('PUT') @endif
         <div class="card-body">
@@ -46,7 +46,22 @@
                 <div class="col-md-3"><label class="form-label">Emergency number</label><input class="form-control" name="emergency_number" value="{{ old('emergency_number', $student->emergency_number) }}"></div>
                 <div class="col-md-9"><label class="form-label">Emergency address</label><input class="form-control" name="emergency_address" value="{{ old('emergency_address', $student->emergency_address) }}"></div>
                 <div class="col-md-4"><label class="form-label">Profile picture</label><input class="form-control" type="file" name="profile_picture" accept="image/*"></div>
-                <div class="col-md-8"><label class="form-label">Signature data/base64</label><textarea class="form-control" name="student_signature" rows="2" placeholder="Optional base64 signature">{{ old('student_signature') }}</textarea></div>
+                <div class="col-md-8">
+                    <label class="form-label" for="attendanceStudentSignaturePad">Signature (draw below)</label>
+                    <input type="hidden" name="student_signature" id="attendanceStudentSignatureInput" value="{{ old('student_signature', $student->student_signature) }}">
+                    <div class="attendance-signature-box">
+                        <canvas id="attendanceStudentSignaturePad" class="attendance-signature-pad"></canvas>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        <button type="button" id="clearAttendanceStudentSignature" class="btn btn-outline-danger btn-sm">Clear signature</button>
+                    </div>
+                    @if ($mode === 'edit' && $student->student_signature)
+                        <div class="mt-3">
+                            <p class="small text-muted mb-1">Current signature</p>
+                            <img src="{{ asset($student->student_signature) }}" alt="Current student signature" class="attendance-signature-preview">
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
         <div class="card-footer d-flex justify-content-between">
@@ -55,3 +70,132 @@
         </div>
     </form>
 @endsection
+
+@push('styles')
+    <style>
+        .attendance-signature-box {
+            width: 100%;
+            max-width: 560px;
+            height: 160px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .attendance-signature-pad {
+            display: block;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .attendance-signature-preview {
+            max-width: 260px;
+            max-height: 90px;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #fff;
+            object-fit: contain;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('attendanceStudentForm');
+            const canvas = document.getElementById('attendanceStudentSignaturePad');
+            const input = document.getElementById('attendanceStudentSignatureInput');
+            const clearButton = document.getElementById('clearAttendanceStudentSignature');
+
+            if (!form || !canvas || !input || !clearButton) return;
+
+            const context = canvas.getContext('2d');
+            let drawing = false;
+            let hasDrawing = false;
+
+            function resizeCanvas() {
+                const ratio = window.devicePixelRatio || 1;
+                const rect = canvas.getBoundingClientRect();
+                const snapshot = hasDrawing ? canvas.toDataURL('image/png') : null;
+
+                canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+                canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+
+                context.setTransform(ratio, 0, 0, ratio, 0, 0);
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
+                context.lineWidth = 2;
+                context.strokeStyle = '#1f2937';
+
+                if (snapshot) {
+                    const image = new Image();
+                    image.onload = function () {
+                        context.drawImage(image, 0, 0, rect.width, rect.height);
+                    };
+                    image.src = snapshot;
+                }
+            }
+
+            function point(event) {
+                const rect = canvas.getBoundingClientRect();
+                const source = event.touches ? event.touches[0] : event;
+
+                return {
+                    x: source.clientX - rect.left,
+                    y: source.clientY - rect.top,
+                };
+            }
+
+            function start(event) {
+                drawing = true;
+                const position = point(event);
+                context.beginPath();
+                context.moveTo(position.x, position.y);
+                event.preventDefault();
+            }
+
+            function move(event) {
+                if (!drawing) return;
+                const position = point(event);
+                context.lineTo(position.x, position.y);
+                context.stroke();
+                hasDrawing = true;
+                event.preventDefault();
+            }
+
+            function end() {
+                if (!drawing) return;
+                drawing = false;
+                if (hasDrawing) {
+                    input.value = canvas.toDataURL('image/png');
+                }
+            }
+
+            clearButton.addEventListener('click', function () {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                hasDrawing = false;
+                input.value = '';
+            });
+
+            form.addEventListener('submit', function () {
+                if (hasDrawing) {
+                    input.value = canvas.toDataURL('image/png');
+                }
+            });
+
+            canvas.addEventListener('mousedown', start);
+            canvas.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', end);
+            canvas.addEventListener('touchstart', start, { passive: false });
+            canvas.addEventListener('touchmove', move, { passive: false });
+            canvas.addEventListener('touchend', end);
+            window.addEventListener('resize', resizeCanvas);
+
+            resizeCanvas();
+        });
+    </script>
+@endpush
