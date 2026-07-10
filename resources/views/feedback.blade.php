@@ -55,6 +55,9 @@
 
         <div class="page-wrapper">
             <div class="feedback-container">
+                <button class="back-button" onclick="window.history.back();">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
                 <h2>Your Feedback Matters!</h2>
                 <p>We'd love to hear about your experience.</p>
 

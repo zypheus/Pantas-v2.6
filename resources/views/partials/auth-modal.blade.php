@@ -59,41 +59,44 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
-                            <input type="hidden" name="modal_view" value="login">
+                        <div class="lm-form">
 
-                            <label for="lm_email">Email <span class="lm-req">*</span></label>
-                            <input
-                                class="lm-input lm-mb"
-                                type="email"
-                                id="lm_email"
-                                name="email"
-                                placeholder="staff@pantas.edu.ph"
-                                value="{{ old('email') }}"
-                                autocomplete="username"
-                                required
-                            >
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
+                                <input type="hidden" name="modal_view" value="login">
 
-                            <label for="lm_password">Password <span class="lm-req">*</span></label>
-                            <input
-                                class="lm-input"
-                                type="password"
-                                id="lm_password"
-                                name="password"
-                                placeholder="Enter password"
-                                autocomplete="current-password"
-                                required
-                            >
+                                <label for="lm_email">Email <span class="lm-req">*</span></label>
+                                <input
+                                    class="lm-input lm-mb"
+                                    type="email"
+                                    id="lm_email"
+                                    name="email"
+                                    placeholder="staff@pantas.edu.ph"
+                                    value="{{ old('email') }}"
+                                    autocomplete="username"
+                                    required
+                                >
 
-                            <label class="lm-remember">
-                                <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
-                                Remember me
-                            </label>
+                                <label for="lm_password">Password <span class="lm-req">*</span></label>
+                                <input
+                                    class="lm-input"
+                                    type="password"
+                                    id="lm_password"
+                                    name="password"
+                                    placeholder="Enter password"
+                                    autocomplete="current-password"
+                                    required
+                                >
 
-                            <button type="submit" class="lm-btn lib">Sign In</button>
-                        </form>
+                                <label class="lm-remember">
+                                    <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
+                                    Remember me
+                                </label>
 
+                                <button type="submit" class="lm-btn lib">Sign In</button>
+                            </form>
+
+                        </div>
                         <button class="lm-swap" type="button" data-lm-go="register">Register</button>
                     </section>
 
