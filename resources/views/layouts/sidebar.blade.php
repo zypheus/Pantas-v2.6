@@ -23,6 +23,9 @@
     {{-- Theme system --}}
     <link rel="stylesheet" href="{{ asset('css/themes.css') }}">
 
+    {{-- Page content dark mode overrides for tables, forms, cards, etc. --}}
+    <link rel="stylesheet" href="{{ asset('css/page-content.css') }}">
+
     @stack('styles')
     @yield('styles')
 </head>

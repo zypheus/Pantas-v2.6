@@ -358,15 +358,15 @@ body {
 }
 
 .btn-logout {
-    border-color: #fecaca;
-    background: #fff1f2;
+    border-color: color-mix(in srgb, var(--shell-danger) 25%, transparent);
+    background: color-mix(in srgb, var(--shell-danger) 8%, var(--shell-surface));
     color: var(--shell-danger);
 }
 
 .btn-logout:hover {
-    border-color: #fca5a5;
-    background: #fee2e2;
-    color: #b91c1c;
+    border-color: var(--shell-danger);
+    background: color-mix(in srgb, var(--shell-danger) 15%, var(--shell-surface));
+    color: var(--shell-danger);
 }
 
 .sidebar-content {
@@ -389,7 +389,7 @@ body {
     min-height: 4.25rem;
     padding: 0.75rem 1.5rem;
     border-bottom: 1px solid var(--shell-border);
-    background: rgba(255, 255, 255, 0.94);
+    background: color-mix(in srgb, var(--shell-surface) 94%, transparent);
     backdrop-filter: blur(12px);
 }
 
@@ -424,11 +424,11 @@ body {
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.topbar-search:hover,
-.topbar-search:focus {
-    border-color: var(--shell-primary);
-    background: #ffffff;
-}
+    .topbar-search:hover,
+    .topbar-search:focus {
+        border-color: var(--shell-primary);
+        background: var(--shell-surface);
+    }
 
 .topbar-search span {
     overflow: hidden;
@@ -439,7 +439,7 @@ body {
 kbd {
     border: 1px solid var(--shell-border-strong);
     border-radius: 0.45rem;
-    background: #ffffff;
+    background: var(--shell-surface);
     color: var(--shell-muted);
     font-size: 0.72rem;
     font-weight: 600;
@@ -464,7 +464,7 @@ kbd {
     min-height: 2.65rem;
     border: 1px solid var(--shell-border);
     border-radius: 0.8rem;
-    background: #ffffff;
+    background: var(--shell-surface);
     color: var(--shell-text);
     gap: 0.55rem;
     padding: 0 0.75rem;
@@ -495,6 +495,7 @@ kbd {
     font-size: 0.62rem;
     font-weight: 700;
     line-height: 1rem;
+    border: 1.5px solid var(--shell-surface);
 }
 
 .topbar-module-btn {
@@ -633,7 +634,7 @@ kbd {
 }
 
 .sidebar-footer {
-    background: #ffffff;
+    background: var(--shell-surface);
     font-size: 0.8125rem;
 }
 
@@ -657,8 +658,8 @@ kbd {
     overflow: hidden;
     border: 1px solid var(--shell-border);
     border-radius: 1rem;
-    background: #ffffff;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+    background: var(--shell-surface);
+    box-shadow: 0 24px 60px var(--shell-modal-overlay, rgba(15, 23, 42, 0.28));
 }
 
 .command-search-row {
@@ -756,7 +757,7 @@ kbd {
     height: 56px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--shell-border);
-    background: #ffffff;
+    background: var(--shell-surface);
     color: var(--shell-text);
 }
 
