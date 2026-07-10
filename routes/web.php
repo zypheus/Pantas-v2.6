@@ -31,6 +31,10 @@ Route::post('/switch-module', [ModuleSelectionController::class, 'store'])
     ->middleware('auth')
     ->name('module.switch');
 
+Route::post('/user/preferences/theme', [\App\Http\Controllers\UserPreferenceController::class, 'store'])
+    ->middleware('auth')
+    ->name('user.preferences.theme');
+
 require __DIR__.'/library.php';
 require __DIR__.'/attendance.php';
 require __DIR__.'/super-admin.php';

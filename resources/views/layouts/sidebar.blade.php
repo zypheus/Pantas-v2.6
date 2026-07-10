@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ auth()->user()->theme_preference ?? 'pantas-default' }}" data-saved-theme="{{ auth()->user()->theme_preference ?? 'pantas-default' }}">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +19,9 @@
 
     {{-- Sidebar custom styles --}}
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+
+    {{-- Theme system --}}
+    <link rel="stylesheet" href="{{ asset('css/themes.css') }}">
 
     @stack('styles')
     @yield('styles')
@@ -73,7 +76,7 @@
         <button id="sidebarToggle" class="sidebar-hamburger me-3" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
             <i class="bi bi-list fs-4"></i>
         </button>
-        <img src="{{ asset('images/pantasLogo.png') }}" alt="Pantas Logo" class="sidebar-topbar-logo me-2">
+        <img src="{{ asset('images/pantasLogo-box.png') }}" alt="Pantas Logo" class="sidebar-topbar-logo me-2">
         <span class="sidebar-topbar-title fw-semibold">@yield('title', 'Pantas Library')</span>
     </header>
 
@@ -229,8 +232,8 @@
                             <button class="dropdown-item topbar-dropdown-item" type="button" data-command-open>
                                 <i class="bi bi-command" aria-hidden="true"></i> Command palette
                             </button>
-                            <button class="dropdown-item topbar-dropdown-item" type="button">
-                                <i class="bi bi-sliders" aria-hidden="true"></i> Preferences
+                            <button class="dropdown-item topbar-dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#themePickerModal">
+                                <i class="bi bi-palette" aria-hidden="true"></i> Theme
                             </button>
                             <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}" class="m-0">
@@ -336,6 +339,9 @@
 
     {{-- Sidebar behaviour: collapse toggle, localStorage state, mobile overlay --}}
     <script src="{{ asset('js/sidebar.js') }}"></script>
+
+    {{-- Theme Picker Modal --}}
+    @include('components.theme-picker')
 
     @stack('scripts')
     @yield('scripts')

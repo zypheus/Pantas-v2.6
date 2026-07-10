@@ -1,0 +1,299 @@
+/* ==========================================================================
+   PANTAS Theme System
+   Each theme overrides the shell CSS custom properties via [data-theme="..."].
+   Pantas Default matches the original :root values in sidebar.css.
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------
+   PANTAS DEFAULT (original palette)
+   ----------------------------------------------------------------------- */
+[data-theme="pantas-default"] {
+    --shell-sidebar-width: 272px;
+    --shell-sidebar-collapsed: 76px;
+    --shell-bg: #f8fafc;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #f1f5f9;
+    --shell-border: #e2e8f0;
+    --shell-border-strong: #cbd5e1;
+    --shell-text: #0f172a;
+    --shell-muted: #475569;
+    --shell-subtle: #64748b;
+    --shell-primary: #1e3a8a;
+    --shell-action: #2563eb;
+    --shell-primary-dark: #172554;
+    --shell-primary-soft: #eff6ff;
+    --shell-danger: #b91c1c;
+    --shell-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --shell-chart-palette: #1e3a8a, #0f766e, #b45309, #6d28d9, #b91c1c, #047857;
+    --shell-chart-bg: rgba(30, 58, 138, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   GREEN APPLE LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="green-apple-light"] {
+    --shell-bg: #f0fdf4;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #dcfce7;
+    --shell-border: #bbf7d0;
+    --shell-border-strong: #86efac;
+    --shell-text: #052e16;
+    --shell-muted: #166534;
+    --shell-subtle: #15803d;
+    --shell-primary: #15803d;
+    --shell-action: #16a34a;
+    --shell-primary-dark: #166534;
+    --shell-primary-soft: #f0fdf4;
+    --shell-danger: #991b1b;
+    --shell-shadow: 0 1px 2px rgba(5, 46, 22, 0.08);
+    --shell-chart-palette: #15803d, #16a34a, #22c55e, #4ade80, #86efac, #bbf7d0;
+    --shell-chart-bg: rgba(21, 128, 61, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   GREEN APPLE DARK
+   ----------------------------------------------------------------------- */
+[data-theme="green-apple-dark"] {
+    --shell-bg: #0d1f12;
+    --shell-surface: #1a3a24;
+    --shell-surface-muted: #234d30;
+    --shell-border: #2d6a3f;
+    --shell-border-strong: #3d8a54;
+    --shell-text: #f0fdf4;
+    --shell-muted: #bbf7d0;
+    --shell-subtle: #86efac;
+    --shell-primary: #4ade80;
+    --shell-action: #22c55e;
+    --shell-primary-dark: #16a34a;
+    --shell-primary-soft: #1a3a24;
+    --shell-danger: #f87171;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.7);
+    --shell-chart-palette: #4ade80, #22c55e, #16a34a, #15803d, #86efac, #bbf7d0;
+    --shell-chart-bg: rgba(74, 222, 128, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   NORD LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="nord-light"] {
+    --shell-bg: #eceff4;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #e5e9f0;
+    --shell-border: #d8dee9;
+    --shell-border-strong: #c1c9d8;
+    --shell-text: #2e3440;
+    --shell-muted: #4c566a;
+    --shell-subtle: #616e88;
+    --shell-primary: #5e81ac;
+    --shell-action: #81a1c1;
+    --shell-primary-dark: #4c6f94;
+    --shell-primary-soft: #eceff4;
+    --shell-danger: #bf616a;
+    --shell-shadow: 0 1px 2px rgba(46, 52, 64, 0.06);
+    --shell-chart-palette: #5e81ac, #81a1c1, #88c0d0, #8fbcbb, #b48ead, #a3be8c;
+    --shell-chart-bg: rgba(94, 129, 172, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   NORD DARK
+   ----------------------------------------------------------------------- */
+[data-theme="nord-dark"] {
+    --shell-bg: #2e3440;
+    --shell-surface: #3b4252;
+    --shell-surface-muted: #434c5e;
+    --shell-border: #4c566a;
+    --shell-border-strong: #616e88;
+    --shell-text: #eceff4;
+    --shell-muted: #d8dee9;
+    --shell-subtle: #81a1c1;
+    --shell-primary: #88c0d0;
+    --shell-action: #81a1c1;
+    --shell-primary-dark: #5e81ac;
+    --shell-primary-soft: #3b4252;
+    --shell-danger: #bf616a;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.7);
+    --shell-chart-palette: #88c0d0, #81a1c1, #5e81ac, #b48ead, #a3be8c, #d08770;
+    --shell-chart-bg: rgba(136, 192, 208, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   CATPPUCCIN LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="catppuccin-light"] {
+    --shell-bg: #eff1f5;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #e6e9ef;
+    --shell-border: #ccd0da;
+    --shell-border-strong: #bcc0cc;
+    --shell-text: #4c4f69;
+    --shell-muted: #5c5f77;
+    --shell-subtle: #6c6f85;
+    --shell-primary: #7287fd;
+    --shell-action: #8839ef;
+    --shell-primary-dark: #6657c5;
+    --shell-primary-soft: #f0e6f6;
+    --shell-danger: #d20f39;
+    --shell-shadow: 0 1px 2px rgba(76, 79, 105, 0.06);
+    --shell-chart-palette: #7287fd, #8839ef, #dd7878, #40a02b, #df8e1d, #04a5e5;
+    --shell-chart-bg: rgba(114, 135, 253, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   CATPPUCCIN DARK
+   ----------------------------------------------------------------------- */
+[data-theme="catppuccin-dark"] {
+    --shell-bg: #1e1e2e;
+    --shell-surface: #313244;
+    --shell-surface-muted: #45475a;
+    --shell-border: #45475a;
+    --shell-border-strong: #585b70;
+    --shell-text: #cdd6f4;
+    --shell-muted: #a6adc8;
+    --shell-subtle: #89b4fa;
+    --shell-primary: #89b4fa;
+    --shell-action: #b4befe;
+    --shell-primary-dark: #74c7ec;
+    --shell-primary-soft: #313244;
+    --shell-danger: #f38ba8;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.75);
+    --shell-chart-palette: #89b4fa, #b4befe, #a6e3a1, #fab387, #f38ba8, #cba6f7;
+    --shell-chart-bg: rgba(137, 180, 250, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   MIDNIGHT DUSK LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="midnight-dusk-light"] {
+    --shell-bg: #f1f5f9;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #e2e8f0;
+    --shell-border: #cbd5e1;
+    --shell-border-strong: #94a3b8;
+    --shell-text: #1e293b;
+    --shell-muted: #475569;
+    --shell-subtle: #64748b;
+    --shell-primary: #334155;
+    --shell-action: #475569;
+    --shell-primary-dark: #1e293b;
+    --shell-primary-soft: #f1f5f9;
+    --shell-danger: #991b1b;
+    --shell-shadow: 0 1px 2px rgba(30, 41, 59, 0.06);
+    --shell-chart-palette: #334155, #475569, #64748b, #94a3b8, #3b82f6, #6366f1;
+    --shell-chart-bg: rgba(51, 65, 85, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   MIDNIGHT DUSK DARK
+   ----------------------------------------------------------------------- */
+[data-theme="midnight-dusk-dark"] {
+    --shell-bg: #0f172a;
+    --shell-surface: #1e293b;
+    --shell-surface-muted: #334155;
+    --shell-border: #334155;
+    --shell-border-strong: #475569;
+    --shell-text: #f1f5f9;
+    --shell-muted: #cbd5e1;
+    --shell-subtle: #94a3b8;
+    --shell-primary: #818cf8;
+    --shell-action: #6366f1;
+    --shell-primary-dark: #4f46e5;
+    --shell-primary-soft: #1e293b;
+    --shell-danger: #f87171;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.75);
+    --shell-chart-palette: #818cf8, #6366f1, #4f46e5, #4338ca, #94a3b8, #f87171;
+    --shell-chart-bg: rgba(129, 140, 248, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   STRAWBERRY DAIQUIRI LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="strawberry-daiquiri-light"] {
+    --shell-bg: #fff1f2;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #ffe4e6;
+    --shell-border: #fecdd3;
+    --shell-border-strong: #fda4af;
+    --shell-text: #4c0519;
+    --shell-muted: #9f1239;
+    --shell-subtle: #be185d;
+    --shell-primary: #be185d;
+    --shell-action: #e11d48;
+    --shell-primary-dark: #9f1239;
+    --shell-primary-soft: #fff1f2;
+    --shell-danger: #991b1b;
+    --shell-shadow: 0 1px 2px rgba(76, 5, 25, 0.06);
+    --shell-chart-palette: #be185d, #e11d48, #f43f5e, #fb7185, #fda4af, #fecdd3;
+    --shell-chart-bg: rgba(190, 24, 93, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   STRAWBERRY DAIQUIRI DARK
+   ----------------------------------------------------------------------- */
+[data-theme="strawberry-daiquiri-dark"] {
+    --shell-bg: #2d0a1a;
+    --shell-surface: #4c122b;
+    --shell-surface-muted: #6b1a3a;
+    --shell-border: #8a224a;
+    --shell-border-strong: #a92a5a;
+    --shell-text: #fff1f2;
+    --shell-muted: #fecdd3;
+    --shell-subtle: #fda4af;
+    --shell-primary: #fb7185;
+    --shell-action: #f43f5e;
+    --shell-primary-dark: #e11d48;
+    --shell-primary-soft: #4c122b;
+    --shell-danger: #f87171;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.7);
+    --shell-chart-palette: #fb7185, #f43f5e, #e11d48, #be185d, #fda4af, #fecdd3;
+    --shell-chart-bg: rgba(251, 113, 133, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   TAKO LIGHT
+   ----------------------------------------------------------------------- */
+[data-theme="tako-light"] {
+    --shell-bg: #fefce8;
+    --shell-surface: #ffffff;
+    --shell-surface-muted: #fef9c3;
+    --shell-border: #fde68a;
+    --shell-border-strong: #fcd34d;
+    --shell-text: #422006;
+    --shell-muted: #713f12;
+    --shell-subtle: #a16207;
+    --shell-primary: #ca8a04;
+    --shell-action: #eab308;
+    --shell-primary-dark: #a16207;
+    --shell-primary-soft: #fefce8;
+    --shell-danger: #991b1b;
+    --shell-shadow: 0 1px 2px rgba(66, 32, 6, 0.06);
+    --shell-chart-palette: #ca8a04, #eab308, #facc15, #fde047, #fef08a, #fef9c3;
+    --shell-chart-bg: rgba(202, 138, 4, 0.08);
+}
+
+/* -----------------------------------------------------------------------
+   TAKO DARK
+   ----------------------------------------------------------------------- */
+[data-theme="tako-dark"] {
+    --shell-bg: #1c1917;
+    --shell-surface: #292524;
+    --shell-surface-muted: #44403c;
+    --shell-border: #57534e;
+    --shell-border-strong: #78716c;
+    --shell-text: #fefce8;
+    --shell-muted: #fde68a;
+    --shell-subtle: #fcd34d;
+    --shell-primary: #facc15;
+    --shell-action: #eab308;
+    --shell-primary-dark: #ca8a04;
+    --shell-primary-soft: #292524;
+    --shell-danger: #f87171;
+    --shell-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shell-modal-overlay: rgba(0, 0, 0, 0.75);
+    --shell-chart-palette: #facc15, #eab308, #ca8a04, #a16207, #fde68a, #fef08a;
+    --shell-chart-bg: rgba(250, 204, 21, 0.08);
+}

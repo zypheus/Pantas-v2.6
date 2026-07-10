@@ -1,0 +1,314 @@
+/* ==========================================================================
+   PANTAS Page Content — global dark‑mode compatibility
+   Applies to tables, forms, cards, and other bootstrap / blade elements
+   rendered inside .sidebar-page-body.  Overrides hardcoded Bootstrap
+   colour tokens with shell CSS custom properties.
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------
+   TABLES
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .table {
+    --bs-table-bg: var(--shell-surface);
+    --bs-table-color: var(--shell-text);
+    --bs-table-border-color: var(--shell-border);
+    --bs-table-striped-bg: var(--shell-surface-muted);
+    --bs-table-striped-color: var(--shell-text);
+    --bs-table-hover-bg: var(--shell-primary-soft);
+    --bs-table-hover-color: var(--shell-text);
+    border-color: var(--shell-border);
+    color: var(--shell-text);
+}
+
+.sidebar-page-body .table thead th {
+    background: var(--shell-surface-muted);
+    color: var(--shell-muted);
+    border-bottom: 2px solid var(--shell-border);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.sidebar-page-body .table tbody tr {
+    border-bottom: 1px solid var(--shell-border);
+}
+
+.sidebar-page-body .table tbody td {
+    color: var(--shell-text);
+    padding: 0.65rem 0.75rem;
+    vertical-align: middle;
+}
+
+.sidebar-page-body .table tbody tr:hover {
+    background: var(--shell-primary-soft);
+}
+
+/* Pagination */
+.sidebar-page-body .pagination {
+    --bs-pagination-bg: var(--shell-surface);
+    --bs-pagination-border-color: var(--shell-border);
+    --bs-pagination-color: var(--shell-muted);
+    --bs-pagination-hover-bg: var(--shell-primary-soft);
+    --bs-pagination-hover-border-color: var(--shell-primary);
+    --bs-pagination-hover-color: var(--shell-primary);
+    --bs-pagination-active-bg: var(--shell-primary);
+    --bs-pagination-active-border-color: var(--shell-primary);
+    --bs-pagination-active-color: #ffffff;
+    --bs-pagination-disabled-bg: var(--shell-surface-muted);
+    --bs-pagination-disabled-color: var(--shell-subtle);
+}
+
+/* -----------------------------------------------------------------------
+   FORMS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .form-control,
+.sidebar-page-body .form-select,
+.sidebar-page-body .input-group-text {
+    background: var(--shell-surface);
+    color: var(--shell-text);
+    border-color: var(--shell-border);
+}
+
+.sidebar-page-body .form-control:focus,
+.sidebar-page-body .form-select:focus {
+    border-color: var(--shell-action);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--shell-action) 20%, transparent);
+    background: var(--shell-surface);
+    color: var(--shell-text);
+}
+
+.sidebar-page-body .form-control::placeholder {
+    color: var(--shell-subtle);
+}
+
+.sidebar-page-body .form-label {
+    color: var(--shell-muted);
+    font-weight: 600;
+    font-size: 0.8125rem;
+}
+
+.sidebar-page-body .form-text {
+    color: var(--shell-subtle);
+}
+
+/* Invalid / valid feedback */
+.sidebar-page-body .was-validated .form-control:invalid,
+.sidebar-page-body .form-control.is-invalid {
+    border-color: var(--shell-danger);
+}
+
+.sidebar-page-body .invalid-feedback {
+    color: var(--shell-danger);
+}
+
+/* -----------------------------------------------------------------------
+   CARDS AND PANELS (Bootstrap)
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .card,
+.sidebar-page-body .panel {
+    background: var(--shell-surface);
+    color: var(--shell-text);
+    border-color: var(--shell-border);
+    box-shadow: var(--shell-shadow);
+}
+
+.sidebar-page-body .card-header,
+.sidebar-page-body .panel-heading {
+    background: var(--shell-surface-muted);
+    color: var(--shell-text);
+    border-bottom: 1px solid var(--shell-border);
+    font-weight: 600;
+}
+
+.sidebar-page-body .card-footer,
+.sidebar-page-body .panel-footer {
+    background: var(--shell-surface-muted);
+    border-top: 1px solid var(--shell-border);
+}
+
+/* -----------------------------------------------------------------------
+   ALERTS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .alert {
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+}
+
+.sidebar-page-body .alert-info {
+    background: color-mix(in srgb, var(--shell-primary-soft) 80%, transparent);
+    color: var(--shell-primary-dark);
+    border-color: color-mix(in srgb, var(--shell-primary) 20%, transparent);
+}
+
+.sidebar-page-body .alert-success {
+    background: color-mix(in srgb, #047857 10%, transparent);
+    color: var(--shell-text);
+    border-color: color-mix(in srgb, #047857 25%, transparent);
+}
+
+.sidebar-page-body .alert-danger {
+    background: color-mix(in srgb, var(--shell-danger) 10%, transparent);
+    color: var(--shell-danger);
+    border-color: color-mix(in srgb, var(--shell-danger) 25%, transparent);
+}
+
+.sidebar-page-body .alert-warning {
+    background: color-mix(in srgb, #b45309 10%, transparent);
+    color: var(--shell-text);
+    border-color: color-mix(in srgb, #b45309 25%, transparent);
+}
+
+/* -----------------------------------------------------------------------
+   BADGES
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .badge {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* -----------------------------------------------------------------------
+   BUTTONS (Bootstrap — safe overrides)
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .btn-secondary {
+    --bs-btn-bg: var(--shell-surface-muted);
+    --bs-btn-color: var(--shell-muted);
+    --bs-btn-border-color: var(--shell-border);
+    --bs-btn-hover-bg: var(--shell-surface);
+    --bs-btn-hover-color: var(--shell-text);
+    --bs-btn-hover-border-color: var(--shell-primary);
+}
+
+.sidebar-page-body .btn-outline-secondary {
+    --bs-btn-color: var(--shell-muted);
+    --bs-btn-border-color: var(--shell-border);
+    --bs-btn-hover-bg: var(--shell-primary-soft);
+    --bs-btn-hover-color: var(--shell-primary);
+    --bs-btn-hover-border-color: var(--shell-primary);
+}
+
+/* -----------------------------------------------------------------------
+   MODALS (Bootstrap)
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .modal-content {
+    background: var(--shell-surface);
+    color: var(--shell-text);
+    border-color: var(--shell-border);
+}
+
+.sidebar-page-body .modal-header,
+.sidebar-page-body .modal-footer {
+    border-color: var(--shell-border);
+}
+
+/* -----------------------------------------------------------------------
+   DROPDOWNS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .dropdown-menu {
+    background: var(--shell-surface);
+    border-color: var(--shell-border);
+    box-shadow: 0 8px 24px var(--shell-modal-overlay, rgba(15, 23, 42, 0.14));
+}
+
+.sidebar-page-body .dropdown-item {
+    color: var(--shell-text);
+}
+
+.sidebar-page-body .dropdown-item:hover,
+.sidebar-page-body .dropdown-item:focus {
+    background: var(--shell-primary-soft);
+    color: var(--shell-primary);
+}
+
+.sidebar-page-body .dropdown-divider {
+    border-color: var(--shell-border);
+}
+
+/* -----------------------------------------------------------------------
+   LIST GROUPS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .list-group-item {
+    background: var(--shell-surface);
+    color: var(--shell-text);
+    border-color: var(--shell-border);
+}
+
+.sidebar-page-body .list-group-item.active {
+    background: var(--shell-primary-soft);
+    color: var(--shell-primary-dark);
+    border-color: var(--shell-border);
+}
+
+/* -----------------------------------------------------------------------
+   NAV TABS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .nav-tabs {
+    border-bottom-color: var(--shell-border);
+}
+
+.sidebar-page-body .nav-tabs .nav-link {
+    color: var(--shell-muted);
+    border-color: transparent;
+}
+
+.sidebar-page-body .nav-tabs .nav-link:hover,
+.sidebar-page-body .nav-tabs .nav-link:focus {
+    border-color: var(--shell-border);
+    background: var(--shell-surface-muted);
+    color: var(--shell-text);
+}
+
+.sidebar-page-body .nav-tabs .nav-link.active {
+    background: var(--shell-surface);
+    color: var(--shell-primary);
+    border-color: var(--shell-border) var(--shell-border) var(--shell-surface);
+}
+
+/* -----------------------------------------------------------------------
+   PROGRESS BARS
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .progress {
+    background: var(--shell-surface-muted);
+}
+
+/* -----------------------------------------------------------------------
+   BREADCRUMB
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .breadcrumb {
+    background: transparent;
+}
+
+.sidebar-page-body .breadcrumb-item {
+    color: var(--shell-subtle);
+}
+
+.sidebar-page-body .breadcrumb-item.active {
+    color: var(--shell-text);
+}
+
+/* -----------------------------------------------------------------------
+   MISC UTILITY OVERRIDES
+   ----------------------------------------------------------------------- */
+.sidebar-page-body .text-muted {
+    color: var(--shell-muted) !important;
+}
+
+.sidebar-page-body .text-body {
+    color: var(--shell-text) !important;
+}
+
+.sidebar-page-body .bg-light {
+    background: var(--shell-surface-muted) !important;
+}
+
+.sidebar-page-body .bg-white {
+    background: var(--shell-surface) !important;
+}
+
+.sidebar-page-body .border {
+    border-color: var(--shell-border) !important;
+}
+
+.sidebar-page-body hr {
+    border-color: var(--shell-border);
+}
