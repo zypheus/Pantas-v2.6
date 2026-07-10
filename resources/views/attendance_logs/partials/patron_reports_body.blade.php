@@ -231,6 +231,92 @@
                 const hourLabels = @json(collect($busiestHours)->take(12)->map(fn($r) => (string) ($r->label ?? ''))->values());
                 const hourCounts = @json(collect($busiestHours)->take(12)->map(fn($r) => (int) ($r->count ?? 0))->values());
 
+                const numberFormatter = new Intl.NumberFormat('en-US');
+
+                // Chart.js reference:
+                // https://www.chartjs.org/docs/latest/configuration/responsive.html
+                // https://www.chartjs.org/docs/latest/configuration/tooltip.html
+                const baseChartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e2e8f0',
+                            borderColor: 'rgba(148, 163, 184, 0.35)',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            displayColors: false,
+                            padding: 12,
+                            callbacks: {
+                                label(context) {
+                                    const label = context.dataset.label || 'Value';
+                                    const value = context.parsed.y ?? context.parsed;
+
+                                    return `${label}: ${numberFormatter.format(value)}`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                autoSkip: false,
+                                maxRotation: 35,
+                                minRotation: 0,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            border: {
+                                display: false,
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.22)',
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                precision: 0,
+                                callback(value) {
+                                    return numberFormatter.format(value);
+                                },
+                            },
+                        },
+                    },
+                };
+
+                function isPlainObject(value) {
+                    return value !== null && typeof value === 'object' && !Array.isArray(value);
+                }
+
+                function mergeOptions(base, overrides = {}) {
+                    const output = { ...base };
+
+                    Object.keys(overrides).forEach((key) => {
+                        output[key] = isPlainObject(base[key]) && isPlainObject(overrides[key])
+                            ? mergeOptions(base[key], overrides[key])
+                            : overrides[key];
+                    });
+
+                    return output;
+                }
+
+                function chartOptions(overrides = {}) {
+                    return mergeOptions(baseChartOptions, overrides);
+                }
+
                 function makeChart(canvasId, config) {
                     const el = document.getElementById(canvasId);
                     if (!el) return;
@@ -241,38 +327,133 @@
 
                 makeChart('chartTopIns', {
                     type: 'bar',
-                    data: { labels: topInsLabels, datasets: [{ label: 'IN scans', data: topInsCounts, backgroundColor: 'rgba(13,110,253,0.55)', borderColor: 'rgba(13,110,253,1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: topInsLabels,
+                        datasets: [{
+                            label: 'IN scans',
+                            data: topInsCounts,
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: '#1d4ed8',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            maxBarThickness: 42,
+                        }],
+                    },
+                    options: chartOptions()
                 });
 
                 makeChart('chartDistinctDays', {
                     type: 'bar',
-                    data: { labels: distinctLabels, datasets: [{ label: 'Days with IN', data: distinctCounts, backgroundColor: 'rgba(25,135,84,0.55)', borderColor: 'rgba(25,135,84,1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: distinctLabels,
+                        datasets: [{
+                            label: 'Days with IN',
+                            data: distinctCounts,
+                            backgroundColor: 'rgba(22, 163, 74, 0.7)',
+                            borderColor: '#15803d',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            maxBarThickness: 42,
+                        }],
+                    },
+                    options: chartOptions()
                 });
 
                 makeChart('chartProgramTotals', {
                     type: 'bar',
-                    data: { labels: progLabels, datasets: [{ label: 'IN scans', data: progIns, backgroundColor: 'rgba(255,193,7,0.65)', borderColor: 'rgba(255,193,7,1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: progLabels,
+                        datasets: [{
+                            label: 'IN scans',
+                            data: progIns,
+                            backgroundColor: 'rgba(217, 119, 6, 0.72)',
+                            borderColor: '#b45309',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            maxBarThickness: 44,
+                        }],
+                    },
+                    options: chartOptions({
+                        scales: {
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxRotation: 25,
+                                },
+                            },
+                        },
+                    })
                 });
 
                 makeChart('chartWeeklyTrend', {
                     type: 'line',
-                    data: { labels: weeklyLabels, datasets: [{ label: 'IN scans', data: weeklyCounts, borderColor: 'rgba(13,202,240,1)', backgroundColor: 'rgba(13,202,240,0.2)', tension: 0.25, fill: true, pointRadius: 3 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: weeklyLabels,
+                        datasets: [{
+                            label: 'IN scans',
+                            data: weeklyCounts,
+                            borderColor: '#0891b2',
+                            backgroundColor: 'rgba(8, 145, 178, 0.16)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#0891b2',
+                            pointBorderWidth: 2,
+                        }],
+                    },
+                    options: chartOptions({
+                        elements: {
+                            line: {
+                                borderWidth: 3,
+                            },
+                        },
+                    })
                 });
 
                 makeChart('chartMonthlyTrend', {
                     type: 'line',
-                    data: { labels: monthlyLabels, datasets: [{ label: 'IN scans', data: monthlyCounts, borderColor: 'rgba(220,53,69,1)', backgroundColor: 'rgba(220,53,69,0.22)', tension: 0.25, fill: true, pointRadius: 3 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: monthlyLabels,
+                        datasets: [{
+                            label: 'IN scans',
+                            data: monthlyCounts,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.14)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#dc2626',
+                            pointBorderWidth: 2,
+                        }],
+                    },
+                    options: chartOptions({
+                        elements: {
+                            line: {
+                                borderWidth: 3,
+                            },
+                        },
+                    })
                 });
 
                 makeChart('chartBusiestHour', {
                     type: 'bar',
-                    data: { labels: hourLabels, datasets: [{ label: 'IN scans', data: hourCounts, backgroundColor: 'rgba(111,66,193,0.55)', borderColor: 'rgba(111,66,193,1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: hourLabels,
+                        datasets: [{
+                            label: 'IN scans',
+                            data: hourCounts,
+                            backgroundColor: 'rgba(71, 85, 105, 0.72)',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            maxBarThickness: 44,
+                        }],
+                    },
+                    options: chartOptions()
                 });
             })();
         </script>

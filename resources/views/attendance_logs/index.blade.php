@@ -129,22 +129,38 @@
                             {{ $log->student ? $log->student->year : 'Unknown' }}
                         </td>
                         <td class="px-4 py-2">
-                            @php $status = strtolower($log->status); @endphp
+                            @php $status = strtolower(trim((string) $log->status)); @endphp
                             @if($status === 'in')
-                            <span class="in">IN</span>
+                                <span class="attendance-status attendance-status--in">
+                                    <span class="attendance-status__icon" aria-hidden="true"><i class="bi bi-box-arrow-in-right"></i></span>
+                                    <span>
+                                        <strong>IN</strong>
+                                        <small>Checked in</small>
+                                    </span>
+                                </span>
                             @elseif($status === 'out')
-                            <span class="out">OUT</span>
+                                <span class="attendance-status attendance-status--out">
+                                    <span class="attendance-status__icon" aria-hidden="true"><i class="bi bi-box-arrow-right"></i></span>
+                                    <span>
+                                        <strong>OUT</strong>
+                                        <small>Checked out</small>
+                                    </span>
+                                </span>
                             @else
-                            <span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-gray-500 rounded">
-                                Unknown
-                            </span>
+                                <span class="attendance-status attendance-status--unknown">
+                                    <span class="attendance-status__icon" aria-hidden="true"><i class="bi bi-question-circle"></i></span>
+                                    <span>
+                                        <strong>Unknown</strong>
+                                        <small>No status</small>
+                                    </span>
+                                </span>
                             @endif
                         </td>
                         <td class="px-4 py-2">{{ $log->scanned_at ?? '—' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="text-center px-4 py-6 text-gray-500">No attendance records found.</td>
+                        <td colspan="6" class="text-center px-4 py-6 text-gray-500">No attendance records found.</td>
                     </tr>
                     @endforelse
                 </tbody>

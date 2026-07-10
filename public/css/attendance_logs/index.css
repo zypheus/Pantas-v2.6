@@ -338,24 +338,72 @@
     background-color: #932c27;
 }
 
-.in {
-    background-color: green;
-    color: white;
-    padding: 4px 10px;
-    font-weight: bold;
-    border-radius: 4px;
-    display: inline-block;
-    font-size: 0.875rem;
+.attendance-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 8.25rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: 999px !important;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.1;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
-.out {
-    background-color: #932c27;
-    color: white;
-    padding: 4px 10px;
-    font-weight: bold;
-    border-radius: 4px;
-    display: inline-block;
-    font-size: 0.875rem;
+.attendance-status__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 999px !important;
+    color: #ffffff;
+    flex: 0 0 auto;
+}
+
+.attendance-status strong {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.attendance-status small {
+    display: block;
+    margin-top: 0.08rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.attendance-status--in {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #14532d;
+}
+
+.attendance-status--in .attendance-status__icon {
+    background: #16a34a;
+}
+
+.attendance-status--out {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #7f1d1d;
+}
+
+.attendance-status--out .attendance-status__icon {
+    background: #dc2626;
+}
+
+.attendance-status--unknown {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+}
+
+.attendance-status--unknown .attendance-status__icon {
+    background: #64748b;
 }
 
 #lfpyss{
