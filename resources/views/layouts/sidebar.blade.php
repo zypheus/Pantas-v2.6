@@ -24,6 +24,46 @@
     @yield('styles')
 </head>
 
+@php
+    $moduleAccess = app(\App\Services\Auth\ModuleAccessService::class);
+    $shellUser = Auth::user();
+    $shellModules = $shellUser ? $moduleAccess->availableModules($shellUser) : [];
+    $shellActiveModule = session('active_module');
+
+    if ($shellUser && (! is_string($shellActiveModule) || ! $moduleAccess->canAccessModule($shellUser, $shellActiveModule))) {
+        try {
+            $shellActiveModule = $moduleAccess->defaultModule($shellUser);
+        } catch (\InvalidArgumentException) {
+            $shellActiveModule = null;
+        }
+    }
+
+    $shellModuleLabel = $shellActiveModule ? str_replace('-', ' ', ucfirst($shellActiveModule)) : 'No module';
+    $shellTitle = trim($__env->yieldContent('title', 'Dashboard'));
+    $shellBreadcrumbs = collect(['Dashboard', $shellTitle])->unique()->values();
+    $shellInitials = collect(explode(' ', trim($shellUser->name ?? 'User')))
+        ->filter()
+        ->take(2)
+        ->map(fn ($part) => substr($part, 0, 1))
+        ->implode('');
+
+    $commandLinks = collect([
+        ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'bi-speedometer2', 'group' => 'Pages'],
+        ['label' => 'Super Admin Dashboard', 'route' => 'dashboard.super-admin', 'icon' => 'bi-shield-lock', 'group' => 'Dashboards'],
+        ['label' => 'Library Dashboard', 'route' => $shellUser && $moduleAccess->hasLibraryAdminAccess($shellUser) ? 'dashboard.library-admin' : 'dashboard.library-staff', 'icon' => 'bi-book', 'group' => 'Dashboards'],
+        ['label' => 'Attendance Dashboard', 'route' => $shellUser && $moduleAccess->hasAttendanceAdminAccess($shellUser) ? 'dashboard.attendance-admin' : 'dashboard.attendance-staff', 'icon' => 'bi-clock-history', 'group' => 'Dashboards'],
+        ['label' => 'Staff Accounts', 'route' => 'users.index', 'icon' => 'bi-people', 'group' => 'Staff'],
+        ['label' => 'Create Staff', 'route' => 'users.create', 'icon' => 'bi-person-plus', 'group' => 'Quick actions'],
+        ['label' => 'Books', 'route' => 'book.index', 'icon' => 'bi-grid', 'group' => 'Library'],
+        ['label' => 'Library Scanner', 'route' => 'library.attendance.scanner', 'icon' => 'bi-upc-scan', 'group' => 'Library'],
+        ['label' => 'Attendance Scanner', 'route' => 'attendance.scan', 'icon' => 'bi-upc-scan', 'group' => 'Attendance'],
+        ['label' => 'Attendance Logs', 'route' => 'attendance_logs.index', 'icon' => 'bi-list-check', 'group' => 'Attendance'],
+        ['label' => 'Reports Hub', 'route' => 'attendance_logs.reports.hub', 'icon' => 'bi-bar-chart', 'group' => 'Reports'],
+        ['label' => 'Admin Activity', 'route' => 'admin.activities.index', 'icon' => 'bi-activity', 'group' => 'Activity'],
+        ['label' => 'Feedback Settings', 'route' => 'attendance.feedback.settings', 'icon' => 'bi-gear', 'group' => 'Settings'],
+    ])->filter(fn ($item) => Route::has($item['route']))->values();
+@endphp
+
 <body class="sidebar-layout sidebar-hydrating">
 
     {{-- ========================================================
@@ -99,14 +139,119 @@
 
         {{-- MAIN CONTENT AREA --}}
         <main class="sidebar-content">
+            <header class="app-topbar">
+                <button type="button" id="desktopSidebarToggle" class="topbar-icon-btn d-none d-md-inline-flex" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="sidebar">
+                    <i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>
+                </button>
+
+                <div class="app-breadcrumbs" aria-label="Breadcrumb">
+                    @foreach ($shellBreadcrumbs as $breadcrumb)
+                        <span>{{ $breadcrumb }}</span>
+                        @if (! $loop->last)
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        @endif
+                    @endforeach
+                </div>
+
+                <button type="button" class="topbar-search" data-command-open aria-label="Open global search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <span>Search staff, books, attendance...</span>
+                    <kbd>Ctrl K</kbd>
+                </button>
+
+                <div class="topbar-actions">
+                    @if (count($shellModules) > 1)
+                        <div class="dropdown">
+                            <button class="topbar-module-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>Module</span>
+                                <strong>{{ $shellModuleLabel }}</strong>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end topbar-dropdown">
+                                @foreach ($shellModules as $availableModule)
+                                    <form method="POST" action="{{ route('module.switch') }}" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="module" value="{{ $availableModule }}">
+                                        <button type="submit" class="dropdown-item topbar-dropdown-item {{ $shellActiveModule === $availableModule ? 'active' : '' }}">
+                                            <i class="bi {{ $shellActiveModule === $availableModule ? 'bi-check-circle-fill' : 'bi-circle' }}" aria-hidden="true"></i>
+                                            {{ str_replace('-', ' ', ucfirst($availableModule)) }}
+                                        </button>
+                                    </form>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="dropdown">
+                        <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                            <i class="bi bi-bell" aria-hidden="true"></i>
+                            <span class="topbar-badge">3</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end topbar-dropdown topbar-notifications">
+                            <div class="topbar-dropdown-heading">Notifications</div>
+                            <div class="topbar-notification-item">
+                                <span class="notification-dot"></span>
+                                <div>
+                                    <strong>Attendance synced</strong>
+                                    <small>Latest scan records are ready.</small>
+                                </div>
+                            </div>
+                            <div class="topbar-notification-item">
+                                <span class="notification-dot"></span>
+                                <div>
+                                    <strong>Review pending work</strong>
+                                    <small>Open your module dashboard for follow-up.</small>
+                                </div>
+                            </div>
+                            <div class="topbar-notification-item">
+                                <span class="notification-dot"></span>
+                                <div>
+                                    <strong>Backup completed</strong>
+                                    <small>System status is normal.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="topbar-user-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="topbar-avatar">{{ $shellInitials ?: 'U' }}</span>
+                            <span class="topbar-user-copy">
+                                <strong>{{ $shellUser->name ?? 'User' }}</strong>
+                                <span>{{ str_replace('_', ' ', ucfirst($shellUser->role ?? 'staff')) }}</span>
+                            </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end topbar-dropdown">
+                            @if (Route::has('profile.edit'))
+                                <a class="dropdown-item topbar-dropdown-item" href="{{ route('profile.edit') }}">
+                                    <i class="bi bi-person" aria-hidden="true"></i> Profile
+                                </a>
+                            @endif
+                            <button class="dropdown-item topbar-dropdown-item" type="button" data-command-open>
+                                <i class="bi bi-command" aria-hidden="true"></i> Command palette
+                            </button>
+                            <button class="dropdown-item topbar-dropdown-item" type="button">
+                                <i class="bi bi-sliders" aria-hidden="true"></i> Preferences
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <form method="POST" action="{{ route('logout') }}" class="m-0">
+                                @csrf
+                                <button class="dropdown-item topbar-dropdown-item text-danger" type="submit">
+                                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
             {{-- Page-level header / breadcrumb (optional) --}}
             @hasSection('header')
-                <div class="sidebar-page-header px-4 pt-3 pb-2 border-bottom">
+                <div class="sidebar-page-header">
                     @yield('header')
                 </div>
             @endif
 
-            <div class="sidebar-page-body px-4 py-3">
+            <div class="sidebar-page-body">
                 @yield('content')
             </div>
 
@@ -117,6 +262,33 @@
         </main>
 
     </div>{{-- /.sidebar-wrapper --}}
+
+    <div class="command-palette-backdrop" id="commandPalette" aria-hidden="true">
+        <div class="command-palette" role="dialog" aria-modal="true" aria-labelledby="commandPaletteTitle">
+            <div class="command-search-row">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input type="search" id="commandSearchInput" placeholder="Search pages, staff, reports, settings..." autocomplete="off">
+                <kbd>Esc</kbd>
+            </div>
+            <div class="command-results" id="commandResults">
+                <div class="command-section-title" id="commandPaletteTitle">Quick navigation</div>
+                @foreach ($commandLinks as $command)
+                    <a href="{{ route($command['route']) }}"
+                       class="command-result"
+                       data-command-item
+                       data-search="{{ strtolower($command['label'].' '.$command['group']) }}">
+                        <span class="command-icon"><i class="bi {{ $command['icon'] }}" aria-hidden="true"></i></span>
+                        <span>
+                            <strong>{{ $command['label'] }}</strong>
+                            <small>{{ $command['group'] }}</small>
+                        </span>
+                        <i class="bi bi-arrow-return-left ms-auto" aria-hidden="true"></i>
+                    </a>
+                @endforeach
+                <div class="command-empty" id="commandEmpty">No matching command found.</div>
+            </div>
+        </div>
+    </div>
 
     {{-- Bootstrap 5 JS (needed for any Bootstrap components on content pages) --}}
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

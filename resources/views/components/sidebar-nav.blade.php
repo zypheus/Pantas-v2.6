@@ -26,29 +26,19 @@
 
 <div class="sidebar-header">
     <a href="{{ route('dashboard') }}" class="sidebar-logo-wrap">
-        <img src="{{ asset('images/pantasLogo.png') }}" alt="Pantas Logo" class="sidebar-logo-img">
-        <span class="sidebar-app-name">Pantas</span>
+        <span class="sidebar-logo-mark">
+            <img src="{{ asset('images/pantasLogo.png') }}" alt="Pantas Logo" class="sidebar-logo-img">
+        </span>
+        <span class="sidebar-brand-copy">
+            <span class="sidebar-app-name">Pantas</span>
+            <span class="sidebar-app-subtitle">Admin Portal</span>
+        </span>
     </a>
     <div class="sidebar-user-info">
         <span class="sidebar-user-name">{{ $user->name ?? 'User' }}</span>
         <span class="sidebar-role-badge">{{ str_replace('_', ' ', ucfirst($user->role ?? 'staff')) }}</span>
-        <span class="sidebar-role-badge mt-1">Active: {{ $activeModuleLabel }}</span>
+        <span class="sidebar-module-pill">Active: {{ $activeModuleLabel }}</span>
     </div>
-
-    @if (count($availableModules) > 1)
-        <div class="mt-3 d-grid gap-2">
-            @foreach ($availableModules as $availableModule)
-                <form method="POST" action="{{ route('module.switch') }}" class="m-0">
-                    @csrf
-                    <input type="hidden" name="module" value="{{ $availableModule }}">
-                    <button type="submit"
-                            class="btn btn-sm w-100 {{ $activeModule === $availableModule ? 'btn-primary' : 'btn-outline-primary' }}">
-                        {{ str_replace('-', ' ', ucfirst($availableModule)) }}
-                    </button>
-                </form>
-            @endforeach
-        </div>
-    @endif
 </div>
 
 <nav class="sidebar-nav" aria-label="Sidebar navigation">
@@ -407,10 +397,15 @@
 </nav>
 
 <div class="sidebar-footer-actions">
+    @if (Route::has('profile.edit'))
+        <a href="{{ route('profile.edit') }}" class="btn-profile">
+            <i class="bi bi-person"></i> <span>Profile</span>
+        </a>
+    @endif
     <form method="POST" action="{{ route('logout') }}" class="flex-1 m-0">
         @csrf
         <button type="submit" class="btn-logout w-100">
-            <i class="bi bi-box-arrow-right"></i> Logout
+            <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
         </button>
     </form>
 </div>

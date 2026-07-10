@@ -3,30 +3,36 @@
 @section('title', $title)
 
 @section('header')
-    <div>
-        <h1 class="h4 mb-1">{{ $title }}</h1>
-        <p class="text-muted mb-0">{{ $summary }}</p>
-    </div>
+    @include('dashboards.partials.page-header')
 @endsection
 
 @section('content')
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <p class="mb-3">
-                Active module: <strong>{{ $module }}</strong>
-            </p>
+    <div class="dashboard-shell">
+        <section class="dashboard-section">
+            @include('dashboards.partials.section-header', [
+                'kicker' => 'Module access',
+                'title' => 'Active module: '.str_replace('-', ' ', ucfirst($module)),
+                'description' => 'Switch between the administrative workspaces available to your account.',
+            ])
 
-            <div class="d-flex gap-2 flex-wrap">
-                @foreach (app(\App\Services\Auth\ModuleAccessService::class)->availableModules(auth()->user()) as $availableModule)
-                    <form method="POST" action="{{ route('module.switch') }}">
-                        @csrf
-                        <input type="hidden" name="module" value="{{ $availableModule }}">
-                        <button type="submit" class="btn btn-outline-primary btn-sm">
-                            Switch to {{ str_replace('-', ' ', ucfirst($availableModule)) }}
-                        </button>
-                    </form>
-                @endforeach
+            <div class="dashboard-card">
+                <div class="dashboard-card-body">
+                <div class="dashboard-action-list dashboard-action-list-inline">
+                    @foreach (app(\App\Services\Auth\ModuleAccessService::class)->availableModules(auth()->user()) as $availableModule)
+                        <form method="POST" action="{{ route('module.switch') }}">
+                            @csrf
+                            <input type="hidden" name="module" value="{{ $availableModule }}">
+                            <button type="submit" class="dashboard-action-link dashboard-action-button">
+                                <span class="dashboard-action-icon" aria-hidden="true">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </span>
+                                <span>Switch to {{ str_replace('-', ' ', ucfirst($availableModule)) }}</span>
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
 @endsection

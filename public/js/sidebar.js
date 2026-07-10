@@ -1,12 +1,14 @@
 /**
  * sidebar.js — Pantas Dashboard Sidebar
- * Handles: collapsible group toggles, localStorage state, mobile overlay.
+ * Handles: collapsible group toggles, localStorage state, mobile overlay,
+ * desktop collapse, and command palette.
  */
 (function () {
     'use strict';
 
     const GROUPS_STORAGE_KEY = 'pantas_sidebar_open_groups';
     const SCROLL_STORAGE_KEY = 'pantas_sidebar_scroll_top';
+    const COLLAPSED_STORAGE_KEY = 'pantas_sidebar_collapsed';
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -43,6 +45,10 @@
         try {
             localStorage.setItem(SCROLL_STORAGE_KEY, String(scrollTop));
         } catch (_) { /* storage may be unavailable */ }
+    }
+
+    function isDesktop() {
+        return window.matchMedia('(min-width: 768px)').matches;
     }
 
     function openGroup(label, items) {
@@ -167,6 +173,120 @@
     }
 
     // -------------------------------------------------------------------------
+    // Desktop collapse
+    // -------------------------------------------------------------------------
+
+    function initDesktopCollapse() {
+        const toggle = document.getElementById('desktopSidebarToggle');
+        if (!toggle) return;
+
+        function readCollapsed() {
+            try {
+                return localStorage.getItem(COLLAPSED_STORAGE_KEY) === 'true';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function writeCollapsed(value) {
+            try {
+                localStorage.setItem(COLLAPSED_STORAGE_KEY, value ? 'true' : 'false');
+            } catch (_) { /* storage may be unavailable */ }
+        }
+
+        function applyCollapsed(value) {
+            document.body.classList.toggle('sidebar-collapsed', value && isDesktop());
+            toggle.setAttribute('aria-expanded', value ? 'false' : 'true');
+            toggle.setAttribute('aria-label', value ? 'Expand sidebar' : 'Collapse sidebar');
+        }
+
+        applyCollapsed(readCollapsed());
+
+        toggle.addEventListener('click', function () {
+            const next = !document.body.classList.contains('sidebar-collapsed');
+            applyCollapsed(next);
+            writeCollapsed(next);
+        });
+
+        window.addEventListener('resize', function () {
+            applyCollapsed(readCollapsed());
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Command palette
+    // -------------------------------------------------------------------------
+
+    function initCommandPalette() {
+        const palette = document.getElementById('commandPalette');
+        const input = document.getElementById('commandSearchInput');
+        const empty = document.getElementById('commandEmpty');
+        const openers = document.querySelectorAll('[data-command-open]');
+        const items = Array.from(document.querySelectorAll('[data-command-item]'));
+
+        if (!palette || !input) return;
+
+        function filterItems() {
+            const query = input.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            items.forEach(function (item) {
+                const haystack = item.dataset.search || item.textContent.toLowerCase();
+                const visible = !query || haystack.includes(query);
+                item.hidden = !visible;
+                if (visible) visibleCount += 1;
+            });
+
+            if (empty) {
+                empty.classList.toggle('show', visibleCount === 0);
+            }
+        }
+
+        function openPalette() {
+            palette.classList.add('open');
+            palette.removeAttribute('aria-hidden');
+            document.body.style.overflow = 'hidden';
+            input.value = '';
+            filterItems();
+            requestAnimationFrame(function () {
+                input.focus();
+            });
+        }
+
+        function closePalette() {
+            palette.classList.remove('open');
+            palette.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        openers.forEach(function (opener) {
+            opener.addEventListener('click', openPalette);
+        });
+
+        input.addEventListener('input', filterItems);
+
+        palette.addEventListener('click', function (event) {
+            if (event.target === palette) {
+                closePalette();
+            }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            const isCommandShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+
+            if (isCommandShortcut) {
+                event.preventDefault();
+                openPalette();
+                return;
+            }
+
+            if (event.key === 'Escape' && palette.classList.contains('open')) {
+                closePalette();
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // Boot
     // -------------------------------------------------------------------------
 
@@ -174,6 +294,8 @@
         initGroups();
         initScrollRestoration();
         initMobileToggle();
+        initDesktopCollapse();
+        initCommandPalette();
     });
 
 }());

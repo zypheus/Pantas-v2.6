@@ -3,33 +3,40 @@
 @section('title', $title)
 
 @section('header')
-    <div>
-        <h1 class="h4 mb-1">{{ $title }}</h1>
-        <p class="text-muted mb-0">{{ $summary }}</p>
-    </div>
+    @include('dashboards.partials.page-header')
 @endsection
 
 @section('content')
-    <div class="row g-3 mb-3">
-        @foreach ($stats as $stat)
-            @include('dashboards.partials.stat-card', ['stat' => $stat])
-        @endforeach
-    </div>
-
-    <div class="row g-3">
-        <div class="col-12 col-xl-5">
-            @include('dashboards.partials.chart-card', ['chart' => $charts[0]])
-        </div>
-        <div class="col-12 col-xl-3">
-            @include('dashboards.partials.quick-actions', ['actions' => $quickActions])
-        </div>
-        <div class="col-12 col-xl-4">
-            @include('dashboards.partials.recent-list', [
-                'title' => 'Recent Attendance Scans',
-                'items' => $recent,
-                'empty' => 'No Attendance scans yet.',
+    <div class="dashboard-shell">
+        <section class="dashboard-section">
+            @include('dashboards.partials.section-header', [
+                'kicker' => 'Attendance desk',
+                'title' => 'Today’s scan snapshot',
+                'description' => 'Current scan activity, in-building status, and feedback signals.',
+                'meta' => 'Attendance Staff',
             ])
-        </div>
+            <div class="dashboard-stat-grid">
+                @foreach ($stats as $stat)
+                    @include('dashboards.partials.stat-card', ['stat' => $stat])
+                @endforeach
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            @include('dashboards.partials.section-header', [
+                'kicker' => 'Work queue',
+                'title' => 'Hourly flow and recent scans',
+                'description' => 'A quick view of scanning volume and the latest patron movement.',
+            ])
+            <div class="dashboard-content-grid">
+                @include('dashboards.partials.chart-card', ['chart' => $charts[0]])
+                @include('dashboards.partials.recent-list', [
+                    'title' => 'Recent Attendance Scans',
+                    'items' => $recent,
+                    'empty' => 'No Attendance scans yet.',
+                ])
+            </div>
+        </section>
     </div>
 
     @include('dashboards.partials.chart-scripts')

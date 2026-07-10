@@ -1,6 +1,12 @@
-<div class="card border-0 shadow-sm h-100">
-    <div class="card-body">
-        <h2 class="h6 mb-3">{{ $title }}</h2>
+<div class="dashboard-card dashboard-recent-card h-100">
+    <div class="dashboard-card-body">
+        <div class="dashboard-panel-header">
+            <div>
+                <span class="dashboard-panel-kicker">Activity</span>
+                <h2>{{ $title }}</h2>
+            </div>
+            <span class="dashboard-panel-meta">{{ count($items) }} shown</span>
+        </div>
 
         @forelse ($items as $item)
             @php
@@ -29,20 +35,20 @@
                 }
             @endphp
 
-            <div class="d-flex gap-3 py-2 border-bottom">
-                <span class="text-primary"><i class="bi {{ $icon }}"></i></span>
-                <div class="min-w-0">
-                    <div class="fw-semibold">{{ $headline }}</div>
+            <div class="dashboard-activity-item">
+                <span class="dashboard-activity-icon" aria-hidden="true"><i class="bi {{ $icon }}"></i></span>
+                <div class="dashboard-activity-copy">
+                    <div class="dashboard-activity-title">{{ $headline }}</div>
                     @if ($detail)
-                        <div class="small text-muted">{{ $detail }}</div>
+                        <div class="dashboard-activity-detail">{{ $detail }}</div>
                     @endif
                     @if ($time)
-                        <div class="small text-muted">{{ $time->timezone('Asia/Manila')->diffForHumans() }}</div>
+                        <div class="dashboard-activity-time">{{ $time->timezone('Asia/Manila')->diffForHumans() }}</div>
                     @endif
                 </div>
             </div>
         @empty
-            <p class="text-muted mb-0">{{ $empty ?? 'No recent activity yet.' }}</p>
+            <div class="dashboard-empty-state">{{ $empty ?? 'No recent activity yet.' }}</div>
         @endforelse
     </div>
 </div>
