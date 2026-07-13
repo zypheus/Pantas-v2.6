@@ -52,6 +52,9 @@
         ->take(2)
         ->map(fn ($part) => substr($part, 0, 1))
         ->implode('');
+    $shellNotifications = $shellUser
+        ? app(\App\Services\TopbarNotificationService::class)->forUser($shellUser)
+        : collect();
 
     $commandLinks = collect([
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'bi-speedometer2', 'group' => 'Pages'],
@@ -190,31 +193,28 @@
                     <div class="dropdown">
                         <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
                             <i class="bi bi-bell" aria-hidden="true"></i>
-                            <span class="topbar-badge">3</span>
+                            @if ($shellNotifications->isNotEmpty())
+                                <span class="topbar-badge">{{ $shellNotifications->count() }}</span>
+                            @endif
                         </button>
                         <div class="dropdown-menu dropdown-menu-end topbar-dropdown topbar-notifications">
                             <div class="topbar-dropdown-heading">Notifications</div>
-                            <div class="topbar-notification-item">
-                                <span class="notification-dot"></span>
-                                <div>
-                                    <strong>Attendance synced</strong>
-                                    <small>Latest scan records are ready.</small>
+                            @forelse ($shellNotifications as $notification)
+                                <a class="topbar-notification-item text-decoration-none" href="{{ $notification['url'] }}">
+                                    <span class="notification-dot"></span>
+                                    <div>
+                                        <strong>{{ $notification['title'] }}</strong>
+                                        <small>{{ $notification['message'] }}</small>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="topbar-notification-item">
+                                    <div>
+                                        <strong>You're all caught up</strong>
+                                        <small>There are no items that need your review.</small>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="topbar-notification-item">
-                                <span class="notification-dot"></span>
-                                <div>
-                                    <strong>Review pending work</strong>
-                                    <small>Open your module dashboard for follow-up.</small>
-                                </div>
-                            </div>
-                            <div class="topbar-notification-item">
-                                <span class="notification-dot"></span>
-                                <div>
-                                    <strong>Backup completed</strong>
-                                    <small>System status is normal.</small>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
 
