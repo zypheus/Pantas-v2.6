@@ -19,6 +19,7 @@ Reference plan:
 
 ## Active Work
 
+- [ ] Start Milestone 11: isolated Developer branding role and system-wide `pantas-default` customization.
 - [x] Compare current `pantas-v2.5` behavior with the target separated-domain architecture.
 - [x] Identify major feature overlap and architecture gaps.
 - [x] Confirm separated Attendance + Library architecture direction.
@@ -183,6 +184,88 @@ Reference plan:
 - [x] Run focused PHPUnit tests after each milestone.
 - [x] Run `npm run build` when frontend assets change.
 - [x] Run Pint before finalizing larger PHP changes.
+
+### Milestone 11: Developer Branding Role
+
+Plan reference: `documentation/developer-branding-plan.md`
+
+#### Task 1: Role And Access Isolation
+
+- [ ] Add the `developer` Spatie role and compatibility role handling.
+- [ ] Add exact-role `developer` middleware with no Super Admin bypass.
+- [ ] Add Developer login redirect and dashboard route.
+- [ ] Prevent Developer access to Super Admin, Library, and Attendance staff modules.
+- [ ] Ensure Super Admin and all other roles receive `403` on `/developer/*`.
+- [ ] Limit Developer navigation to Dashboard, Branding Settings, Profile, and Logout.
+- [ ] Hide Developer navigation from Super Admin and all other roles.
+- [ ] Remove the Library/Attendance module switcher from the Developer shell.
+
+#### Task 2: Branding Defaults And Persistence
+
+- [ ] Define permanent original asset paths and colors in `config/branding.php`.
+- [ ] Create the `branding_settings` migration with nullable override fields and `updated_by`.
+- [ ] Add the `BrandingSetting` model and updater relationship.
+- [ ] Create `BrandingService` to merge defaults and overrides.
+- [ ] Add active-branding caching and cache invalidation.
+- [ ] Add missing-custom-file fallback to original assets.
+
+#### Task 3: Developer Routes And Interface
+
+- [ ] Create and load `routes/developer.php`.
+- [ ] Add Developer dashboard controller and view.
+- [ ] Add Branding Settings controller, Form Request, and view.
+- [ ] Show current and original banner/logo previews.
+- [ ] Add color pickers and `#RRGGBB` inputs with current/original values.
+- [ ] Add live banner, sidebar, and palette preview.
+- [ ] Add Save Changes, per-field restore, and Restore to Default actions.
+- [ ] Add a confirmation dialog for full restoration.
+
+#### Task 4: Upload And Color Safety
+
+- [ ] Validate banner and logo MIME types, sizes, dimensions, and image decoding.
+- [ ] Store generated filenames under public branding storage directories.
+- [ ] Make image replacement safe so the old custom file is deleted only after success.
+- [ ] Prevent original Pantas assets from being overwritten or deleted.
+- [ ] Validate and normalize colors to uppercase six-digit `#RRGGBB` values.
+- [ ] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete values.
+
+#### Task 5: Application Branding Integration
+
+- [ ] Share active branding with Blade layouts through one centralized integration point.
+- [ ] Expose validated active colors as CSS custom properties.
+- [ ] Connect customizable colors only to `pantas-default`.
+- [ ] Preserve all other themes and per-user theme preferences.
+- [ ] Replace relevant hard-coded banner references in shared layouts.
+- [ ] Replace relevant hard-coded sidebar/application logo references.
+- [ ] Apply branding consistently to authenticated, public, guest, Library, Attendance, and scanner layouts.
+
+#### Task 6: Restoration And Audit
+
+- [ ] Implement transactional full Restore to Default.
+- [ ] Implement partial restore for individual assets and colors.
+- [ ] Clear custom overrides and return to configuration defaults.
+- [ ] Delete only obsolete custom files after a successful restore.
+- [ ] Clear branding cache after update or restoration.
+- [ ] Log branding updates, previous/new values, and file paths.
+- [ ] Log full and partial restoration with the acting Developer.
+- [ ] Restrict Developer activity display to branding-related records.
+
+#### Task 7: Tests And Verification
+
+- [ ] Test Developer-only route access and exact-role enforcement.
+- [ ] Test that Super Admin and other roles receive `403` on Developer routes.
+- [ ] Test that Developer receives `403` on other staff modules.
+- [ ] Test Developer login redirect, isolated navigation, and hidden module switcher.
+- [ ] Test valid and invalid image uploads, limits, and safe replacement.
+- [ ] Test valid and invalid color values and normalization.
+- [ ] Test `pantas-default` customization and isolation from other themes.
+- [ ] Test full and partial restoration of assets and colors.
+- [ ] Test that original Pantas assets are never deleted.
+- [ ] Test missing custom-file fallback and cache invalidation.
+- [ ] Test branding update and restoration activity records.
+- [ ] Run focused Branding, Developer Access, Theme Preference, and Module Access tests.
+- [ ] Run `php artisan route:list`, `npm run build`, and Pint.
+- [ ] Visually verify responsive layouts, theme isolation, restoration, fallback, and color contrast.
 
 ## Backlog
 
