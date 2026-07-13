@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -24,6 +25,16 @@ final class DeveloperAccessTest extends TestCase
     public function test_role_seeder_creates_developer_role(): void
     {
         $this->assertTrue(Role::query()->where('name', 'developer')->where('guard_name', 'web')->exists());
+    }
+
+    public function test_migration_provisions_active_developer_account(): void
+    {
+        $developer = User::query()->where('email', 'developer.admin@pantas.text')->firstOrFail();
+
+        $this->assertSame('developer', $developer->role);
+        $this->assertTrue($developer->is_active);
+        $this->assertTrue($developer->hasRole('developer'));
+        $this->assertTrue(Hash::check('password', $developer->password));
     }
 
     public function test_developer_defaults_to_isolated_dashboard(): void
