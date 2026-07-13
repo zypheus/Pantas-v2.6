@@ -21,7 +21,7 @@
         <header class="opac-search-header" role="banner">
             <div class="opac-search-header-inner">
                 <div class="opac-search-brand">
-                    <img class="opac-search-logo" src="{{ asset('images/d.png') }}" alt="Library logo">
+                    <img class="opac-search-logo" src="{{ $brandingOpacLogoUrl }}" alt="Library logo">
                     <div class="opac-search-title">Governor Generoso College of Arts, Sciences and Technology</div>
                 </div>
 
@@ -68,7 +68,7 @@
     <div class="opac-page-fill flex-grow-1">
     @unless($searchActive)
         <section class="hero-text">
-            <img src="{{ $brandingBannerUrl }}" alt="Banner" class="banner-img">
+            <img src="{{ $brandingOpacBannerUrl }}" alt="Banner" class="banner-img">
         </section>
     @endunless
 
@@ -135,7 +135,7 @@
                     $cAvail = ($cMeta['is_available'] ?? false) ? 'Available' : 'Not Available';
                 @endphp
                 <div class="opac-book-card"
-                    data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
+                    data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : $brandingOpacDefaultBookCoverUrl }}"
                     data-title="{{ $book->title_statement }}"
                     data-author="{{ $book->main_author }}"
                     data-note="{{ $book->general_note }}"
@@ -154,7 +154,7 @@
                     aria-label="{{ $book->title_statement }}">
 
                     <div class="opac-book-card-cover">
-                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : $brandingOpacDefaultBookCoverUrl }}"
                             alt="{{ $book->title_statement }}">
                     </div>
                     <div class="opac-book-card-body">
@@ -271,7 +271,7 @@
                            rel="noopener"
                            onclick="{{ $eb->link ? '' : 'return false;' }}">
                             <div class="opac-result-cover">
-                                <img src="{{ asset('images/defaultBook.png') }}" alt="">
+                                <img src="{{ $brandingOpacDefaultBookCoverUrl }}" alt="">
                             </div>
                             <div class="opac-result-meta">
                                 <div class="opac-result-title">
@@ -294,7 +294,7 @@
                 @else
                     @foreach ($books as $book)
                     <div class="opac-result-row"
-                        data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}"
+                        data-img="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : $brandingOpacDefaultBookCoverUrl }}"
                         data-title="{{ $book->title_statement }}"
                         data-author="{{ $book->main_author }}"
                         data-note="{{ $book->general_note }}"
@@ -309,7 +309,7 @@
                         data-course="{{ $book->course ?? '' }}"
                         onclick="openBookCard(this)">
                         <div class="opac-result-cover">
-                            <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/defaultBook.png') }}" alt="">
+                            <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : $brandingOpacDefaultBookCoverUrl }}" alt="">
                         </div>
                         <div class="opac-result-meta">
                             <div class="opac-result-title">

@@ -20,6 +20,9 @@ final class UpdateBrandingRequest extends FormRequest
 
         return [
             'banner' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120', 'dimensions:min_width=800,min_height=200,max_width=4000,max_height=2000'],
+            'opac_banner' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120', 'dimensions:min_width=800,min_height=200,max_width=4000,max_height=2000'],
+            'opac_logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048', 'dimensions:min_width=64,min_height=64,max_width=1000,max_height=1000'],
+            'opac_default_book_cover' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:4096', 'dimensions:min_width=200,min_height=300,max_width=2000,max_height=3000'],
             'sidebar_logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048', 'dimensions:min_width=64,min_height=64,max_width=1000,max_height=1000'],
             'sidebar_brand_name' => ['nullable', 'string', 'max:60'],
             'sidebar_brand_subtitle' => ['nullable', 'string', 'max:100'],

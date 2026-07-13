@@ -14,6 +14,9 @@ return [
 
     'defaults' => [
         'banner_path' => 'images/Bannernew.jpg',
+        'opac_banner_path' => 'images/Bannernew.jpg',
+        'opac_logo_path' => 'images/d.png',
+        'opac_default_book_cover_path' => 'images/defaultBook.png',
         'sidebar_logo_path' => 'images/pantasLogo-box.png',
         'sidebar_brand_name' => 'Pantas',
         'sidebar_brand_subtitle' => 'Admin Portal',

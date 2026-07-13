@@ -29,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'activeBranding' => $branding->active(),
                 'brandingBannerUrl' => $branding->assetUrl('banner_path'),
+                'brandingOpacBannerUrl' => $branding->assetUrl('opac_banner_path'),
+                'brandingOpacLogoUrl' => $branding->assetUrl('opac_logo_path'),
+                'brandingOpacDefaultBookCoverUrl' => $branding->assetUrl('opac_default_book_cover_path'),
                 'brandingSidebarLogoUrl' => $branding->assetUrl('sidebar_logo_path'),
             ]);
         });

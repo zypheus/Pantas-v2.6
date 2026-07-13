@@ -34,8 +34,14 @@ final class DeveloperBrandingController extends Controller
             'branding' => $this->branding->active(),
             'defaults' => $this->branding->defaults(),
             'bannerUrl' => $this->branding->assetUrl('banner_path'),
+            'opacBannerUrl' => $this->branding->assetUrl('opac_banner_path'),
+            'opacLogoUrl' => $this->branding->assetUrl('opac_logo_path'),
+            'opacDefaultBookCoverUrl' => $this->branding->assetUrl('opac_default_book_cover_path'),
             'logoUrl' => $this->branding->assetUrl('sidebar_logo_path'),
             'originalBannerUrl' => asset($this->branding->defaults()['banner_path']),
+            'originalOpacBannerUrl' => asset($this->branding->defaults()['opac_banner_path']),
+            'originalOpacLogoUrl' => asset($this->branding->defaults()['opac_logo_path']),
+            'originalOpacDefaultBookCoverUrl' => asset($this->branding->defaults()['opac_default_book_cover_path']),
             'originalLogoUrl' => asset($this->branding->defaults()['sidebar_logo_path']),
         ]);
     }
@@ -43,9 +49,12 @@ final class DeveloperBrandingController extends Controller
     public function update(UpdateBrandingRequest $request): RedirectResponse
     {
         $this->branding->update(
-            $request->safe()->except(['banner', 'sidebar_logo']),
+            $request->safe()->except(['banner', 'opac_banner', 'opac_logo', 'opac_default_book_cover', 'sidebar_logo']),
             $request->user(),
             $request->file('banner'),
+            $request->file('opac_banner'),
+            $request->file('opac_logo'),
+            $request->file('opac_default_book_cover'),
             $request->file('sidebar_logo'),
         );
 

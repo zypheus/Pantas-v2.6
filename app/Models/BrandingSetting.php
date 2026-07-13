@@ -11,6 +11,9 @@ final class BrandingSetting extends Model
 {
     protected $fillable = [
         'banner_path',
+        'opac_banner_path',
+        'opac_logo_path',
+        'opac_default_book_cover_path',
         'sidebar_logo_path',
         'sidebar_brand_name',
         'sidebar_brand_subtitle',

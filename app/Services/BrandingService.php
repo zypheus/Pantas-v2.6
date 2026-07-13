@@ -63,7 +63,7 @@ final class BrandingService
                 }
             }
 
-            foreach (['banner_path', 'sidebar_logo_path'] as $field) {
+            foreach (['banner_path', 'opac_banner_path', 'opac_logo_path', 'opac_default_book_cover_path', 'sidebar_logo_path'] as $field) {
                 if ($active[$field] !== $defaults[$field] && ! Storage::disk('public')->exists($active[$field])) {
                     $active[$field] = $defaults[$field];
                 }
@@ -93,22 +93,31 @@ final class BrandingService
     }
 
     /** @param array<string, mixed> $values */
-    public function update(array $values, User $user, ?UploadedFile $banner = null, ?UploadedFile $logo = null): BrandingSetting
+    public function update(array $values, User $user, ?UploadedFile $banner = null, ?UploadedFile $opacBanner = null, ?UploadedFile $opacLogo = null, ?UploadedFile $opacDefaultBookCover = null, ?UploadedFile $logo = null): BrandingSetting
     {
         $settings = $this->settings() ?? new BrandingSetting;
         $old = [
             'banner_path' => $settings->banner_path,
+            'opac_banner_path' => $settings->opac_banner_path,
+            'opac_logo_path' => $settings->opac_logo_path,
+            'opac_default_book_cover_path' => $settings->opac_default_book_cover_path,
             'sidebar_logo_path' => $settings->sidebar_logo_path,
             ...collect(self::COLOR_FIELDS)->mapWithKeys(fn (string $f) => [$f => $settings->{$f}])->all(),
             ...collect(self::TEXT_FIELDS)->mapWithKeys(fn (string $f) => [$f => $settings->{$f}])->all(),
         ];
         $oldBanner = $settings->banner_path;
+        $oldOpacBanner = $settings->opac_banner_path;
+        $oldOpacLogo = $settings->opac_logo_path;
+        $oldOpacDefaultBookCover = $settings->opac_default_book_cover_path;
         $oldLogo = $settings->sidebar_logo_path;
         $newBanner = $banner?->store('branding/banners', 'public');
+        $newOpacBanner = $opacBanner?->store('branding/banners', 'public');
+        $newOpacLogo = $opacLogo?->store('branding/opac', 'public');
+        $newOpacDefaultBookCover = $opacDefaultBookCover?->store('branding/opac', 'public');
         $newLogo = $logo?->store('branding/logos', 'public');
 
         try {
-            DB::transaction(function () use ($settings, $values, $user, $newBanner, $newLogo): void {
+            DB::transaction(function () use ($settings, $values, $user, $newBanner, $newOpacBanner, $newOpacLogo, $newOpacDefaultBookCover, $newLogo): void {
                 foreach (self::COLOR_FIELDS as $field) {
                     if (array_key_exists($field, $values)) {
                         $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
@@ -125,6 +134,18 @@ final class BrandingService
                     $settings->banner_path = $newBanner;
                 }
 
+                if ($newOpacBanner) {
+                    $settings->opac_banner_path = $newOpacBanner;
+                }
+
+                if ($newOpacLogo) {
+                    $settings->opac_logo_path = $newOpacLogo;
+                }
+
+                if ($newOpacDefaultBookCover) {
+                    $settings->opac_default_book_cover_path = $newOpacDefaultBookCover;
+                }
+
                 if ($newLogo) {
                     $settings->sidebar_logo_path = $newLogo;
                 }
@@ -134,6 +155,9 @@ final class BrandingService
             });
         } catch (\Throwable $exception) {
             $this->deleteCustomFile($newBanner);
+            $this->deleteCustomFile($newOpacBanner);
+            $this->deleteCustomFile($newOpacLogo);
+            $this->deleteCustomFile($newOpacDefaultBookCover);
             $this->deleteCustomFile($newLogo);
 
             throw $exception;
@@ -141,6 +165,9 @@ final class BrandingService
 
         $this->clearCache();
         $this->deleteReplacedFile($oldBanner, $settings->banner_path);
+        $this->deleteReplacedFile($oldOpacBanner, $settings->opac_banner_path);
+        $this->deleteReplacedFile($oldOpacLogo, $settings->opac_logo_path);
+        $this->deleteReplacedFile($oldOpacDefaultBookCover, $settings->opac_default_book_cover_path);
         $this->deleteReplacedFile($oldLogo, $settings->sidebar_logo_path);
 
         $this->logUpdateActivity($old, $settings, $user);
@@ -214,7 +241,7 @@ final class BrandingService
             return $settings->fresh('updater');
         }
 
-        $oldPaths = [$settings->banner_path, $settings->sidebar_logo_path];
+        $oldPaths = [$settings->banner_path, $settings->opac_banner_path, $settings->opac_logo_path, $settings->opac_default_book_cover_path, $settings->sidebar_logo_path];
         foreach ($fields as $defaultField) {
             $settings->{$defaultField} = null;
         }

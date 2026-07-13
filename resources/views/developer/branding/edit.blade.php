@@ -49,6 +49,66 @@
                     </div>
                 </section>
 
+                <section class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5">OPAC Banner</h2>
+                        <p class="small text-muted">This banner appears on the public OPAC (library catalog) page.</p>
+                        <div class="row g-3 align-items-start">
+                            <div class="col-md-8">
+                                <img id="opacBannerPreview" src="{{ $opacBannerUrl }}" alt="Current OPAC banner" class="img-fluid rounded border w-100" style="height:190px;object-fit:cover">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="{{ $originalOpacBannerUrl }}" alt="Original OPAC banner" class="img-fluid rounded border mb-2" style="height:70px;width:100%;object-fit:cover">
+                                <p class="small fw-semibold mb-2">Original Pantas preview</p>
+                                <label for="opac_banner" class="form-label">Upload OPAC banner</label>
+                                <input class="form-control" type="file" id="opac_banner" name="opac_banner" accept="image/png,image/jpeg,image/webp" data-preview="opacBannerPreview">
+                                <p class="small text-muted mt-2">Original: {{ $defaults['opac_banner_path'] }}</p>
+                                <button class="btn btn-sm btn-outline-secondary" form="restore-opac-banner" type="submit">Restore OPAC banner</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5">OPAC Library Logo</h2>
+                        <p class="small text-muted">This logo appears on the public OPAC search header.</p>
+                        <div class="row g-3 align-items-start">
+                            <div class="col-md-8">
+                                <img id="opacLogoPreview" src="{{ $opacLogoUrl }}" alt="Current OPAC logo" class="img-fluid rounded border w-100" style="height:100px;object-fit:contain">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="{{ $originalOpacLogoUrl }}" alt="Original OPAC logo" class="img-fluid rounded border mb-2" style="height:60px;width:100%;object-fit:contain">
+                                <p class="small fw-semibold mb-2">Original Pantas preview</p>
+                                <label for="opac_logo" class="form-label">Upload OPAC logo</label>
+                                <input class="form-control" type="file" id="opac_logo" name="opac_logo" accept="image/png,image/jpeg,image/webp" data-preview="opacLogoPreview">
+                                <p class="small text-muted mt-2">Original: {{ $defaults['opac_logo_path'] }}</p>
+                                <button class="btn btn-sm btn-outline-secondary" form="restore-opac-logo" type="submit">Restore OPAC logo</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5">OPAC Default Book Cover</h2>
+                        <p class="small text-muted">This image appears when a book has no cover image in the OPAC.</p>
+                        <div class="row g-3 align-items-start">
+                            <div class="col-md-8">
+                                <img id="opacDefaultBookCoverPreview" src="{{ $opacDefaultBookCoverUrl }}" alt="Current default book cover" class="img-fluid rounded border w-100" style="height:220px;object-fit:contain">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="{{ $originalOpacDefaultBookCoverUrl }}" alt="Original default book cover" class="img-fluid rounded border mb-2" style="height:80px;width:100%;object-fit:contain">
+                                <p class="small fw-semibold mb-2">Original Pantas preview</p>
+                                <label for="opac_default_book_cover" class="form-label">Upload default book cover</label>
+                                <input class="form-control" type="file" id="opac_default_book_cover" name="opac_default_book_cover" accept="image/png,image/jpeg,image/webp" data-preview="opacDefaultBookCoverPreview">
+                                <p class="small text-muted mt-2">Original: {{ $defaults['opac_default_book_cover_path'] }}</p>
+                                <button class="btn btn-sm btn-outline-secondary" form="restore-opac-default-book-cover" type="submit">Restore default book cover</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="h5">Sidebar logo</h2>
@@ -153,7 +213,10 @@
     </form>
 
     <form id="restore-banner" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="banner_path"></form>
+    <form id="restore-opac-banner" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="opac_banner_path"></form>
     <form id="restore-logo" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_logo_path"></form>
+    <form id="restore-opac-logo" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="opac_logo_path"></form>
+    <form id="restore-opac-default-book-cover" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="opac_default_book_cover_path"></form>
     <form id="restore-brand-name" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_brand_name"></form>
     <form id="restore-brand-subtitle" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_brand_subtitle"></form>
     @foreach (array_keys($labels) as $field)
