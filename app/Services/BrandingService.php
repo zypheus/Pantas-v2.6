@@ -27,6 +27,10 @@ final class BrandingService
         'button_color',
     ];
 
+    public function __construct(
+        private readonly AdminActivityLogger $activityLogger,
+    ) {}
+
     /** @return array<string, mixed> */
     public function active(): array
     {
@@ -76,6 +80,11 @@ final class BrandingService
     public function update(array $values, User $user, ?UploadedFile $banner = null, ?UploadedFile $logo = null): BrandingSetting
     {
         $settings = $this->settings() ?? new BrandingSetting;
+        $old = [
+            'banner_path' => $settings->banner_path,
+            'sidebar_logo_path' => $settings->sidebar_logo_path,
+            ...collect(self::COLOR_FIELDS)->mapWithKeys(fn (string $f) => [$f => $settings->{$f}])->all(),
+        ];
         $oldBanner = $settings->banner_path;
         $oldLogo = $settings->sidebar_logo_path;
         $newBanner = $banner?->store('branding/banners', 'public');
@@ -111,7 +120,40 @@ final class BrandingService
         $this->deleteReplacedFile($oldBanner, $settings->banner_path);
         $this->deleteReplacedFile($oldLogo, $settings->sidebar_logo_path);
 
+        $this->logUpdateActivity($old, $settings, $user);
+
         return $settings->fresh('updater');
+    }
+
+    /** @param array<string, mixed> $old */
+    private function logUpdateActivity(array $old, BrandingSetting $settings, User $user): void
+    {
+        $changed = [];
+        $fields = array_keys(config('branding.defaults', []));
+
+        foreach ($fields as $field) {
+            $newVal = $settings->{$field};
+            if ((string) $old[$field] !== (string) $newVal) {
+                $changed[] = $field;
+            }
+        }
+
+        if ($changed === []) {
+            return;
+        }
+
+        $title = 'Branding settings updated';
+        $body = 'Changed: '.implode(', ', $changed).'.';
+
+        $this->activityLogger->log(
+            module: 'branding',
+            type: 'branding_update',
+            title: $title,
+            body: $body,
+            subject: $settings,
+            actionUrl: route('developer.branding.edit', absolute: false),
+            icon: 'palette',
+        );
     }
 
     private function deleteCustomFile(string|false|null $path): void
@@ -125,14 +167,26 @@ final class BrandingService
     {
         $settings = $this->settings() ?? new BrandingSetting;
         $fields = array_keys($this->defaults());
+        $oldPaths = [];
 
         if ($field !== null && in_array($field, $fields, true)) {
+            $oldVal = $settings->{$field};
             $oldPath = $settings->{$field};
             $settings->{$field} = null;
             $settings->updated_by = $user->getKey();
             $settings->save();
             $this->clearCache();
             $this->deleteReplacedFile($oldPath, null);
+
+            $this->activityLogger->log(
+                module: 'branding',
+                type: 'branding_restore',
+                title: 'Branding value restored: '.$field,
+                body: 'Restored '.$field.' to its original Pantas default.',
+                subject: $settings,
+                actionUrl: route('developer.branding.edit', absolute: false),
+                icon: 'restore',
+            );
 
             return $settings->fresh('updater');
         }
@@ -148,6 +202,16 @@ final class BrandingService
         foreach ($oldPaths as $path) {
             $this->deleteReplacedFile($path, null);
         }
+
+        $this->activityLogger->log(
+            module: 'branding',
+            type: 'branding_restore_all',
+            title: 'All branding restored to Pantas defaults',
+            body: 'Full restoration of banner, sidebar logo, and all colors.',
+            subject: $settings,
+            actionUrl: route('developer.branding.edit', absolute: false),
+            icon: 'restore',
+        );
 
         return $settings->fresh('updater');
     }

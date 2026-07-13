@@ -57,8 +57,13 @@
             </li>
             @if (Route::has('developer.branding.edit'))
                 <li>
-                    <a href="{{ route('developer.branding.edit') }}" class="sidebar-link {{ request()->routeIs('developer.branding.*') ? 'active' : '' }}">
+                    <a href="{{ route('developer.branding.edit') }}" class="sidebar-link {{ request()->routeIs('developer.branding.edit', 'developer.branding.update', 'developer.branding.restore') ? 'active' : '' }}">
                         <i class="bi bi-palette"></i> Branding Settings
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('developer.branding.activity') }}" class="sidebar-link {{ request()->routeIs('developer.branding.activity') ? 'active' : '' }}">
+                        <i class="bi bi-activity"></i> Branding Activity
                     </a>
                 </li>
             @else

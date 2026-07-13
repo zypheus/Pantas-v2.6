@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateBrandingRequest;
+use App\Models\AdminActivity;
 use App\Services\BrandingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,19 @@ use Illuminate\View\View;
 final class DeveloperBrandingController extends Controller
 {
     public function __construct(private readonly BrandingService $branding) {}
+
+    public function activity(): View
+    {
+        $activities = AdminActivity::query()
+            ->where('module', 'branding')
+            ->with('user')
+            ->latest()
+            ->paginate(20);
+
+        return view('developer.branding.activity', [
+            'activities' => $activities,
+        ]);
+    }
 
     public function edit(): View
     {

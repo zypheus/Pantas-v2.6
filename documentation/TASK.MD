@@ -241,30 +241,30 @@ Plan reference: `documentation/developer-branding-plan.md`
 
 #### Task 6: Restoration And Audit
 
-- [ ] Implement transactional full Restore to Default.
-- [ ] Implement partial restore for individual assets and colors.
-- [ ] Clear custom overrides and return to configuration defaults.
-- [ ] Delete only obsolete custom files after a successful restore.
-- [ ] Clear branding cache after update or restoration.
-- [ ] Log branding updates, previous/new values, and file paths.
-- [ ] Log full and partial restoration with the acting Developer.
-- [ ] Restrict Developer activity display to branding-related records.
+- [x] Implement transactional full Restore to Default.
+- [x] Implement partial restore for individual assets and colors.
+- [x] Clear custom overrides and return to configuration defaults.
+- [x] Delete only obsolete custom files after a successful restore.
+- [x] Clear branding cache after update or restoration.
+- [x] Log branding updates, previous/new values, and file paths.
+- [x] Log full and partial restoration with the acting Developer.
+- [x] Restrict Developer activity display to branding-related records.
 
 #### Task 7: Tests And Verification
 
-- [ ] Test Developer-only route access and exact-role enforcement.
-- [ ] Test that Super Admin and other roles receive `403` on Developer routes.
-- [ ] Test that Developer receives `403` on other staff modules.
-- [ ] Test Developer login redirect, isolated navigation, and hidden module switcher.
-- [ ] Test valid and invalid image uploads, limits, and safe replacement.
-- [ ] Test valid and invalid color values and normalization.
-- [ ] Test `pantas-default` customization and isolation from other themes.
-- [ ] Test full and partial restoration of assets and colors.
-- [ ] Test that original Pantas assets are never deleted.
-- [ ] Test missing custom-file fallback and cache invalidation.
-- [ ] Test branding update and restoration activity records.
-- [ ] Run focused Branding, Developer Access, Theme Preference, and Module Access tests.
-- [ ] Run `php artisan route:list`, `npm run build`, and Pint.
+- [x] Test Developer-only route access and exact-role enforcement.
+- [x] Test that Super Admin and other roles receive `403` on Developer routes.
+- [x] Test that Developer receives `403` on other staff modules.
+- [x] Test Developer login redirect, isolated navigation, and hidden module switcher.
+- [x] Test valid and invalid image uploads, limits, and safe replacement.
+- [x] Test valid and invalid color values and normalization.
+- [x] Test `pantas-default` customization and isolation from other themes.
+- [x] Test full and partial restoration of assets and colors.
+- [x] Test that original Pantas assets are never deleted.
+- [x] Test missing custom-file fallback and cache invalidation.
+- [x] Test branding update and restoration activity records.
+- [x] Run focused Branding, Developer Access, Theme Preference, and Module Access tests.
+- [x] Run `php artisan route:list`, `npm run build`, and Pint.
 - [ ] Visually verify responsive layouts, theme isolation, restoration, fallback, and color contrast.
 
 ## Backlog

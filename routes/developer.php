@@ -13,4 +13,6 @@ Route::middleware(['auth', 'developer'])->group(function (): void {
         ->name('developer.branding.update');
     Route::post('/developer/branding/restore', [DeveloperBrandingController::class, 'restore'])
         ->name('developer.branding.restore');
+    Route::get('/developer/branding/activity', [DeveloperBrandingController::class, 'activity'])
+        ->name('developer.branding.activity');
 });
