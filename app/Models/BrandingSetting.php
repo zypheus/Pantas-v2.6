@@ -12,6 +12,9 @@ final class BrandingSetting extends Model
     protected $fillable = [
         'banner_path',
         'sidebar_logo_path',
+        'sidebar_brand_name',
+        'sidebar_brand_subtitle',
+        'sidebar_brand_text_color',
         'primary_color',
         'secondary_color',
         'accent_color',

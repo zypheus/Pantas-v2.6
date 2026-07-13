@@ -54,11 +54,17 @@ final class DeveloperBrandingSettingsTest extends TestCase
         $this->actingAs($developer)->put('/developer/branding', $this->colors([
             'primary_color' => '#aabbcc',
             'table_header_color' => '#ddeeff',
+            'sidebar_brand_name' => 'My Library',
+            'sidebar_brand_subtitle' => 'Staff Portal',
+            'sidebar_brand_text_color' => '#123456',
         ]))->assertRedirect(route('developer.branding.edit', absolute: false));
 
         $this->assertDatabaseHas('branding_settings', [
             'primary_color' => '#AABBCC',
             'table_header_color' => '#DDEEFF',
+            'sidebar_brand_name' => 'My Library',
+            'sidebar_brand_subtitle' => 'Staff Portal',
+            'sidebar_brand_text_color' => '#123456',
             'updated_by' => $developer->id,
         ]);
         $this->assertSame('#AABBCC', app(BrandingService::class)->active()['primary_color']);
@@ -148,6 +154,7 @@ final class DeveloperBrandingSettingsTest extends TestCase
             'accent_color' => '#B45309',
             'sidebar_background_color' => '#FFFFFF',
             'sidebar_text_color' => '#0F172A',
+            'sidebar_brand_text_color' => '#0F172A',
             'sidebar_active_color' => '#2563EB',
             'sidebar_hover_background_color' => '#F1F5F9',
             'sidebar_hover_text_color' => '#0F172A',

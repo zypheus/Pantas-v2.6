@@ -15,6 +15,9 @@ return [
     'defaults' => [
         'banner_path' => 'images/Bannernew.jpg',
         'sidebar_logo_path' => 'images/pantasLogo-box.png',
+        'sidebar_brand_name' => 'Pantas',
+        'sidebar_brand_subtitle' => 'Admin Portal',
+        'sidebar_brand_text_color' => '#0F172A',
         'primary_color' => '#1E3A8A',
         'secondary_color' => '#0F766E',
         'accent_color' => '#B45309',

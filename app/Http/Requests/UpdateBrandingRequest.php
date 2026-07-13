@@ -21,6 +21,9 @@ final class UpdateBrandingRequest extends FormRequest
         return [
             'banner' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:5120', 'dimensions:min_width=800,min_height=200,max_width=4000,max_height=2000'],
             'sidebar_logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048', 'dimensions:min_width=64,min_height=64,max_width=1000,max_height=1000'],
+            'sidebar_brand_name' => ['nullable', 'string', 'max:60'],
+            'sidebar_brand_subtitle' => ['nullable', 'string', 'max:100'],
+            'sidebar_brand_text_color' => $color,
             'primary_color' => $color,
             'secondary_color' => $color,
             'accent_color' => $color,

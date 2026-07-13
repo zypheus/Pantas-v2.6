@@ -23,6 +23,7 @@ final class BrandingService
         'accent_color',
         'sidebar_background_color',
         'sidebar_text_color',
+        'sidebar_brand_text_color',
         'sidebar_active_color',
         'sidebar_hover_background_color',
         'sidebar_hover_text_color',
@@ -32,6 +33,12 @@ final class BrandingService
         'table_header_text_color',
         'table_border_color',
         'table_hover_color',
+    ];
+
+    /** @var list<string> */
+    public const TEXT_FIELDS = [
+        'sidebar_brand_name',
+        'sidebar_brand_subtitle',
     ];
 
     public function __construct(
@@ -93,6 +100,7 @@ final class BrandingService
             'banner_path' => $settings->banner_path,
             'sidebar_logo_path' => $settings->sidebar_logo_path,
             ...collect(self::COLOR_FIELDS)->mapWithKeys(fn (string $f) => [$f => $settings->{$f}])->all(),
+            ...collect(self::TEXT_FIELDS)->mapWithKeys(fn (string $f) => [$f => $settings->{$f}])->all(),
         ];
         $oldBanner = $settings->banner_path;
         $oldLogo = $settings->sidebar_logo_path;
@@ -104,6 +112,12 @@ final class BrandingService
                 foreach (self::COLOR_FIELDS as $field) {
                     if (array_key_exists($field, $values)) {
                         $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
+                    }
+                }
+
+                foreach (self::TEXT_FIELDS as $field) {
+                    if (array_key_exists($field, $values)) {
+                        $settings->{$field} = filled($values[$field]) ? trim((string) $values[$field]) : null;
                     }
                 }
 

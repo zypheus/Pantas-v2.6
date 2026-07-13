@@ -11,6 +11,7 @@
         --shell-chart-palette: {{ $activeBranding['primary_color'] }}, {{ $activeBranding['secondary_color'] }}, {{ $activeBranding['accent_color'] }}, #6D28D9, #B91C1C, #047857;
         --branding-sidebar-background: {{ $activeBranding['sidebar_background_color'] }};
         --branding-sidebar-text: {{ $activeBranding['sidebar_text_color'] }};
+        --branding-sidebar-brand-text: {{ $activeBranding['sidebar_brand_text_color'] }};
         --branding-sidebar-active: {{ $activeBranding['sidebar_active_color'] }};
         --branding-sidebar-hover-background: {{ $activeBranding['sidebar_hover_background_color'] }};
         --branding-sidebar-hover-text: {{ $activeBranding['sidebar_hover_text_color'] }};
@@ -26,6 +27,13 @@
     [data-theme="pantas-default"] #sidebar {
         background: var(--branding-sidebar-background);
         color: var(--branding-sidebar-text);
+    }
+
+    :root:not([data-theme]) #sidebar .sidebar-app-name,
+    :root:not([data-theme]) #sidebar .sidebar-app-subtitle,
+    [data-theme="pantas-default"] #sidebar .sidebar-app-name,
+    [data-theme="pantas-default"] #sidebar .sidebar-app-subtitle {
+        color: var(--branding-sidebar-brand-text);
     }
 
     :root:not([data-theme]) #sidebar .sidebar-link.active,

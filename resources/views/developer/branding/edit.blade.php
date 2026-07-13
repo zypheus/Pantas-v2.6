@@ -65,6 +65,26 @@
                                 <button class="btn btn-sm btn-outline-secondary" form="restore-logo" type="submit">Restore logo</button>
                             </div>
                         </div>
+                        <hr>
+                        <h3 class="h6">Sidebar brand text</h3>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="sidebar_brand_name" class="form-label">Brand name</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="sidebar_brand_name" name="sidebar_brand_name" value="{{ old('sidebar_brand_name', $branding['sidebar_brand_name']) }}" maxlength="60">
+                                    <button class="btn btn-outline-secondary" form="restore-brand-name" type="submit">Reset</button>
+                                </div>
+                                <small class="text-muted">Default: {{ $defaults['sidebar_brand_name'] }}</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sidebar_brand_subtitle" class="form-label">Brand subtitle</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="sidebar_brand_subtitle" name="sidebar_brand_subtitle" value="{{ old('sidebar_brand_subtitle', $branding['sidebar_brand_subtitle']) }}" maxlength="100">
+                                    <button class="btn btn-outline-secondary" form="restore-brand-subtitle" type="submit">Reset</button>
+                                </div>
+                                <small class="text-muted">Default: {{ $defaults['sidebar_brand_subtitle'] }}</small>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -74,10 +94,11 @@
                     <div class="card-body">
                         <h2 class="h5">Pantas Default colors</h2>
                         <p class="small text-muted">These values do not change the other selectable themes.</p>
-                        <div id="palettePreview" class="rounded border overflow-hidden mb-4" style="--preview-sidebar:{{ $branding['sidebar_background_color'] }};--preview-text:{{ $branding['sidebar_text_color'] }};--preview-active:{{ $branding['sidebar_active_color'] }};--preview-sidebar-hover:{{ $branding['sidebar_hover_background_color'] }};--preview-sidebar-hover-text:{{ $branding['sidebar_hover_text_color'] }};--preview-primary:{{ $branding['primary_color'] }};--preview-button:{{ $branding['button_color'] }};--preview-sidebar-footer:{{ $branding['sidebar_footer_background_color'] }};--preview-table-header:{{ $branding['table_header_color'] }};--preview-table-header-text:{{ $branding['table_header_text_color'] }};--preview-table-border:{{ $branding['table_border_color'] }};--preview-table-hover:{{ $branding['table_hover_color'] }}">
+                        <div id="palettePreview" class="rounded border overflow-hidden mb-4" style="--preview-sidebar:{{ $branding['sidebar_background_color'] }};--preview-text:{{ $branding['sidebar_text_color'] }};--preview-brand-text:{{ $branding['sidebar_brand_text_color'] }};--preview-active:{{ $branding['sidebar_active_color'] }};--preview-sidebar-hover:{{ $branding['sidebar_hover_background_color'] }};--preview-sidebar-hover-text:{{ $branding['sidebar_hover_text_color'] }};--preview-primary:{{ $branding['primary_color'] }};--preview-button:{{ $branding['button_color'] }};--preview-sidebar-footer:{{ $branding['sidebar_footer_background_color'] }};--preview-table-header:{{ $branding['table_header_color'] }};--preview-table-header-text:{{ $branding['table_header_text_color'] }};--preview-table-border:{{ $branding['table_border_color'] }};--preview-table-hover:{{ $branding['table_hover_color'] }}">
                             <div class="d-flex" style="min-height:150px;background:#f8fafc">
                                 <div class="p-3" style="width:42%;background:var(--preview-sidebar);color:var(--preview-text)">
-                                    <strong>Pantas</strong>
+                                    <strong id="brandNamePreview" style="color:var(--preview-brand-text)">{{ $branding['sidebar_brand_name'] }}</strong>
+                                    <div id="brandSubtitlePreview" class="small" style="color:var(--preview-brand-text)">{{ $branding['sidebar_brand_subtitle'] }}</div>
                                     <div class="rounded px-2 py-1 mt-3" style="background:var(--preview-active);color:#fff">Active page</div>
                                     <div class="px-2 py-1 mt-1">Navigation</div>
                                     <div class="rounded px-2 py-1 mt-1" style="background:var(--preview-sidebar-hover);color:var(--preview-sidebar-hover-text)">Hover effect</div>
@@ -98,6 +119,7 @@
                             $labels = [
                                 'primary_color' => 'Primary', 'secondary_color' => 'Secondary', 'accent_color' => 'Accent',
                                 'sidebar_background_color' => 'Sidebar background', 'sidebar_text_color' => 'Sidebar text',
+                                'sidebar_brand_text_color' => 'Sidebar brand text',
                                 'sidebar_active_color' => 'Active navigation', 'button_color' => 'Primary button',
                                 'sidebar_hover_background_color' => 'Sidebar hover background',
                                 'sidebar_hover_text_color' => 'Sidebar hover text',
@@ -132,6 +154,8 @@
 
     <form id="restore-banner" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="banner_path"></form>
     <form id="restore-logo" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_logo_path"></form>
+    <form id="restore-brand-name" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_brand_name"></form>
+    <form id="restore-brand-subtitle" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="sidebar_brand_subtitle"></form>
     @foreach (array_keys($labels) as $field)
         <form id="restore-{{ $field }}" method="POST" action="{{ route('developer.branding.restore') }}" class="d-none">@csrf<input type="hidden" name="field" value="{{ $field }}"></form>
     @endforeach
@@ -166,6 +190,7 @@ function refreshPalettePreview() {
     if (!preview) return;
     const fields = {
         sidebar_background_color: '--preview-sidebar', sidebar_text_color: '--preview-text',
+        sidebar_brand_text_color: '--preview-brand-text',
         sidebar_active_color: '--preview-active', primary_color: '--preview-primary', button_color: '--preview-button',
         sidebar_hover_background_color: '--preview-sidebar-hover', sidebar_hover_text_color: '--preview-sidebar-hover-text',
         sidebar_footer_background_color: '--preview-sidebar-footer',
@@ -177,5 +202,11 @@ function refreshPalettePreview() {
         if (input && /^#[0-9A-Fa-f]{6}$/.test(input.value)) preview.style.setProperty(fields[field], input.value);
     });
 }
+document.getElementById('sidebar_brand_name')?.addEventListener('input', function () {
+    document.getElementById('brandNamePreview').textContent = this.value || '{{ $defaults['sidebar_brand_name'] }}';
+});
+document.getElementById('sidebar_brand_subtitle')?.addEventListener('input', function () {
+    document.getElementById('brandSubtitlePreview').textContent = this.value || '{{ $defaults['sidebar_brand_subtitle'] }}';
+});
 </script>
 @endpush

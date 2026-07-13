@@ -33,6 +33,9 @@ final class BrandingIntegrationTest extends TestCase
         BrandingSetting::query()->create([
             'banner_path' => 'branding/banners/custom.jpg',
             'sidebar_logo_path' => 'branding/logos/custom.png',
+            'sidebar_brand_name' => 'Custom Pantas',
+            'sidebar_brand_subtitle' => 'Custom Portal',
+            'sidebar_brand_text_color' => '#ABCDEF',
             'primary_color' => '#112233',
             'secondary_color' => '#223344',
             'accent_color' => '#334455',
@@ -56,6 +59,9 @@ final class BrandingIntegrationTest extends TestCase
             ->assertOk()
             ->assertSee('/branding-assets/logos/custom.png', false)
             ->assertSee('/branding-assets/banners/custom.jpg', false)
+            ->assertSee('Custom Pantas')
+            ->assertSee('Custom Portal')
+            ->assertSee('--branding-sidebar-brand-text: #ABCDEF', false)
             ->assertSee('--shell-primary: #112233', false)
             ->assertSee('--branding-sidebar-background: #445566', false)
             ->assertSee('--branding-sidebar-hover-background: #102030', false)

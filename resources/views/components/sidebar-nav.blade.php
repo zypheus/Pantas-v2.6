@@ -32,8 +32,8 @@
             <img src="{{ $brandingSidebarLogoUrl }}" alt="Pantas Logo" class="sidebar-logo-img">
         </span>
         <span class="sidebar-brand-copy">
-            <span class="sidebar-app-name">Pantas</span>
-            <span class="sidebar-app-subtitle">Admin Portal</span>
+            <span class="sidebar-app-name">{{ $activeBranding['sidebar_brand_name'] }}</span>
+            <span class="sidebar-app-subtitle">{{ $activeBranding['sidebar_brand_subtitle'] }}</span>
         </span>
     </a>
     <div class="sidebar-user-info">
