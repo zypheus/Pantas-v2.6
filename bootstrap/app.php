@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureActiveStaff;
 use App\Http\Middleware\EnsureAttendanceAccess;
 use App\Http\Middleware\EnsureAttendanceAdmin;
+use App\Http\Middleware\EnsureDeveloper;
 use App\Http\Middleware\EnsureLibraryAccess;
 use App\Http\Middleware\EnsureLibraryAdmin;
 use App\Http\Middleware\EnsureSuperAdmin;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'attendance.access' => EnsureAttendanceAccess::class,
             'attendance.admin' => EnsureAttendanceAdmin::class,
+            'developer' => EnsureDeveloper::class,
             'library.access' => EnsureLibraryAccess::class,
             'library.admin' => EnsureLibraryAdmin::class,
             'super-admin' => EnsureSuperAdmin::class,

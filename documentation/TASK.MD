@@ -19,7 +19,7 @@ Reference plan:
 
 ## Active Work
 
-- [ ] Start Milestone 11: isolated Developer branding role and system-wide `pantas-default` customization.
+- [x] Start Milestone 11: isolated Developer branding role and system-wide `pantas-default` customization.
 - [x] Compare current `pantas-v2.5` behavior with the target separated-domain architecture.
 - [x] Identify major feature overlap and architecture gaps.
 - [x] Confirm separated Attendance + Library architecture direction.
@@ -191,34 +191,34 @@ Plan reference: `documentation/developer-branding-plan.md`
 
 #### Task 1: Role And Access Isolation
 
-- [ ] Add the `developer` Spatie role and compatibility role handling.
-- [ ] Add exact-role `developer` middleware with no Super Admin bypass.
-- [ ] Add Developer login redirect and dashboard route.
-- [ ] Prevent Developer access to Super Admin, Library, and Attendance staff modules.
-- [ ] Ensure Super Admin and all other roles receive `403` on `/developer/*`.
-- [ ] Limit Developer navigation to Dashboard, Branding Settings, Profile, and Logout.
-- [ ] Hide Developer navigation from Super Admin and all other roles.
-- [ ] Remove the Library/Attendance module switcher from the Developer shell.
+- [x] Add the `developer` Spatie role and compatibility role handling.
+- [x] Add exact-role `developer` middleware with no Super Admin bypass.
+- [x] Add Developer login redirect and dashboard route.
+- [x] Prevent Developer access to Super Admin, Library, and Attendance staff modules.
+- [x] Ensure Super Admin and all other roles receive `403` on `/developer/*`.
+- [x] Limit Developer navigation to Dashboard, Branding Settings, Profile, and Logout.
+- [x] Hide Developer navigation from Super Admin and all other roles.
+- [x] Remove the Library/Attendance module switcher from the Developer shell.
 
 #### Task 2: Branding Defaults And Persistence
 
-- [ ] Define permanent original asset paths and colors in `config/branding.php`.
-- [ ] Create the `branding_settings` migration with nullable override fields and `updated_by`.
-- [ ] Add the `BrandingSetting` model and updater relationship.
-- [ ] Create `BrandingService` to merge defaults and overrides.
-- [ ] Add active-branding caching and cache invalidation.
-- [ ] Add missing-custom-file fallback to original assets.
+- [x] Define permanent original asset paths and colors in `config/branding.php`.
+- [x] Create the `branding_settings` migration with nullable override fields and `updated_by`.
+- [x] Add the `BrandingSetting` model and updater relationship.
+- [x] Create `BrandingService` to merge defaults and overrides.
+- [x] Add active-branding caching and cache invalidation.
+- [x] Add missing-custom-file fallback to original assets.
 
 #### Task 3: Developer Routes And Interface
 
-- [ ] Create and load `routes/developer.php`.
-- [ ] Add Developer dashboard controller and view.
-- [ ] Add Branding Settings controller, Form Request, and view.
-- [ ] Show current and original banner/logo previews.
-- [ ] Add color pickers and `#RRGGBB` inputs with current/original values.
-- [ ] Add live banner, sidebar, and palette preview.
-- [ ] Add Save Changes, per-field restore, and Restore to Default actions.
-- [ ] Add a confirmation dialog for full restoration.
+- [x] Create and load `routes/developer.php`.
+- [x] Add Developer dashboard controller and view.
+- [x] Add Branding Settings controller, Form Request, and view.
+- [x] Show current and original banner/logo previews.
+- [x] Add color pickers and `#RRGGBB` inputs with current/original values.
+- [x] Add live banner, sidebar, and palette preview.
+- [x] Add Save Changes, per-field restore, and Restore to Default actions.
+- [x] Add a confirmation dialog for full restoration.
 
 #### Task 4: Upload And Color Safety
 
@@ -320,6 +320,10 @@ Plan reference: `documentation/developer-branding-plan.md`
 - A read-only Super Admin activity index was added so the System Activity sidebar has a concrete audit-trail destination.
 - Attendance Admin now has a read-only pending-registration page with existing approval actions; full Attendance student/employee management remains a future product decision.
 - `DemoWorkflowSeeder` now fills manual-testing gaps left by the base sample seeders, including role accounts, dashboard metrics, Library circulation, Library visits, school Attendance records, pending approvals, room workflow examples, feedback, and audit activity.
+- Developer Task 1 added an exact-role isolated dashboard and middleware. Super Admin cannot list, create, assign, edit, delete, or enter Developer accounts/features; Developer cannot enter other staff modules.
+- `DeveloperAccessTest` passes all role-isolation checks. `RoleDashboardExperienceTest` still has five pre-existing label-visibility failures because global command-palette data contains routes hidden from the visible role sidebar.
+- Developer Tasks 2 and 3 added permanent configuration defaults, singleton branding overrides, caching/fallback service behavior, four protected Developer routes, a current-state dashboard, and a functional settings interface with uploads, color controls, live previews, and restore actions.
+- `DeveloperBrandingSettingsTest` passes five tests covering original values, exact-role route isolation, normalized color persistence, image uploads, and partial/full restoration.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

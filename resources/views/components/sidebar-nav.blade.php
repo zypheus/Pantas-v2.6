@@ -8,6 +8,7 @@
     $canAttendance = $user && $moduleAccess->hasAttendanceAccess($user);
     $canAttendanceAdmin = $user && $moduleAccess->hasAttendanceAdminAccess($user);
     $canSuperAdmin = $user && $moduleAccess->isSuperAdmin($user);
+    $canDeveloper = $user && $moduleAccess->isDeveloper($user);
 
     if ($user && (! is_string($activeModule) || ! $moduleAccess->canAccessModule($user, $activeModule))) {
         try {
@@ -18,6 +19,7 @@
     }
 
     $showSystemNav = $canSuperAdmin && $activeModule === \App\Services\Auth\ModuleAccessService::SUPER_ADMIN;
+    $showDeveloperNav = $canDeveloper && $activeModule === \App\Services\Auth\ModuleAccessService::DEVELOPER;
     $showLibraryNav = $canLibrary && $activeModule === \App\Services\Auth\ModuleAccessService::LIBRARY;
     $showAttendanceNav = $canAttendance && $activeModule === \App\Services\Auth\ModuleAccessService::ATTENDANCE;
 
@@ -42,6 +44,33 @@
 </div>
 
 <nav class="sidebar-nav" aria-label="Sidebar navigation">
+    @if ($showDeveloperNav)
+        <button class="sidebar-group-label open" data-group="developer-overview" aria-expanded="true" aria-controls="sidebar-group-developer-overview">
+            <span><i class="bi bi-code-slash sidebar-group-icon"></i>Developer</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </button>
+        <ul class="sidebar-group-items open" id="sidebar-group-developer-overview" role="list">
+            <li>
+                <a href="{{ route('dashboard.developer') }}" class="sidebar-link {{ request()->routeIs('dashboard.developer') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i> Developer Dashboard
+                </a>
+            </li>
+            @if (Route::has('developer.branding.edit'))
+                <li>
+                    <a href="{{ route('developer.branding.edit') }}" class="sidebar-link {{ request()->routeIs('developer.branding.*') ? 'active' : '' }}">
+                        <i class="bi bi-palette"></i> Branding Settings
+                    </a>
+                </li>
+            @else
+                <li>
+                    <a href="{{ route('dashboard.developer') }}#branding-settings" class="sidebar-link">
+                        <i class="bi bi-palette"></i> Branding Settings
+                    </a>
+                </li>
+            @endif
+        </ul>
+    @endif
+
     @if ($showSystemNav)
         <button class="sidebar-group-label" data-group="system-overview" aria-expanded="false" aria-controls="sidebar-group-system-overview">
             <span><i class="bi bi-shield-lock sidebar-group-icon"></i>System</span>

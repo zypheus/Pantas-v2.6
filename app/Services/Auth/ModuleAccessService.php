@@ -15,6 +15,8 @@ final class ModuleAccessService
 
     public const SUPER_ADMIN = 'super-admin';
 
+    public const DEVELOPER = 'developer';
+
     /** @var list<string> */
     public const STAFF_ROLES = [
         'super_admin',
@@ -22,11 +24,17 @@ final class ModuleAccessService
         'library_staff',
         'attendance_admin',
         'attendance_staff',
+        'developer',
     ];
 
     public function isSuperAdmin(User $user): bool
     {
         return $user->hasRole('super_admin');
+    }
+
+    public function isDeveloper(User $user): bool
+    {
+        return $user->hasRole('developer');
     }
 
     public function hasLibraryAccess(User $user): bool
@@ -57,6 +65,10 @@ final class ModuleAccessService
     /** @return list<string> */
     public function availableModules(User $user): array
     {
+        if ($this->isDeveloper($user)) {
+            return [self::DEVELOPER];
+        }
+
         $modules = [];
 
         if ($this->hasAttendanceAccess($user)) {
@@ -77,6 +89,7 @@ final class ModuleAccessService
     public function canAccessModule(User $user, string $module): bool
     {
         return match ($module) {
+            self::DEVELOPER => $this->isDeveloper($user),
             self::SUPER_ADMIN => $this->isSuperAdmin($user),
             self::ATTENDANCE => $this->hasAttendanceAccess($user),
             self::LIBRARY => $this->hasLibraryAccess($user),
@@ -86,6 +99,10 @@ final class ModuleAccessService
 
     public function defaultModule(User $user): string
     {
+        if ($this->isDeveloper($user)) {
+            return self::DEVELOPER;
+        }
+
         if ($this->isSuperAdmin($user)) {
             return self::SUPER_ADMIN;
         }
@@ -108,6 +125,7 @@ final class ModuleAccessService
         }
 
         return match ($module) {
+            self::DEVELOPER => 'dashboard.developer',
             self::SUPER_ADMIN => 'dashboard.super-admin',
             self::ATTENDANCE => $this->hasAttendanceAdminAccess($user)
                 ? 'dashboard.attendance-admin'

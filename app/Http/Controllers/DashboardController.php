@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\Auth\ModuleAccessService;
+use App\Services\BrandingService;
 use App\Services\DashboardMetricsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,17 @@ final class DashboardController extends Controller
             'title' => 'Super Admin Dashboard',
             'summary' => 'System-wide access for staff accounts, Library administration, and Attendance administration.',
         ] + $this->metrics->superAdmin());
+    }
+
+    public function developer(BrandingService $branding): View
+    {
+        return view('dashboards.developer', [
+            'title' => 'Developer Dashboard',
+            'summary' => 'Isolated workspace for Pantas branding configuration.',
+            'branding' => $branding->active(),
+            'bannerUrl' => $branding->assetUrl('banner_path'),
+            'logoUrl' => $branding->assetUrl('sidebar_logo_path'),
+        ]);
     }
 
     public function libraryAdmin(): View

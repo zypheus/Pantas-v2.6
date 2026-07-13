@@ -56,7 +56,12 @@
         ? app(\App\Services\TopbarNotificationService::class)->forUser($shellUser)
         : collect();
 
-    $commandLinks = collect([
+    $commandLinks = $shellUser && $moduleAccess->isDeveloper($shellUser)
+        ? collect([
+            ['label' => 'Developer Dashboard', 'route' => 'dashboard.developer', 'icon' => 'bi-code-slash', 'group' => 'Developer'],
+            ['label' => 'Branding Settings', 'route' => 'developer.branding.edit', 'icon' => 'bi-palette', 'group' => 'Developer'],
+        ])
+        : collect([
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'bi-speedometer2', 'group' => 'Pages'],
         ['label' => 'Super Admin Dashboard', 'route' => 'dashboard.super-admin', 'icon' => 'bi-shield-lock', 'group' => 'Dashboards'],
         ['label' => 'Library Dashboard', 'route' => $shellUser && $moduleAccess->hasLibraryAdminAccess($shellUser) ? 'dashboard.library-admin' : 'dashboard.library-staff', 'icon' => 'bi-book', 'group' => 'Dashboards'],
@@ -70,7 +75,7 @@
         ['label' => 'Reports Hub', 'route' => 'attendance_logs.reports.hub', 'icon' => 'bi-bar-chart', 'group' => 'Reports'],
         ['label' => 'Admin Activity', 'route' => 'admin.activities.index', 'icon' => 'bi-activity', 'group' => 'Activity'],
         ['label' => 'Feedback Settings', 'route' => 'attendance.feedback.settings', 'icon' => 'bi-gear', 'group' => 'Settings'],
-    ])->filter(fn ($item) => Route::has($item['route']))->values();
+        ])->filter(fn ($item) => Route::has($item['route']))->values();
 @endphp
 
 <body class="sidebar-layout sidebar-hydrating">

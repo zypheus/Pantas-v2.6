@@ -44,7 +44,7 @@ class UserController extends Controller
     // show user
     public function index()
     {
-        $users = User::orderBy('lname')->orderBy('fname')->get();
+        $users = User::where('role', '!=', 'developer')->orderBy('lname')->orderBy('fname')->get();
 
         return view('accounts.index', compact('users'));
     }
@@ -52,6 +52,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
+        abort_if($this->isDeveloperAccount($user), 403);
 
         return view('accounts.edit', compact('user'));
     }
@@ -66,6 +67,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+        abort_if($this->isDeveloperAccount($user), 403);
         $user->update($request->only(['fname', 'lname', 'email', 'role']));
         $user->syncRoles([$request->string('role')->toString()]);
         $activities->log('super-admin', 'staff.updated', 'Staff account updated', $user->email, $user);
@@ -76,10 +78,16 @@ class UserController extends Controller
     public function destroy($id, AdminActivityLogger $activities)
     {
         $user = User::findOrFail($id);
+        abort_if($this->isDeveloperAccount($user), 403);
         $email = $user->email;
         $user->delete();
         $activities->log('super-admin', 'staff.deleted', 'Staff account deleted', $email);
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully!');
+    }
+
+    private function isDeveloperAccount(User $user): bool
+    {
+        return $user->hasRole('developer') || $user->getRawOriginal('role') === 'developer';
     }
 }

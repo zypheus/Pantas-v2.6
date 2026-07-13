@@ -38,3 +38,4 @@ Route::post('/user/preferences/theme', [\App\Http\Controllers\UserPreferenceCont
 require __DIR__.'/library.php';
 require __DIR__.'/attendance.php';
 require __DIR__.'/super-admin.php';
+require __DIR__.'/developer.php';
