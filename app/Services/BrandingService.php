@@ -73,7 +73,9 @@ final class BrandingService
     {
         $path = (string) ($this->active()[$field] ?? $this->defaults()[$field] ?? '');
 
-        return str_starts_with($path, 'branding/') ? Storage::disk('public')->url($path) : asset($path);
+        return str_starts_with($path, 'branding/')
+            ? '/branding-assets/'.substr($path, strlen('branding/'))
+            : '/'.ltrim($path, '/');
     }
 
     /** @param array<string, mixed> $values */

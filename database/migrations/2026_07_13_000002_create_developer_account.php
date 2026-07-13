@@ -43,7 +43,7 @@ return new class extends Migration
             } else {
                 DB::table('users')->where('id', $userId)->update([
                     'role' => 'developer',
-                    'is_active' => true,
+                      'is_active' => true,
                     'updated_at' => now(),
                 ]);
             }

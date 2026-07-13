@@ -47,8 +47,8 @@ final class BrandingIntegrationTest extends TestCase
         $this->actingAs($developer)
             ->get('/developer/dashboard')
             ->assertOk()
-            ->assertSee('/storage/branding/logos/custom.png', false)
-            ->assertSee('/storage/branding/banners/custom.jpg', false)
+            ->assertSee('/branding-assets/logos/custom.png', false)
+            ->assertSee('/branding-assets/banners/custom.jpg', false)
             ->assertSee('--shell-primary: #112233', false)
             ->assertSee('--branding-sidebar-background: #445566', false)
             ->assertSee('[data-theme="pantas-default"]', false)
@@ -70,8 +70,8 @@ final class BrandingIntegrationTest extends TestCase
         $response->assertOk()
             ->assertSee('/images/Bannernew.jpg', false)
             ->assertSee('/images/pantasLogo-box.png', false)
-            ->assertDontSee('/storage/branding/banners/missing.jpg', false)
-            ->assertDontSee('/storage/branding/logos/missing.png', false);
+            ->assertDontSee('/branding-assets/banners/missing.jpg', false)
+            ->assertDontSee('/branding-assets/logos/missing.png', false);
     }
 
     public function test_custom_assets_are_exposed_on_public_opac_layout(): void
@@ -86,8 +86,14 @@ final class BrandingIntegrationTest extends TestCase
 
         $this->get('/opac')
             ->assertOk()
-            ->assertSee('/storage/branding/banners/public.jpg', false)
-            ->assertSee('/storage/branding/logos/public.png', false);
+            ->assertSee('/branding-assets/banners/public.jpg', false)
+            ->assertSee('/branding-assets/logos/public.png', false);
+
+        $this->get('/branding-assets/banners/public.jpg')
+            ->assertOk()
+            ->assertHeader('x-content-type-options', 'nosniff');
+
+        $this->get('/branding-assets/banners/not-active.jpg')->assertNotFound();
     }
 
     private function staffUser(string $role): User

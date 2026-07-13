@@ -1,11 +1,17 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandingAssetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModuleSelectionController;
 use App\Models\AttendanceProgram;
 use App\Models\Program;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/branding-assets/{type}/{filename}', BrandingAssetController::class)
+    ->whereIn('type', ['banners', 'logos'])
+    ->where('filename', '[A-Za-z0-9._-]+')
+    ->name('branding.asset');
 
 Route::get('/', function () {
     if (auth()->check()) {
