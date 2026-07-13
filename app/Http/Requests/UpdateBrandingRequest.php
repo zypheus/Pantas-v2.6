@@ -27,7 +27,14 @@ final class UpdateBrandingRequest extends FormRequest
             'sidebar_background_color' => $color,
             'sidebar_text_color' => $color,
             'sidebar_active_color' => $color,
+            'sidebar_hover_background_color' => $color,
+            'sidebar_hover_text_color' => $color,
             'button_color' => $color,
+            'sidebar_footer_background_color' => $color,
+            'table_header_color' => $color,
+            'table_header_text_color' => $color,
+            'table_border_color' => $color,
+            'table_hover_color' => $color,
         ];
     }
 

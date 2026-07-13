@@ -327,6 +327,9 @@ Plan reference: `documentation/developer-branding-plan.md`
 - `DeveloperBrandingSettingsTest` passes seven tests covering original values, exact-role route isolation, normalized colors, uploads, dimension/input rejection, safe replacement, and partial/full restoration.
 - Developer Task 4 hardened image type, size, dimension, and decoding rules; strict hexadecimal colors; generated storage paths; transactional updates; failed-upload cleanup; and post-commit replacement cleanup that cannot target original assets.
 - Developer Task 5 now shares branding centrally with Blade, scopes dynamic color variables to `pantas-default`, and replaces relevant banner/sidebar-logo references across authenticated, public, guest, Library, Attendance, OPAC, kiosk, and scanner surfaces.
+- Developer table branding now includes header background, header text, border, and row-hover colors, with defaults, live preview, persistence, restoration, and `pantas-default`-only CSS integration.
+- Developer branding now includes a dedicated Sidebar Logout Area Background color for the footer section containing Logout; the button retains its standard danger styling. The setting appears in the live preview and supports individual/full restoration under `pantas-default`.
+- Developer branding now includes Sidebar Hover Background and Sidebar Hover Text colors for non-active navigation links, with a small movement effect, live preview, persistence, and restoration under `pantas-default`.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

@@ -74,17 +74,23 @@
                     <div class="card-body">
                         <h2 class="h5">Pantas Default colors</h2>
                         <p class="small text-muted">These values do not change the other selectable themes.</p>
-                        <div id="palettePreview" class="rounded border overflow-hidden mb-4" style="--preview-sidebar:{{ $branding['sidebar_background_color'] }};--preview-text:{{ $branding['sidebar_text_color'] }};--preview-active:{{ $branding['sidebar_active_color'] }};--preview-primary:{{ $branding['primary_color'] }};--preview-button:{{ $branding['button_color'] }}">
+                        <div id="palettePreview" class="rounded border overflow-hidden mb-4" style="--preview-sidebar:{{ $branding['sidebar_background_color'] }};--preview-text:{{ $branding['sidebar_text_color'] }};--preview-active:{{ $branding['sidebar_active_color'] }};--preview-sidebar-hover:{{ $branding['sidebar_hover_background_color'] }};--preview-sidebar-hover-text:{{ $branding['sidebar_hover_text_color'] }};--preview-primary:{{ $branding['primary_color'] }};--preview-button:{{ $branding['button_color'] }};--preview-sidebar-footer:{{ $branding['sidebar_footer_background_color'] }};--preview-table-header:{{ $branding['table_header_color'] }};--preview-table-header-text:{{ $branding['table_header_text_color'] }};--preview-table-border:{{ $branding['table_border_color'] }};--preview-table-hover:{{ $branding['table_hover_color'] }}">
                             <div class="d-flex" style="min-height:150px;background:#f8fafc">
                                 <div class="p-3" style="width:42%;background:var(--preview-sidebar);color:var(--preview-text)">
                                     <strong>Pantas</strong>
                                     <div class="rounded px-2 py-1 mt-3" style="background:var(--preview-active);color:#fff">Active page</div>
                                     <div class="px-2 py-1 mt-1">Navigation</div>
+                                    <div class="rounded px-2 py-1 mt-1" style="background:var(--preview-sidebar-hover);color:var(--preview-sidebar-hover-text)">Hover effect</div>
+                                    <div class="rounded p-2 mt-4" style="background:var(--preview-sidebar-footer)"><div class="rounded px-2 py-1 text-center" style="border:1px solid #B91C1C;background:#FEF2F2;color:#B91C1C">Logout</div></div>
                                 </div>
                                 <div class="p-3 flex-grow-1">
                                     <strong style="color:var(--preview-primary)">Live palette</strong>
                                     <p class="small text-muted mt-2">Pantas Default preview</p>
                                     <button type="button" class="btn btn-sm text-white" style="background:var(--preview-button)">Button</button>
+                                    <table class="w-100 mt-3 small" style="border-collapse:collapse">
+                                        <thead><tr><th class="p-1" style="background:var(--preview-table-header);color:var(--preview-table-header-text);border:1px solid var(--preview-table-border)">Table header</th></tr></thead>
+                                        <tbody><tr><td class="p-1" style="background:var(--preview-table-hover);border:1px solid var(--preview-table-border)">Row hover</td></tr></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -93,6 +99,11 @@
                                 'primary_color' => 'Primary', 'secondary_color' => 'Secondary', 'accent_color' => 'Accent',
                                 'sidebar_background_color' => 'Sidebar background', 'sidebar_text_color' => 'Sidebar text',
                                 'sidebar_active_color' => 'Active navigation', 'button_color' => 'Primary button',
+                                'sidebar_hover_background_color' => 'Sidebar hover background',
+                                'sidebar_hover_text_color' => 'Sidebar hover text',
+                                'sidebar_footer_background_color' => 'Sidebar logout area background',
+                                'table_header_color' => 'Table header', 'table_header_text_color' => 'Table header text',
+                                'table_border_color' => 'Table border', 'table_hover_color' => 'Table row hover',
                             ];
                         @endphp
                         @foreach ($labels as $field => $label)
@@ -155,7 +166,11 @@ function refreshPalettePreview() {
     if (!preview) return;
     const fields = {
         sidebar_background_color: '--preview-sidebar', sidebar_text_color: '--preview-text',
-        sidebar_active_color: '--preview-active', primary_color: '--preview-primary', button_color: '--preview-button'
+        sidebar_active_color: '--preview-active', primary_color: '--preview-primary', button_color: '--preview-button',
+        sidebar_hover_background_color: '--preview-sidebar-hover', sidebar_hover_text_color: '--preview-sidebar-hover-text',
+        sidebar_footer_background_color: '--preview-sidebar-footer',
+        table_header_color: '--preview-table-header', table_header_text_color: '--preview-table-header-text',
+        table_border_color: '--preview-table-border', table_hover_color: '--preview-table-hover'
     };
     Object.keys(fields).forEach(function (field) {
         const input = document.getElementById(field + '_text');

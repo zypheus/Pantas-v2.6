@@ -39,7 +39,14 @@ final class BrandingIntegrationTest extends TestCase
             'sidebar_background_color' => '#445566',
             'sidebar_text_color' => '#F1F2F3',
             'sidebar_active_color' => '#556677',
+            'sidebar_hover_background_color' => '#102030',
+            'sidebar_hover_text_color' => '#F0E0D0',
             'button_color' => '#667788',
+            'sidebar_footer_background_color' => '#AA1122',
+            'table_header_color' => '#778899',
+            'table_header_text_color' => '#F4F5F6',
+            'table_border_color' => '#8899AA',
+            'table_hover_color' => '#99AABB',
             'updated_by' => $developer->id,
         ]);
         Cache::forget(BrandingService::CACHE_KEY);
@@ -51,6 +58,12 @@ final class BrandingIntegrationTest extends TestCase
             ->assertSee('/branding-assets/banners/custom.jpg', false)
             ->assertSee('--shell-primary: #112233', false)
             ->assertSee('--branding-sidebar-background: #445566', false)
+            ->assertSee('--branding-sidebar-hover-background: #102030', false)
+            ->assertSee('--branding-sidebar-hover-text: #F0E0D0', false)
+            ->assertSee('--branding-table-header: #778899', false)
+            ->assertSee('--branding-table-hover: #99AABB', false)
+            ->assertSee('--branding-sidebar-footer-background: #AA1122', false)
+            ->assertSee('background: var(--branding-sidebar-footer-background)', false)
             ->assertSee('[data-theme="pantas-default"]', false)
             ->assertDontSee('[data-theme="nord-dark"] {', false);
     }

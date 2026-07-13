@@ -21,6 +21,13 @@ return [
         'sidebar_background_color' => '#FFFFFF',
         'sidebar_text_color' => '#0F172A',
         'sidebar_active_color' => '#2563EB',
+        'sidebar_hover_background_color' => '#F1F5F9',
+        'sidebar_hover_text_color' => '#0F172A',
         'button_color' => '#1E3A8A',
+        'sidebar_footer_background_color' => '#FFFFFF',
+        'table_header_color' => '#F1F5F9',
+        'table_header_text_color' => '#475569',
+        'table_border_color' => '#E2E8F0',
+        'table_hover_color' => '#EFF6FF',
     ],
 ];
