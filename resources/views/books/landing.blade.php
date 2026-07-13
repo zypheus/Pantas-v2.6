@@ -11,6 +11,7 @@
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/books/landing.css') }}?v=opac-search-responsive-1">
     <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}">
+    @include('components.branding-overrides')
     <script src="https://cdn.jsdelivr.net/npm/qz-tray/qz-tray.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -48,7 +49,7 @@
         <header class="opac-public-header opac-header-bar opac-header-sticky">
             <div class="logo opac-logo-wrap">
                 <a href="{{ route('landing') }}" class="text-decoration-none d-inline-flex align-items-center">
-                    <img src="{{ asset('images/pantasLogo.png') }}" alt="Library Logo">
+                    <img src="{{ $brandingSidebarLogoUrl }}" alt="Library Logo">
                 </a>
             </div>
             <span class="opac-nav-divider" aria-hidden="true"></span>
@@ -67,7 +68,7 @@
     <div class="opac-page-fill flex-grow-1">
     @unless($searchActive)
         <section class="hero-text">
-            <img src="{{ asset('images/Bannernew.jpg') }}" alt="Banner" class="banner-img">
+            <img src="{{ $brandingBannerUrl }}" alt="Banner" class="banner-img">
         </section>
     @endunless
 

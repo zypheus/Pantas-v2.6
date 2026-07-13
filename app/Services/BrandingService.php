@@ -8,6 +8,7 @@ use App\Models\BrandingSetting;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,29 +78,47 @@ final class BrandingService
         $settings = $this->settings() ?? new BrandingSetting;
         $oldBanner = $settings->banner_path;
         $oldLogo = $settings->sidebar_logo_path;
+        $newBanner = $banner?->store('branding/banners', 'public');
+        $newLogo = $logo?->store('branding/logos', 'public');
 
-        foreach (self::COLOR_FIELDS as $field) {
-            if (array_key_exists($field, $values)) {
-                $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
-            }
+        try {
+            DB::transaction(function () use ($settings, $values, $user, $newBanner, $newLogo): void {
+                foreach (self::COLOR_FIELDS as $field) {
+                    if (array_key_exists($field, $values)) {
+                        $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
+                    }
+                }
+
+                if ($newBanner) {
+                    $settings->banner_path = $newBanner;
+                }
+
+                if ($newLogo) {
+                    $settings->sidebar_logo_path = $newLogo;
+                }
+
+                $settings->updated_by = $user->getKey();
+                $settings->save();
+            });
+        } catch (\Throwable $exception) {
+            $this->deleteCustomFile($newBanner);
+            $this->deleteCustomFile($newLogo);
+
+            throw $exception;
         }
 
-        if ($banner) {
-            $settings->banner_path = $banner->store('branding/banners', 'public');
-        }
-
-        if ($logo) {
-            $settings->sidebar_logo_path = $logo->store('branding/logos', 'public');
-        }
-
-        $settings->updated_by = $user->getKey();
-        $settings->save();
         $this->clearCache();
-
         $this->deleteReplacedFile($oldBanner, $settings->banner_path);
         $this->deleteReplacedFile($oldLogo, $settings->sidebar_logo_path);
 
         return $settings->fresh('updater');
+    }
+
+    private function deleteCustomFile(string|false|null $path): void
+    {
+        if (is_string($path) && str_starts_with($path, 'branding/')) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     public function restore(?string $field, User $user): BrandingSetting

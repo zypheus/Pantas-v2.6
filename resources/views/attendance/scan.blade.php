@@ -7,6 +7,7 @@
   <link href="{{ asset('vendor/fontsource/poppins/latin-400.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/fontsource/poppins/latin-600.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/fontsource/poppins/latin-700.css') }}" rel="stylesheet">
+  @include('components.branding-overrides')
   <style>
     .marquee-container {
       width: 100%;
@@ -38,7 +39,7 @@
   <header>
     <div class="header">
       <div class="logo-title">
-        <img src="{{ asset('images/pantasLogo.png') }}" alt="Logo">
+        <img src="{{ $brandingSidebarLogoUrl }}" alt="Logo">
         <div class="system-title">POWERED BY PANTAS</div>
         <a href="{{ route('book.index') }}" class="home-button" hidden>Home</a>
       </div>

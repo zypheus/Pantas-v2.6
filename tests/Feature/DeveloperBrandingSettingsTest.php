@@ -77,6 +77,40 @@ final class DeveloperBrandingSettingsTest extends TestCase
         Storage::disk('public')->assertExists($settings->sidebar_logo_path);
     }
 
+    public function test_invalid_dimensions_and_unsafe_color_values_are_rejected(): void
+    {
+        Storage::fake('public');
+        $developer = $this->staffUser('developer');
+
+        $this->actingAs($developer)->put('/developer/branding', $this->colors([
+            'banner' => UploadedFile::fake()->image('tiny.jpg', 200, 100),
+            'sidebar_logo' => UploadedFile::fake()->image('huge.png', 1200, 1200),
+            'primary_color' => 'url(javascript:alert(1))',
+        ]))->assertSessionHasErrors(['banner', 'sidebar_logo', 'primary_color']);
+
+        $this->assertDatabaseCount('branding_settings', 0);
+    }
+
+    public function test_successful_replacement_deletes_only_previous_custom_files(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/banners/old.jpg', 'old');
+        Storage::disk('public')->put('images/Bannernew.jpg', 'original-copy');
+        $developer = $this->staffUser('developer');
+        BrandingSetting::query()->create([
+            'banner_path' => 'branding/banners/old.jpg',
+            'updated_by' => $developer->id,
+        ]);
+
+        $this->actingAs($developer)->put('/developer/branding', $this->colors([
+            'banner' => UploadedFile::fake()->image('replacement.jpg', 1200, 400),
+        ]))->assertRedirect(route('developer.branding.edit', absolute: false));
+
+        Storage::disk('public')->assertMissing('branding/banners/old.jpg');
+        Storage::disk('public')->assertExists('images/Bannernew.jpg');
+        Storage::disk('public')->assertExists(BrandingSetting::query()->value('banner_path'));
+    }
+
     public function test_developer_can_restore_one_value_or_all_values(): void
     {
         $developer = $this->staffUser('developer');

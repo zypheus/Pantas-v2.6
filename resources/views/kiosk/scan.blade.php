@@ -7,6 +7,7 @@
 
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset(config('branding.css_path')) }}">
+    @include('components.branding-overrides')
 
     <style>
         :root {
@@ -157,7 +158,7 @@
 
 <div class="container kiosk-shell py-4 py-md-5">
     <div class="kiosk-header text-center">
-        <img src="{{ asset('images/pantasLogo.png') }}" alt="Library" class="kiosk-logo mb-2">
+        <img src="{{ $brandingSidebarLogoUrl }}" alt="Library" class="kiosk-logo mb-2">
         <h1 class="h3 fw-bold mb-1">Student Account Lookup</h1>
         <p class="text-muted mb-0">Scan your QR code or enter your Student ID to view your loans and fines.</p>
     </div>

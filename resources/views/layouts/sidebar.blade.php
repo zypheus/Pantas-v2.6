@@ -22,6 +22,7 @@
 
     {{-- Theme system --}}
     <link rel="stylesheet" href="{{ asset('css/themes.css') }}">
+    @include('components.branding-overrides')
 
     {{-- Page content dark mode overrides for tables, forms, cards, etc. --}}
     <link rel="stylesheet" href="{{ asset('css/page-content.css') }}">
@@ -87,7 +88,7 @@
         <button id="sidebarToggle" class="sidebar-hamburger me-3" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
             <i class="bi bi-list fs-4"></i>
         </button>
-        <img src="{{ asset('images/pantasLogo-box.png') }}" alt="Pantas Logo" class="sidebar-topbar-logo me-2">
+        <img src="{{ $brandingSidebarLogoUrl }}" alt="Pantas Logo" class="sidebar-topbar-logo me-2">
         <span class="sidebar-topbar-title fw-semibold">@yield('title', 'Pantas Library')</span>
     </header>
 

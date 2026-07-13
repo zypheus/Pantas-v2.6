@@ -12,6 +12,7 @@
 
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset(config('branding.css_path')) }}">
+    @include('components.branding-overrides')
     <link rel="stylesheet" href="{{ asset('css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/books/index.css') }}">
     <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}">
@@ -24,7 +25,7 @@
 
     {{-- NAVBAR --}}
     <div class="d-flex align-items-center px-4 py-2 flex-wrap staff-top-bar" style="background-color: white; position: relative;">
-        <img src="{{ asset('images/pantasLogo.png') }}" alt="New Logo" class="header-logo-img" />
+        <img src="{{ $brandingSidebarLogoUrl }}" alt="Pantas Logo" class="header-logo-img" />
         <h1 class="school-name mb-0 ms-2"></h1>
 
         <button type="button" id="customMenuToggle" class="d-lg-none toggle-btn" aria-label="Open menu">&#9776;</button>
@@ -97,7 +98,7 @@
 
     {{-- BANNER --}}
     <div class="head">
-        <img src="{{ asset('images/Bannernew.jpg') }}" alt="Banner" class="banner-img">
+        <img src="{{ $brandingBannerUrl }}" alt="Banner" class="banner-img">
     </div>
 
     {{-- MAIN CONTENT --}}

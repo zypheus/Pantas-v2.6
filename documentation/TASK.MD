@@ -222,22 +222,22 @@ Plan reference: `documentation/developer-branding-plan.md`
 
 #### Task 4: Upload And Color Safety
 
-- [ ] Validate banner and logo MIME types, sizes, dimensions, and image decoding.
-- [ ] Store generated filenames under public branding storage directories.
-- [ ] Make image replacement safe so the old custom file is deleted only after success.
-- [ ] Prevent original Pantas assets from being overwritten or deleted.
-- [ ] Validate and normalize colors to uppercase six-digit `#RRGGBB` values.
-- [ ] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete values.
+- [x] Validate banner and logo MIME types, sizes, dimensions, and image decoding.
+- [x] Store generated filenames under public branding storage directories.
+- [x] Make image replacement safe so the old custom file is deleted only after success.
+- [x] Prevent original Pantas assets from being overwritten or deleted.
+- [x] Validate and normalize colors to uppercase six-digit `#RRGGBB` values.
+- [x] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete values.
 
 #### Task 5: Application Branding Integration
 
-- [ ] Share active branding with Blade layouts through one centralized integration point.
-- [ ] Expose validated active colors as CSS custom properties.
-- [ ] Connect customizable colors only to `pantas-default`.
-- [ ] Preserve all other themes and per-user theme preferences.
-- [ ] Replace relevant hard-coded banner references in shared layouts.
-- [ ] Replace relevant hard-coded sidebar/application logo references.
-- [ ] Apply branding consistently to authenticated, public, guest, Library, Attendance, and scanner layouts.
+- [x] Share active branding with Blade layouts through one centralized integration point.
+- [x] Expose validated active colors as CSS custom properties.
+- [x] Connect customizable colors only to `pantas-default`.
+- [x] Preserve all other themes and per-user theme preferences.
+- [x] Replace relevant hard-coded banner references in shared layouts.
+- [x] Replace relevant hard-coded sidebar/application logo references.
+- [x] Apply branding consistently to authenticated, public, guest, Library, Attendance, and scanner layouts.
 
 #### Task 6: Restoration And Audit
 
@@ -323,7 +323,9 @@ Plan reference: `documentation/developer-branding-plan.md`
 - Developer Task 1 added an exact-role isolated dashboard and middleware. Super Admin cannot list, create, assign, edit, delete, or enter Developer accounts/features; Developer cannot enter other staff modules.
 - `DeveloperAccessTest` passes all role-isolation checks. `RoleDashboardExperienceTest` still has five pre-existing label-visibility failures because global command-palette data contains routes hidden from the visible role sidebar.
 - Developer Tasks 2 and 3 added permanent configuration defaults, singleton branding overrides, caching/fallback service behavior, four protected Developer routes, a current-state dashboard, and a functional settings interface with uploads, color controls, live previews, and restore actions.
-- `DeveloperBrandingSettingsTest` passes five tests covering original values, exact-role route isolation, normalized color persistence, image uploads, and partial/full restoration.
+- `DeveloperBrandingSettingsTest` passes seven tests covering original values, exact-role route isolation, normalized colors, uploads, dimension/input rejection, safe replacement, and partial/full restoration.
+- Developer Task 4 hardened image type, size, dimension, and decoding rules; strict hexadecimal colors; generated storage paths; transactional updates; failed-upload cleanup; and post-commit replacement cleanup that cannot target original assets.
+- Developer Task 5 now shares branding centrally with Blade, scopes dynamic color variables to `pantas-default`, and replaces relevant banner/sidebar-logo references across authenticated, public, guest, Library, Attendance, OPAC, kiosk, and scanner surfaces.
 - Added documentation:
   - `documentation/mobile-api-contract-review.md`
   - `documentation/staff-role-setup.md`

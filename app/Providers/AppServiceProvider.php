@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Services\BrandingService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('*', function ($view): void {
+            $branding = app(BrandingService::class);
+            $view->with([
+                'activeBranding' => $branding->active(),
+                'brandingBannerUrl' => $branding->assetUrl('banner_path'),
+                'brandingSidebarLogoUrl' => $branding->assetUrl('sidebar_logo_path'),
+            ]);
+        });
+
         // Set PHP's default timezone to Asia/Manila
         date_default_timezone_set(Config::get('app.timezone'));
 

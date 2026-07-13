@@ -31,7 +31,7 @@
 <div class="books-index-layout">
 
     <section class="books-index-hero" aria-label="All books catalog">
-        <img src="{{ asset('images/Bannernew.jpg') }}" alt="Pantas library catalog banner">
+        <img src="{{ $brandingBannerUrl }}" alt="Pantas library catalog banner">
     </section>
 
     {{-- Left sidebar: search, filters, actions --}}

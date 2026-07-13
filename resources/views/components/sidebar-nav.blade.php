@@ -29,7 +29,7 @@
 <div class="sidebar-header">
     <a href="{{ route('dashboard') }}" class="sidebar-logo-wrap">
         <span class="sidebar-logo-mark">
-            <img src="{{ asset('images/pantasLogo.png') }}" alt="Pantas Logo" class="sidebar-logo-img">
+            <img src="{{ $brandingSidebarLogoUrl }}" alt="Pantas Logo" class="sidebar-logo-img">
         </span>
         <span class="sidebar-brand-copy">
             <span class="sidebar-app-name">Pantas</span>
