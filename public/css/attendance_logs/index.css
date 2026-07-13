@@ -4,9 +4,9 @@
             font-size: 1.3rem;
             font-weight: bold;
             font-family: 'Poppins', sans-serif;
-            
+
         }
-        
+
         .dropdown {
     position: relative;
     display: inline-block;
@@ -47,9 +47,9 @@
   .dropdown:hover .dropdown-content {
     display: block;
   }
-  
-  
-  
+
+
+
  .attendance_dropdown {
     position: relative;
     border: none;
@@ -99,7 +99,7 @@
     display: block;
 }
 
-  
+
   .logs_dropdown {
     position: relative;
     border: none;
@@ -148,11 +148,11 @@
 .logs_dropdown:hover .logs_dropdown-content {
     display: block;
 }
-        
-        
-        
-        
-        
+
+
+
+
+
         .btn1{
             font-weight: 600;
             font-size: 0.8rem;
@@ -164,7 +164,7 @@
             text-decoration: none;
             color: #932c27;
         }
-        
+
         .btn2{
             font-weight: 600;
             font-size: 0.8rem;
@@ -214,7 +214,7 @@
             font-size: 1.3rem;
             font-weight: bold;
             font-family: 'Poppins', sans-serif;
-            
+
         }
         .btn0{
             font-weight: 600;
@@ -230,7 +230,7 @@
         .btn0:hover{
             color: #ffd700;
         }
-        
+
         .btn1{
             font-weight: 600;
             font-size: 0.8rem;
@@ -242,7 +242,7 @@
             text-decoration: none;
             color: #ffb845;
         }
-        
+
         .btn2{
             font-weight: 600;
             font-size: 0.8rem;
@@ -285,7 +285,7 @@
         .btn4:hover{
             color: #ffb845;
         }
-        
+
         .btn5{
             margin-right: 5rem;
             background-color: #22333b;
@@ -304,7 +304,7 @@
             background-color: #ffb845;
             color: #22333b;
         }
-        
+
         footer{
             background-color: #05014a;
             width: 100%;
@@ -315,7 +315,7 @@
         .a51-footer{
             text-align: center;
         }
-       
+
         .a51-footer h1{
             font-family: 'Orbitron', sans-serif;
             font-weight: bold;
@@ -333,7 +333,7 @@
             font-style: italic;
             color: #ccc;
         }
-        
+
         .text-white.px-4.py-2.hover\:bg-yellow-400.transition.w-full {
     background-color: #932c27;
 }
@@ -411,10 +411,8 @@
 }
 
         /*end of header*/
-        
-        * {
-    border-radius: 0 !important;
-}
+
+
 
 .btn-search{
     background-color: var(--brand-button-bg, #22333b);
@@ -432,7 +430,7 @@
 
 /* Make Export buttons transparent and inherit text */
 a.export-btn {
-   
+
     color: black !important;
     padding: 0.5rem 1rem;
     font-weight: 600;
@@ -449,4 +447,4 @@ a.export-btn:hover {
     background: none !important;
     box-shadow: none !important;
 }
- 
+
