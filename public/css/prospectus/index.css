@@ -29,7 +29,7 @@
             font-size: 1.3rem;
             font-weight: bold;
             font-family: 'Poppins', sans-serif;
-            
+
         }
         .btn0{
             font-weight: 600;
@@ -45,7 +45,7 @@
         .btn0:hover{
             color: var(--brand-button-hover-bg, #ffb845);
         }
-        
+
         .btn1{
             font-weight: 600;
             font-size: 0.8rem;
@@ -99,7 +99,7 @@
         .btn4:hover{
             color: var(--brand-button-hover-bg, #ffb845);
         }
-        
+
         .btn5{
             background-color: var(--brand-button-bg, #22333b);
             font-weight: 600;
@@ -117,8 +117,8 @@
             background-color: var(--brand-button-hover-bg, #ffb845);
             color: var(--brand-button-hover-text, #22333b);
         }
-        
-       
+
+
         footer{
             background-color: var(--brand-footer-bg, #05014a);
             width: 100%;
@@ -127,12 +127,12 @@
             margin-top:50px;
 
         }
-      
+
         .a51-footer{
             text-align: center;
         }
-        
-        
+
+
         .com-name{
             color: #ffc107;
             font-weight: bold;
@@ -283,14 +283,12 @@
       backdrop-filter: blur(5px);
       transition: backdrop-filter 0.3s ease;
     }
-    * {
-    border-radius: 0 !important;
-}
 
 
-    
-    
-    
+
+
+
+
     .dropdown {
     position: relative;
     display: inline-block;
@@ -331,9 +329,9 @@
   .dropdown:hover .dropdown-content {
     display: block;
   }
-  
-  
-  
+
+
+
  .attendance_dropdown {
     position: relative;
     border: none;
@@ -383,7 +381,7 @@
     display: block;
 }
 
-  
+
   .logs_dropdown {
     position: relative;
     border: none;
@@ -433,4 +431,3 @@
     display: block;
 }
 
- 

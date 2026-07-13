@@ -1,17 +1,17 @@
  /*header style sheet*/
-   
+
         .school-name{
             color: #932c27;
             margin-left: 5px;
             font-size: 1.3rem;
             font-weight: bold;
             font-family: 'Poppins', sans-serif;
-            
+
         }
         .btn0{
             font-weight: 600;
             font-size: 0.8rem;
-            
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -25,7 +25,7 @@
         .btn1{
             font-weight: 600;
             font-size: 0.8rem;
-            
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -39,7 +39,7 @@
         .btn2{
             font-weight: 600;
             font-size: 0.8rem;
-            
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -53,7 +53,7 @@
         .btn3{
             font-weight: 600;
             font-size: 0.8rem;
-            
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -67,7 +67,7 @@
         .btn6{
             font-weight: 600;
             font-size: 0.8rem;
-            
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -81,7 +81,7 @@
         .btn7{
             font-weight: 600;
             font-size: 0.8rem;
-           
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -95,7 +95,7 @@
         .btn8{
             font-weight: 600;
             font-size: 0.8rem;
-          
+
             padding: 5px 15px;
             margin-top: 10px;
             transition: color 0.3s, transform 0.3s;
@@ -136,7 +136,7 @@
             background-color: #ffb845;
             color: #22333b;
         }
-        
+
         footer{
             background-color: #05014a;
             width: 100%;
@@ -145,11 +145,11 @@
             margin-top:50px;
 
         }
-        
+
         .a51-footer{
             text-align: center;
         }
-       
+
         /*end of header*/
         .bg{
             background-color: white;
@@ -176,15 +176,15 @@
           padding: 1rem;
           box-sizing: border-box;
         }
-        
+
         .left-buttons {
           display: flex;
           flex-wrap: wrap;
           gap: 1rem;
         }
-        
+
         .btn11, .btn12, .btn13 {
-         
+
           padding: 10px 20px;
           border: none;
           min-width: 200px;
@@ -196,14 +196,14 @@
           font-weight: bold;
           transition: color 0.3s, transform 0.3s;
         }
-        
+
         /* Colors */
         .btn11 {
           background-color: #22333b;
           color: white;
           transition: color 0.3s, transform 0.3s;
         }
-        
+
         .btn12 {
           background-color: #22333b;
           color: #ffffff;
@@ -213,7 +213,7 @@
           background-color: #ffb845;
           color: #ffffff; /* contrast color */
         }
-        
+
         .btn13 {
           background-color: #22333b;
           color: white;
@@ -225,14 +225,14 @@
           background-color: #ffb845;
           color: #22333b; /* contrast color */
         }
-        
+
         .form-control{
             background-color: #edf0f7;
             box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
             height: 45px;
             font: italic 300 15px 'Rubik', sans-serif;
             font-weight: bold;
-            
+
         }
         .form-select{
             background-color: #edf0f7;
@@ -243,34 +243,32 @@
             border-radius: 50px;
             padding: 50px;
         }
-        
+
         .table th, .table td {
             vertical-align: middle;
         }
-        
-        * {
-            border-radius: 0 !important;
-        }
+
+
         /* Change text and border color of pagination links */
         .pagination .page-link {
             color: #22333b;
             border-color: #22333b;
         }
-    
+
         /* On hover */
         .pagination .page-link:hover {
             background-color: #22333b;
             color: white;
         }
-    
+
         /* Active page */
         .pagination .page-item.active .page-link {
             background-color: #22333b;
             border-color: #22333b;
             color: white;
         }
-        
-        
+
+
         .dropdown {
     position: relative;
     display: inline-block;
@@ -311,9 +309,9 @@
   .dropdown:hover .dropdown-content {
     display: block;
   }
-  
-  
-  
+
+
+
  .attendance_dropdown {
     position: relative;
     border: none;
@@ -363,7 +361,7 @@
     display: block;
 }
 
-  
+
   .logs_dropdown {
     position: relative;
     border: none;
@@ -573,7 +571,7 @@
     .header-logo-img{
         margin: 0;
     }
-    
+
 }
 @media(max-width:1024px ){
     .header-logo-img{
@@ -605,7 +603,7 @@
     .btn8{
         font-size: 0.5rem;
     }
-    
+
 }
 @media(max-width: 768px){
     .header-logo-img{
@@ -626,16 +624,16 @@
             z-index: 1000;
             text-align: center;
         }
-    
+
         #routeWrapper.open {
             display: flex !important;
         }
-    
+
         #customMenuToggle {
             display: block !important;
             margin-left: auto;
         }
-    
+
         #customMenuClose {
             display: block !important;
             align-self: flex-end;
@@ -647,7 +645,7 @@
     .table th, td{
         font-size: 16px;
     }
-    
+
 }
 @media(max-width: 398px){
     .header-logo-img{
@@ -657,7 +655,7 @@
     }
     .head{
         max-width: 100%; height: auto;
-        
+
     }
     .button_div{
         display: flex;
