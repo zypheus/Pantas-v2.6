@@ -19,6 +19,7 @@ Reference plan:
 
 ## Active Work
 
+- [ ] Start Milestone 12: Developer-managed login modal customization.
 - [x] Start Milestone 11: isolated Developer branding role and system-wide `pantas-default` customization.
 - [x] Compare current `pantas-v2.5` behavior with the target separated-domain architecture.
 - [x] Identify major feature overlap and architecture gaps.
@@ -266,6 +267,81 @@ Plan reference: `documentation/developer-branding-plan.md`
 - [x] Run focused Branding, Developer Access, Theme Preference, and Module Access tests.
 - [x] Run `php artisan route:list`, `npm run build`, and Pint.
 - [ ] Visually verify responsive layouts, theme isolation, restoration, fallback, and color contrast.
+
+### Milestone 12: Developer-Managed Login Modal
+
+Goal: allow the isolated Developer role to customize the public login modal from Branding Settings without changing authentication, registration, or role-redirect behavior.
+
+#### Task 1: Customization Scope And Defaults
+
+- [ ] Add permanent defaults for the login modal logo, welcome label, portal name, description, sign-in heading, and field placeholders.
+- [ ] Add permanent defaults for the left-panel background, modal background, modal text, and sign-in button colors.
+- [ ] Keep Attendance and Library registration wording and workflows unchanged unless separately approved.
+- [ ] Ensure every new setting falls back safely to its original Pantas value.
+
+#### Task 2: Persistence And Branding Service
+
+- [ ] Add nullable login-modal override fields to `branding_settings` through a new migration.
+- [ ] Add the new fields to `BrandingSetting`, `config/branding.php`, and `BrandingService`.
+- [ ] Add the login modal logo to centralized asset URL, upload, replacement, missing-file fallback, and cleanup handling.
+- [ ] Include the new settings in branding caching and cache invalidation.
+- [ ] Include the new settings in individual and full restoration.
+- [ ] Record login-modal changes and restorations in the existing branding activity log.
+
+#### Task 3: Validation And Upload Safety
+
+- [ ] Add text length limits and normalize submitted modal text.
+- [ ] Validate colors as strict uppercase six-digit `#RRGGBB` values.
+- [ ] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete color values.
+- [ ] Validate the modal logo MIME type, file size, dimensions, and image decoding.
+- [ ] Store the logo under generated public branding storage paths.
+- [ ] Delete an old custom logo only after its replacement or restoration succeeds.
+- [ ] Ensure original Pantas assets can never be overwritten or deleted.
+
+#### Task 4: Developer Branding Interface
+
+- [ ] Add a dedicated Login Modal section to Developer Branding Settings.
+- [ ] Add text inputs, color controls, and a modal logo uploader with current and original values.
+- [ ] Add a responsive live preview for desktop and mobile modal layouts.
+- [ ] Preserve submitted values and show validation errors when saving fails.
+- [ ] Add per-field restore actions and a Restore Login Modal Defaults action.
+- [ ] Include the new fields in the existing full Restore to Default action and confirmation flow.
+
+#### Task 5: Public Modal Integration
+
+- [ ] Replace hard-coded login logo and text in `resources/views/partials/auth-modal.blade.php` with active branding values.
+- [ ] Expose validated modal colors through CSS custom properties scoped to the authentication modal.
+- [ ] Update `public/css/auth-modal.css` to consume the scoped variables without affecting other application surfaces or themes.
+- [ ] Update `public/js/auth-modal.js` so Login, Attendance Registration, and Library Registration switching does not overwrite customized login content.
+- [ ] Preserve modal opening, closing, keyboard, focus, error, session-expiry, and responsive behavior.
+- [ ] Keep the login form action, CSRF protection, remember-me option, validation, inactive-account handling, and role-aware redirects unchanged.
+
+#### Task 6: Direct Login Consistency
+
+- [ ] Replace or adapt the legacy `/login` page so it uses the same branded modal experience as the landing page.
+- [ ] Preserve direct `/login` access for password reset, expired sessions, authentication errors, and bookmarked links.
+- [ ] Verify the modal automatically opens with the correct login view and retains old email/remember values after validation errors.
+
+#### Task 7: Tests And Verification
+
+- [ ] Test default login-modal values and customized rendering.
+- [ ] Test exact Developer-only update and restore authorization.
+- [ ] Test valid and invalid modal logo uploads, text limits, and color values.
+- [ ] Test safe logo replacement, missing-file fallback, and protection of original assets.
+- [ ] Test individual login-modal restoration and full branding restoration.
+- [ ] Test branding activity records for login-modal updates and restorations.
+- [ ] Test the landing-page modal and direct `/login` page for consistent customized values.
+- [ ] Keep existing authentication, inactive-account, registration, modal, and role-redirect tests passing.
+- [ ] Run focused `DeveloperBrandingSettingsTest`, `AuthenticationTest`, and `PublicRegistrationSplitTest` coverage.
+- [ ] Run `php artisan route:list`, `npm run build`, Pint, and responsive visual verification.
+
+#### Acceptance Criteria
+
+- [ ] A Developer can customize and restore the login modal entirely from Branding Settings.
+- [ ] Customized values appear on both the landing-page modal and direct `/login` experience.
+- [ ] Attendance and Library registration content and behavior remain unchanged.
+- [ ] Authentication security, validation, account status checks, and role-based redirects remain unchanged.
+- [ ] Invalid or missing custom values safely fall back to permanent Pantas defaults.
 
 ## Backlog
 
