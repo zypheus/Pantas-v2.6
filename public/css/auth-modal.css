@@ -83,7 +83,7 @@
 .lm-left.att-mode {
     background:
         radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.22), transparent 24%),
-        linear-gradient(145deg, #7a3d00, #d97706 62%, #8f4c00);
+        linear-gradient(145deg, #7a3d00, var(--lm-reg-att-panel, #d97706) 62%, #8f4c00);
 }
 
 .lm-waves {
@@ -337,7 +337,7 @@
 }
 
 .lm-btn.lib {
-    background: linear-gradient(135deg, #0f3f83, #175dbd);
+    background: linear-gradient(135deg, var(--lm-reg-lib-submit, #0f3f83), color-mix(in srgb, var(--lm-reg-lib-submit, #0f3f83) 75%, #fff));
 }
 
 [data-lm-view-panel="login"] {
@@ -366,7 +366,7 @@
 }
 
 .lm-btn.att {
-    background: linear-gradient(135deg, #d97706, #f59e0b);
+    background: linear-gradient(135deg, var(--lm-reg-att-submit, #d97706), color-mix(in srgb, var(--lm-reg-att-submit, #d97706) 75%, #fff));
     box-shadow: 0 12px 26px rgba(217, 119, 6, 0.24);
 }
 
@@ -424,13 +424,13 @@
     left: 5px;
     width: calc(50% - 5px);
     border-radius: 999px;
-    background: #f59e0b;
+    background: var(--lm-reg-att-active, #f59e0b);
     transition: transform 0.25s ease, background 0.25s ease;
 }
 
 .lm-service.lib-mode .lm-pill {
     transform: translateX(100%);
-    background: #175dbd;
+    background: var(--lm-reg-lib-active, #175dbd);
 }
 
 .lm-service .sv-active {
@@ -479,14 +479,14 @@
 
 .lm-role.on-att {
     color: #ffffff;
-    border-color: #d97706;
-    background: #d97706;
+    border-color: var(--lm-reg-att-active, #d97706);
+    background: var(--lm-reg-att-active, #d97706);
 }
 
 .lm-role.on-lib {
     color: #ffffff;
-    border-color: #175dbd;
-    background: #175dbd;
+    border-color: var(--lm-reg-lib-active, #175dbd);
+    background: var(--lm-reg-lib-active, #175dbd);
 }
 
 .lm-role-panel {
@@ -514,7 +514,7 @@
 }
 
 .lm-section-title.att {
-    color: #b45309;
+    color: var(--lm-reg-att-accent, #b45309);
 }
 
 .lm-section-title.lib {

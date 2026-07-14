@@ -19,7 +19,7 @@ Reference plan:
 
 ## Active Work
 
-- [ ] Start Milestone 13: Developer-managed register modal customization on a dedicated Developer settings page.
+- [x] Start Milestone 13: Developer-managed register modal customization on a dedicated Developer settings page.
 - [x] Start Milestone 12: Developer-managed login modal customization on a dedicated Developer settings page.
 - [x] Start Milestone 11: isolated Developer branding role and system-wide `pantas-default` customization.
 - [x] Compare current `pantas-v2.5` behavior with the target separated-domain architecture.
@@ -352,103 +352,103 @@ Goal: allow the isolated Developer role to customize the public Attendance and L
 
 #### Task 1: Customization Scope And Defaults
 
-- [ ] Define permanent defaults for the shared Register heading, Login/back label, Attendance tab label, and Library tab label.
-- [ ] Define separate Attendance registration defaults for the welcome label, portal name, description, logo, service heading, Student label, Employee label, student submit label, and employee submit label.
-- [ ] Define separate Library registration defaults for the welcome label, portal name, description, logo, service heading, Student label, Faculty & Staff label, student submit label, and employee submit label.
-- [ ] Define separate Attendance and Library panel, text, accent, active-role, and submit-button colors.
-- [ ] Keep field labels, field names, required markers, field ordering, form actions, CSRF protection, validation rules, file inputs, signature pads, and approval behavior outside the customizable scope.
-- [ ] Ensure every register-modal setting safely falls back to its permanent Pantas default.
+- [x] Define permanent defaults for the shared Register heading, Login/back label, Attendance tab label, and Library tab label.
+- [x] Define separate Attendance registration defaults for the welcome label, portal name, description, logo, service heading, Student label, Employee label, student submit label, and employee submit label.
+- [x] Define separate Library registration defaults for the welcome label, portal name, description, logo, service heading, Student label, Faculty & Staff label, student submit label, and employee submit label.
+- [x] Define separate Attendance and Library panel, text, accent, active-role, and submit-button colors.
+- [x] Keep field labels, field names, required markers, field ordering, form actions, CSRF protection, validation rules, file inputs, signature pads, and approval behavior outside the customizable scope.
+- [x] Ensure every register-modal setting safely falls back to its permanent Pantas default.
 
 #### Task 2: Persistence And Branding Service
 
-- [ ] Add nullable register-modal override fields to `branding_settings` through a new migration.
-- [ ] Add register-modal defaults to `config/branding.php` and persistence fields to `BrandingSetting`.
-- [ ] Add centralized register-modal field groups to `BrandingService` for assets, text, and colors.
-- [ ] Add Attendance and Library registration logos to asset URL, upload, replacement, missing-file fallback, and cleanup handling.
-- [ ] Re-merge current register defaults on cached reads so older branding cache payloads remain upgrade-safe.
-- [ ] Include register-modal settings in cache invalidation, individual restoration, register-modal-only restoration, and full branding restoration.
-- [ ] Record register-modal updates and restorations in the existing branding activity log.
+- [x] Add nullable register-modal override fields to `branding_settings` through a new migration.
+- [x] Add register-modal defaults to `config/branding.php` and persistence fields to `BrandingSetting`.
+- [x] Add centralized register-modal field groups to `BrandingService` for assets, text, and colors.
+- [x] Add Attendance and Library registration logos to asset URL, upload, replacement, missing-file fallback, and cleanup handling.
+- [x] Re-merge current register defaults on cached reads so older branding cache payloads remain upgrade-safe.
+- [x] Include register-modal settings in cache invalidation, individual restoration, register-modal-only restoration, and full branding restoration.
+- [x] Record register-modal updates and restorations in the existing branding activity log.
 
 #### Task 3: Validation And Upload Safety
 
-- [ ] Add a Developer-only Form Request dedicated to register-modal settings.
-- [ ] Add text length limits and normalize submitted registration text.
-- [ ] Validate colors as strict uppercase six-digit `#RRGGBB` values.
-- [ ] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete color values.
-- [ ] Validate Attendance and Library logo MIME types, file sizes, dimensions, and image decoding.
-- [ ] Store uploaded logos under generated public branding storage paths.
-- [ ] Delete replaced custom logos only after a successful update or restoration.
-- [ ] Ensure original Pantas assets can never be overwritten or deleted.
+- [x] Add a Developer-only Form Request dedicated to register-modal settings.
+- [x] Add text length limits and normalize submitted registration text.
+- [x] Validate colors as strict uppercase six-digit `#RRGGBB` values.
+- [x] Reject CSS expressions, URLs, variables, named colors, alpha colors, and incomplete color values.
+- [x] Validate Attendance and Library logo MIME types, file sizes, dimensions, and image decoding.
+- [x] Store uploaded logos under generated public branding storage paths.
+- [x] Delete replaced custom logos only after a successful update or restoration.
+- [x] Ensure original Pantas assets can never be overwritten or deleted.
 
 #### Task 4: Separate Developer Register Modal Interface
 
-- [ ] Add dedicated Developer routes, controller actions, and a Register Modal Settings page.
-- [ ] Add a Register Modal Settings link visible only to the Developer role in the sidebar and command palette.
-- [ ] Add a separate Register Modal card and link on the Developer Dashboard.
-- [ ] Divide the page into Shared, Attendance Registration, and Library Registration settings.
-- [ ] Add text inputs, color controls, and separate Attendance/Library logo uploaders with current and original previews.
-- [ ] Add live preview controls for Attendance Student, Attendance Employee, Library Student, and Library Faculty & Staff states.
-- [ ] Add desktop and mobile preview modes.
-- [ ] Preserve submitted values and display validation errors when saving fails.
-- [ ] Add per-field restore actions and a Restore Register Modal Defaults action.
-- [ ] Include register-modal settings in the existing full Restore to Default confirmation flow.
+- [x] Add dedicated Developer routes, controller actions, and a Register Modal Settings page.
+- [x] Add a Register Modal Settings link visible only to the Developer role in the sidebar and command palette.
+- [x] Add a separate Register Modal card and link on the Developer Dashboard.
+- [x] Divide the page into Shared, Attendance Registration, and Library Registration settings.
+- [x] Add text inputs, color controls, and separate Attendance/Library logo uploaders with current and original previews.
+- [x] Add live preview controls for Attendance Student, Attendance Employee, Library Student, and Library Faculty & Staff states.
+- [x] Add desktop and mobile preview modes.
+- [x] Preserve submitted values and display validation errors when saving fails.
+- [x] Add per-field restore actions and a Restore Register Modal Defaults action.
+- [x] Include register-modal settings in the existing full Restore to Default confirmation flow.
 
 #### Task 5: Public Register Modal Integration
 
-- [ ] Replace hard-coded shared registration headings and tab labels in `resources/views/partials/auth-modal.blade.php` with active register-modal values.
-- [ ] Replace hard-coded Attendance registration presentation text and logo with active Attendance values.
-- [ ] Replace hard-coded Library registration presentation text and logo with active Library values.
-- [ ] Expose validated Attendance and Library register colors through CSS variables scoped to registration mode only.
-- [ ] Update `public/css/auth-modal.css` without affecting login-mode branding or other application surfaces.
-- [ ] Update `public/js/auth-modal.js` so service and role switching applies the correct Attendance or Library registration branding.
-- [ ] Ensure returning to Login mode restores the independently configured login logo, text, and colors.
-- [ ] Apply register-modal settings consistently on both the landing page and direct `/login` experience.
-- [ ] Preserve registration scrolling, signature pads, file-name display, keyboard behavior, closing behavior, and responsive layout.
+- [x] Replace hard-coded shared registration headings and tab labels in `resources/views/partials/auth-modal.blade.php` with active register-modal values.
+- [x] Replace hard-coded Attendance registration presentation text and logo with active Attendance values.
+- [x] Replace hard-coded Library registration presentation text and logo with active Library values.
+- [x] Expose validated Attendance and Library register colors through CSS variables scoped to registration mode only.
+- [x] Update `public/css/auth-modal.css` without affecting login-mode branding or other application surfaces.
+- [x] Update `public/js/auth-modal.js` so service and role switching applies the correct Attendance or Library registration branding.
+- [x] Ensure returning to Login mode restores the independently configured login logo, text, and colors.
+- [x] Apply register-modal settings consistently on both the landing page and direct `/login` experience.
+- [x] Preserve registration scrolling, signature pads, file-name display, keyboard behavior, closing behavior, and responsive layout.
 
 #### Task 6: Registration Workflow Protection
 
-- [ ] Keep Attendance student registration posting only to `attendance.pending.store`.
-- [ ] Keep Attendance employee registration posting only to `attendance.pendingEmployee.store`.
-- [ ] Keep Library student registration posting only to `library.pending.store`.
-- [ ] Keep Library employee registration posting only to `library.pendingEmployee.store`.
-- [ ] Preserve CSRF tokens, hidden service/type fields, model binding, old-input restoration, and validation-error panel selection.
-- [ ] Preserve profile/formal photo inputs and all four signature-pad workflows.
-- [ ] Confirm register customization cannot change patron-domain ownership or mix Attendance and Library records.
+- [x] Keep Attendance student registration posting only to `attendance.pending.store`.
+- [x] Keep Attendance employee registration posting only to `attendance.pendingEmployee.store`.
+- [x] Keep Library student registration posting only to `library.pending.store`.
+- [x] Keep Library employee registration posting only to `library.pendingEmployee.store`.
+- [x] Preserve CSRF tokens, hidden service/type fields, model binding, old-input restoration, and validation-error panel selection.
+- [x] Preserve profile/formal photo inputs and all four signature-pad workflows.
+- [x] Confirm register customization cannot change patron-domain ownership or mix Attendance and Library records.
 
 #### Task 7: Restoration And Audit
 
-- [ ] Restore an individual shared, Attendance, or Library register value without affecting other modal settings.
-- [ ] Restore the entire register-modal group without affecting Login Modal Settings or unrelated branding.
-- [ ] Include register-modal values in the system-wide Restore to Default action.
-- [ ] Delete only obsolete custom register logos after restoration succeeds.
-- [ ] Clear branding cache after every update or restoration.
-- [ ] Log changed register fields and link activity records back to Register Modal Settings.
-- [ ] Log individual, register-group, and full-branding restoration actions.
+- [x] Restore an individual shared, Attendance, or Library register value without affecting other modal settings.
+- [x] Restore the entire register-modal group without affecting Login Modal Settings or unrelated branding.
+- [x] Include register-modal values in the system-wide Restore to Default action.
+- [x] Delete only obsolete custom register logos after restoration succeeds.
+- [x] Clear branding cache after every update or restoration.
+- [x] Log changed register fields and link activity records back to Register Modal Settings.
+- [x] Log individual, register-group, and full-branding restoration actions.
 
 #### Task 8: Tests And Verification
 
-- [ ] Test register-modal defaults, schema fields, cache compatibility, and missing-file fallback.
-- [ ] Test exact Developer-only access to view, update, and restore routes.
-- [ ] Test valid and invalid Attendance/Library logo uploads, dimensions, sizes, and decoding.
-- [ ] Test text limits, trimming, strict colors, and unsafe CSS-value rejection.
-- [ ] Test safe logo replacement and protection of original assets.
-- [ ] Test individual, register-group, and full-branding restoration boundaries.
-- [ ] Test branding activity records for register updates and restorations.
-- [ ] Test customized Attendance and Library rendering on the landing page and direct `/login` page.
-- [ ] Test Login, Attendance Registration, and Library Registration switching keeps each mode's independent branding.
-- [ ] Keep existing public registration, domain-isolation, authentication, inactive-account, and role-redirect tests passing.
-- [ ] Run focused Register Modal, `PublicRegistrationSplitTest`, `AuthenticationTest`, Developer Branding, and Developer Access coverage.
-- [ ] Run `php artisan route:list`, `npm run build`, Pint, JavaScript syntax validation, and Blade compilation.
+- [x] Test register-modal defaults, schema fields, cache compatibility, and missing-file fallback.
+- [x] Test exact Developer-only access to view, update, and restore routes.
+- [x] Test valid and invalid Attendance/Library logo uploads, dimensions, sizes, and decoding.
+- [x] Test text limits, trimming, strict colors, and unsafe CSS-value rejection.
+- [x] Test safe logo replacement and protection of original assets.
+- [x] Test individual, register-group, and full-branding restoration boundaries.
+- [x] Test branding activity records for register updates and restorations.
+- [x] Test customized Attendance and Library rendering on the landing page and direct `/login` page.
+- [x] Test Login, Attendance Registration, and Library Registration switching keeps each mode's independent branding.
+- [x] Keep existing public registration, domain-isolation, authentication, inactive-account, and role-redirect tests passing.
+- [x] Run focused Register Modal, `PublicRegistrationSplitTest`, `AuthenticationTest`, Developer Branding, and Developer Access coverage.
+- [x] Run `php artisan route:list`, `npm run build`, Pint, JavaScript syntax validation, and Blade compilation.
 - [ ] Visually verify all four registration states at desktop and mobile sizes when the in-app browser is available.
 
 #### Acceptance Criteria
 
-- [ ] A Developer can customize and restore the register modal from a dedicated Register Modal Settings page.
-- [ ] Attendance and Library registration branding can be configured independently.
-- [ ] Customized register values appear consistently on the landing page and direct `/login` experience.
-- [ ] Login Modal Settings remain independent and are restored when returning to Login mode.
-- [ ] Registration fields, validation, uploads, signatures, endpoints, approvals, and patron-domain ownership remain unchanged.
-- [ ] Invalid, missing, or stale custom values safely fall back to permanent Pantas defaults.
+- [x] A Developer can customize and restore the register modal from a dedicated Register Modal Settings page.
+- [x] Attendance and Library registration branding can be configured independently.
+- [x] Customized register values appear consistently on the landing page and direct `/login` experience.
+- [x] Login Modal Settings remain independent and are restored when returning to Login mode.
+- [x] Registration fields, validation, uploads, signatures, endpoints, approvals, and patron-domain ownership remain unchanged.
+- [x] Invalid, missing, or stale custom values safely fall back to permanent Pantas defaults.
 
 ## Backlog
 

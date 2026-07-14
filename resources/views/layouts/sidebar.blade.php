@@ -62,6 +62,7 @@
             ['label' => 'Developer Dashboard', 'route' => 'dashboard.developer', 'icon' => 'bi-code-slash', 'group' => 'Developer'],
             ['label' => 'Branding Settings', 'route' => 'developer.branding.edit', 'icon' => 'bi-palette', 'group' => 'Developer'],
             ['label' => 'Login Modal Settings', 'route' => 'developer.login-modal.edit', 'icon' => 'bi-window-stack', 'group' => 'Developer'],
+            ['label' => 'Register Modal Settings', 'route' => 'developer.register-modal.edit', 'icon' => 'bi-person-plus', 'group' => 'Developer'],
         ])
         : collect([
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'bi-speedometer2', 'group' => 'Pages'],

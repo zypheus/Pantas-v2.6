@@ -78,7 +78,7 @@ final class LoginModalBrandingIntegrationTest extends TestCase
             ->assertSee(route('attendance.pendingEmployee.store', absolute: false))
             ->assertSee(route('library.pending.store', absolute: false))
             ->assertSee(route('library.pendingEmployee.store', absolute: false))
-            ->assertSee('data-registration-src="'.asset('img/pantas-10.png').'"', false);
+            ->assertSee('data-default-registration-src="'.asset('img/pantas-10.png').'"', false);
     }
 
     public function test_direct_login_uses_the_same_branded_modal_and_opens_it_automatically(): void

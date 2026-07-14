@@ -16,8 +16,20 @@
     data-login-welcome="{{ $activeBranding['login_modal_welcome_label'] }}"
     data-login-portal-name="{{ $activeBranding['login_modal_portal_name'] }}"
     data-login-description="{{ $activeBranding['login_modal_description'] }}"
+    data-register-heading="{{ $activeBranding['register_modal_heading'] }}"
+    data-register-login-label="{{ $activeBranding['register_modal_login_label'] }}"
+    data-register-attendance-tab="{{ $activeBranding['register_modal_attendance_tab'] }}"
+    data-register-library-tab="{{ $activeBranding['register_modal_library_tab'] }}"
+    data-register-att-welcome="{{ $activeBranding['register_modal_attendance_welcome_label'] }}"
+    data-register-att-name="{{ $activeBranding['register_modal_attendance_portal_name'] }}"
+    data-register-att-description="{{ $activeBranding['register_modal_attendance_description'] }}"
+    data-register-att-logo-src="{{ $brandingAttendanceRegisterLogoUrl }}"
+    data-register-lib-welcome="{{ $activeBranding['register_modal_library_welcome_label'] }}"
+    data-register-lib-name="{{ $activeBranding['register_modal_library_portal_name'] }}"
+    data-register-lib-description="{{ $activeBranding['register_modal_library_description'] }}"
+    data-register-lib-logo-src="{{ $brandingLibraryRegisterLogoUrl }}"
     data-close-url="{{ $authModalCloseUrl ?? '' }}"
-    style="--lm-login-left:{{ $activeBranding['login_modal_left_background_color'] }};--lm-login-bg:{{ $activeBranding['login_modal_background_color'] }};--lm-login-text:{{ $activeBranding['login_modal_text_color'] }};--lm-login-button:{{ $activeBranding['login_modal_button_color'] }}"
+    style="--lm-login-left:{{ $activeBranding['login_modal_left_background_color'] }};--lm-login-bg:{{ $activeBranding['login_modal_background_color'] }};--lm-login-text:{{ $activeBranding['login_modal_text_color'] }};--lm-login-button:{{ $activeBranding['login_modal_button_color'] }};--lm-reg-att-panel:{{ $activeBranding['register_modal_attendance_panel_color'] }};--lm-reg-att-text:{{ $activeBranding['register_modal_attendance_text_color'] }};--lm-reg-att-accent:{{ $activeBranding['register_modal_attendance_accent_color'] }};--lm-reg-att-active:{{ $activeBranding['register_modal_attendance_active_role_color'] }};--lm-reg-att-submit:{{ $activeBranding['register_modal_attendance_submit_color'] }};--lm-reg-lib-panel:{{ $activeBranding['register_modal_library_panel_color'] }};--lm-reg-lib-text:{{ $activeBranding['register_modal_library_text_color'] }};--lm-reg-lib-accent:{{ $activeBranding['register_modal_library_accent_color'] }};--lm-reg-lib-active:{{ $activeBranding['register_modal_library_active_role_color'] }};--lm-reg-lib-submit:{{ $activeBranding['register_modal_library_submit_color'] }}"
     aria-hidden="true"
 >
     <div class="lm-card-wrap">
@@ -34,7 +46,9 @@
                         id="lmBadgeImage"
                         src="{{ $brandingLoginModalLogoUrl }}"
                         data-login-src="{{ $brandingLoginModalLogoUrl }}"
-                        data-registration-src="{{ asset('img/pantas-10.png') }}"
+                        data-registration-att-src="{{ $brandingAttendanceRegisterLogoUrl }}"
+                        data-registration-lib-src="{{ $brandingLibraryRegisterLogoUrl }}"
+                        data-default-registration-src="{{ asset('img/pantas-10.png') }}"
                         alt="PANTAS mark"
                     >
                 </div>

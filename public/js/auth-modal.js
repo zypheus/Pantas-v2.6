@@ -26,18 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
             login: true,
         },
         attendance: {
-            top: 'Register for',
+            top: overlay.dataset.registerAttWelcome || 'Register for',
             cls: 'att',
-            name: 'PANTAS Attendance',
-            text: 'Create your attendance record. Students and employees can log school attendance once approved.',
+            name: overlay.dataset.registerAttName || 'PANTAS Attendance',
+            text: overlay.dataset.registerAttDescription || 'Create your attendance record. Students and employees can log school attendance once approved.',
             att: true,
             login: false,
         },
         library: {
-            top: 'Register for',
+            top: overlay.dataset.registerLibWelcome || 'Register for',
             cls: 'lib',
-            name: 'PANTAS Library',
-            text: 'Apply for library access. A librarian reviews each request before your library ID is issued.',
+            name: overlay.dataset.registerLibName || 'PANTAS Library',
+            text: overlay.dataset.registerLibDescription || 'Apply for library access. A librarian reviews each request before your library ID is issued.',
             att: false,
             login: false,
         },
@@ -55,7 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         left.classList.toggle('att-mode', config.att);
         left.classList.toggle('login-mode', config.login);
         if (badgeImage) {
-            badgeImage.src = config.login ? badgeImage.dataset.loginSrc : badgeImage.dataset.registrationSrc;
+            if (config.login) {
+                badgeImage.src = badgeImage.dataset.loginSrc;
+            } else if (activeService === 'attendance' && badgeImage.dataset.registrationAttSrc) {
+                badgeImage.src = badgeImage.dataset.registrationAttSrc;
+            } else if (activeService === 'library' && badgeImage.dataset.registrationLibSrc) {
+                badgeImage.src = badgeImage.dataset.registrationLibSrc;
+            } else {
+                badgeImage.src = badgeImage.dataset.defaultRegistrationSrc || badgeImage.dataset.loginSrc;
+            }
         }
     }
 
@@ -93,6 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
         service.classList.toggle('lib-mode', activeService === 'library');
         serviceButtons.attendance.classList.toggle('sv-active', activeService === 'attendance');
         serviceButtons.library.classList.toggle('sv-active', activeService === 'library');
+
+        // Update tab labels from data attributes
+        if (serviceButtons.attendance) {
+            serviceButtons.attendance.textContent = overlay.dataset.registerAttendanceTab || 'Attendance';
+        }
+        if (serviceButtons.library) {
+            serviceButtons.library.textContent = overlay.dataset.registerLibraryTab || 'Library';
+        }
+
         paint(activeService);
         setRole(`${activeService}-${overlay.dataset.initialType || 'student'}`);
         setTimeout(initAllCanvases, 60);
@@ -280,6 +297,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         initAllCanvases();
     });
+
+    // Update register mode heading and back label from data attributes
+    const regHead = overlay.querySelector('[data-lm-view-panel="register"] .lm-reg-head h2');
+    const regBack = overlay.querySelector('[data-lm-view-panel="register"] .lm-back');
+    if (regHead && overlay.dataset.registerHeading) {
+        regHead.textContent = overlay.dataset.registerHeading;
+    }
+    if (regBack && overlay.dataset.registerLoginLabel) {
+        regBack.textContent = overlay.dataset.registerLoginLabel;
+    }
 
     setService(activeService);
     setRole(`${activeService}-${overlay.dataset.initialType || 'student'}`);

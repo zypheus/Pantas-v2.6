@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeveloperBrandingController;
 use App\Http\Controllers\DeveloperLoginModalController;
+use App\Http\Controllers\DeveloperRegisterModalController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'developer'])->group(function (): void {
@@ -22,4 +23,10 @@ Route::middleware(['auth', 'developer'])->group(function (): void {
         ->name('developer.login-modal.update');
     Route::post('/developer/login-modal/restore', [DeveloperLoginModalController::class, 'restore'])
         ->name('developer.login-modal.restore');
+    Route::get('/developer/register-modal', [DeveloperRegisterModalController::class, 'edit'])
+        ->name('developer.register-modal.edit');
+    Route::put('/developer/register-modal', [DeveloperRegisterModalController::class, 'update'])
+        ->name('developer.register-modal.update');
+    Route::post('/developer/register-modal/restore', [DeveloperRegisterModalController::class, 'restore'])
+        ->name('developer.register-modal.restore');
 });

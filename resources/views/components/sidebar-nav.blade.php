@@ -73,6 +73,13 @@
                         </a>
                     </li>
                 @endif
+                @if (Route::has('developer.register-modal.edit'))
+                    <li>
+                        <a href="{{ route('developer.register-modal.edit') }}" class="sidebar-link {{ request()->routeIs('developer.register-modal.*') ? 'active' : '' }}">
+                            <i class="bi bi-person-plus"></i> Register Modal Settings
+                        </a>
+                    </li>
+                @endif
             @else
                 <li>
                     <a href="{{ route('dashboard.developer') }}#branding-settings" class="sidebar-link">

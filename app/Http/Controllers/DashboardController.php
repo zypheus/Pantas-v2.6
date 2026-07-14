@@ -55,6 +55,9 @@ final class DashboardController extends Controller
             'branding' => $branding->active(),
             'bannerUrl' => $branding->assetUrl('banner_path'),
             'logoUrl' => $branding->assetUrl('sidebar_logo_path'),
+            'brandingLoginModalLogoUrl' => $branding->assetUrl('login_modal_logo_path'),
+            'brandingAttendanceRegisterLogoUrl' => $branding->assetUrl('register_modal_attendance_logo_path'),
+            'brandingLibraryRegisterLogoUrl' => $branding->assetUrl('register_modal_library_logo_path'),
         ]);
     }
 

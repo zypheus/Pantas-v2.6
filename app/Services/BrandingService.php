@@ -24,6 +24,8 @@ final class BrandingService
         'opac_default_book_cover_path',
         'sidebar_logo_path',
         'login_modal_logo_path',
+        'register_modal_attendance_logo_path',
+        'register_modal_library_logo_path',
     ];
 
     /** @var list<string> */
@@ -47,6 +49,16 @@ final class BrandingService
         'login_modal_background_color',
         'login_modal_text_color',
         'login_modal_button_color',
+        'register_modal_attendance_panel_color',
+        'register_modal_attendance_text_color',
+        'register_modal_attendance_accent_color',
+        'register_modal_attendance_active_role_color',
+        'register_modal_attendance_submit_color',
+        'register_modal_library_panel_color',
+        'register_modal_library_text_color',
+        'register_modal_library_accent_color',
+        'register_modal_library_active_role_color',
+        'register_modal_library_submit_color',
     ];
 
     /** @var list<string> */
@@ -59,6 +71,26 @@ final class BrandingService
         'login_modal_sign_in_heading',
         'login_modal_email_placeholder',
         'login_modal_password_placeholder',
+        'register_modal_heading',
+        'register_modal_login_label',
+        'register_modal_attendance_tab',
+        'register_modal_library_tab',
+        'register_modal_attendance_welcome_label',
+        'register_modal_attendance_portal_name',
+        'register_modal_attendance_description',
+        'register_modal_attendance_heading',
+        'register_modal_attendance_student_label',
+        'register_modal_attendance_employee_label',
+        'register_modal_attendance_student_submit',
+        'register_modal_attendance_employee_submit',
+        'register_modal_library_welcome_label',
+        'register_modal_library_portal_name',
+        'register_modal_library_description',
+        'register_modal_library_heading',
+        'register_modal_library_student_label',
+        'register_modal_library_employee_label',
+        'register_modal_library_student_submit',
+        'register_modal_library_employee_submit',
     ];
 
     /** @var list<string> */
@@ -74,6 +106,86 @@ final class BrandingService
         'login_modal_background_color',
         'login_modal_text_color',
         'login_modal_button_color',
+    ];
+
+    /** @var list<string> */
+    public const REGISTER_MODAL_FIELDS = [
+        'register_modal_attendance_logo_path',
+        'register_modal_library_logo_path',
+        'register_modal_heading',
+        'register_modal_login_label',
+        'register_modal_attendance_tab',
+        'register_modal_library_tab',
+        'register_modal_attendance_welcome_label',
+        'register_modal_attendance_portal_name',
+        'register_modal_attendance_description',
+        'register_modal_attendance_heading',
+        'register_modal_attendance_student_label',
+        'register_modal_attendance_employee_label',
+        'register_modal_attendance_student_submit',
+        'register_modal_attendance_employee_submit',
+        'register_modal_library_welcome_label',
+        'register_modal_library_portal_name',
+        'register_modal_library_description',
+        'register_modal_library_heading',
+        'register_modal_library_student_label',
+        'register_modal_library_employee_label',
+        'register_modal_library_student_submit',
+        'register_modal_library_employee_submit',
+        'register_modal_attendance_panel_color',
+        'register_modal_attendance_text_color',
+        'register_modal_attendance_accent_color',
+        'register_modal_attendance_active_role_color',
+        'register_modal_attendance_submit_color',
+        'register_modal_library_panel_color',
+        'register_modal_library_text_color',
+        'register_modal_library_accent_color',
+        'register_modal_library_active_role_color',
+        'register_modal_library_submit_color',
+    ];
+
+    /** @var list<string> */
+    public const SHARED_REGISTER_FIELDS = [
+        'register_modal_heading',
+        'register_modal_login_label',
+        'register_modal_attendance_tab',
+        'register_modal_library_tab',
+    ];
+
+    /** @var list<string> */
+    public const ATTENDANCE_REGISTER_FIELDS = [
+        'register_modal_attendance_logo_path',
+        'register_modal_attendance_welcome_label',
+        'register_modal_attendance_portal_name',
+        'register_modal_attendance_description',
+        'register_modal_attendance_heading',
+        'register_modal_attendance_student_label',
+        'register_modal_attendance_employee_label',
+        'register_modal_attendance_student_submit',
+        'register_modal_attendance_employee_submit',
+        'register_modal_attendance_panel_color',
+        'register_modal_attendance_text_color',
+        'register_modal_attendance_accent_color',
+        'register_modal_attendance_active_role_color',
+        'register_modal_attendance_submit_color',
+    ];
+
+    /** @var list<string> */
+    public const LIBRARY_REGISTER_FIELDS = [
+        'register_modal_library_logo_path',
+        'register_modal_library_welcome_label',
+        'register_modal_library_portal_name',
+        'register_modal_library_description',
+        'register_modal_library_heading',
+        'register_modal_library_student_label',
+        'register_modal_library_employee_label',
+        'register_modal_library_student_submit',
+        'register_modal_library_employee_submit',
+        'register_modal_library_panel_color',
+        'register_modal_library_text_color',
+        'register_modal_library_accent_color',
+        'register_modal_library_active_role_color',
+        'register_modal_library_submit_color',
     ];
 
     public function __construct(
@@ -111,9 +223,7 @@ final class BrandingService
             ];
         });
 
-        // A forever-cached payload may predate newly introduced branding fields.
         // Re-merge current defaults on every read so deployments remain upgrade-safe
-        // even before the next branding update clears the cache.
         $active = $this->defaults();
         foreach (array_keys($active) as $field) {
             if (filled($cached[$field] ?? null)) {
@@ -144,8 +254,18 @@ final class BrandingService
     }
 
     /** @param array<string, mixed> $values */
-    public function update(array $values, User $user, ?UploadedFile $banner = null, ?UploadedFile $opacBanner = null, ?UploadedFile $opacLogo = null, ?UploadedFile $opacDefaultBookCover = null, ?UploadedFile $logo = null, ?UploadedFile $loginModalLogo = null): BrandingSetting
-    {
+    public function update(
+        array $values,
+        User $user,
+        ?UploadedFile $banner = null,
+        ?UploadedFile $opacBanner = null,
+        ?UploadedFile $opacLogo = null,
+        ?UploadedFile $opacDefaultBookCover = null,
+        ?UploadedFile $logo = null,
+        ?UploadedFile $loginModalLogo = null,
+        ?UploadedFile $attendanceRegisterLogo = null,
+        ?UploadedFile $libraryRegisterLogo = null,
+    ): BrandingSetting {
         $settings = $this->settings() ?? new BrandingSetting;
         $old = collect(array_keys($this->defaults()))
             ->mapWithKeys(fn (string $field): array => [$field => $settings->{$field}])
@@ -156,15 +276,19 @@ final class BrandingService
         $oldOpacDefaultBookCover = $settings->opac_default_book_cover_path;
         $oldLogo = $settings->sidebar_logo_path;
         $oldLoginModalLogo = $settings->login_modal_logo_path;
+        $oldAttendanceRegisterLogo = $settings->register_modal_attendance_logo_path;
+        $oldLibraryRegisterLogo = $settings->register_modal_library_logo_path;
         $newBanner = $banner?->store('branding/banners', 'public');
         $newOpacBanner = $opacBanner?->store('branding/banners', 'public');
         $newOpacLogo = $opacLogo?->store('branding/opac', 'public');
         $newOpacDefaultBookCover = $opacDefaultBookCover?->store('branding/opac', 'public');
         $newLogo = $logo?->store('branding/logos', 'public');
         $newLoginModalLogo = $loginModalLogo?->store('branding/login-modal', 'public');
+        $newAttendanceRegisterLogo = $attendanceRegisterLogo?->store('branding/register-modal', 'public');
+        $newLibraryRegisterLogo = $libraryRegisterLogo?->store('branding/register-modal', 'public');
 
         try {
-            DB::transaction(function () use ($settings, $values, $user, $newBanner, $newOpacBanner, $newOpacLogo, $newOpacDefaultBookCover, $newLogo, $newLoginModalLogo): void {
+            DB::transaction(function () use ($settings, $values, $user, $newBanner, $newOpacBanner, $newOpacLogo, $newOpacDefaultBookCover, $newLogo, $newLoginModalLogo, $newAttendanceRegisterLogo, $newLibraryRegisterLogo): void {
                 foreach (self::COLOR_FIELDS as $field) {
                     if (array_key_exists($field, $values)) {
                         $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
@@ -201,6 +325,14 @@ final class BrandingService
                     $settings->login_modal_logo_path = $newLoginModalLogo;
                 }
 
+                if ($newAttendanceRegisterLogo) {
+                    $settings->register_modal_attendance_logo_path = $newAttendanceRegisterLogo;
+                }
+
+                if ($newLibraryRegisterLogo) {
+                    $settings->register_modal_library_logo_path = $newLibraryRegisterLogo;
+                }
+
                 $settings->updated_by = $user->getKey();
                 $settings->save();
             });
@@ -211,6 +343,8 @@ final class BrandingService
             $this->deleteCustomFile($newOpacDefaultBookCover);
             $this->deleteCustomFile($newLogo);
             $this->deleteCustomFile($newLoginModalLogo);
+            $this->deleteCustomFile($newAttendanceRegisterLogo);
+            $this->deleteCustomFile($newLibraryRegisterLogo);
 
             throw $exception;
         }
@@ -222,6 +356,8 @@ final class BrandingService
         $this->deleteReplacedFile($oldOpacDefaultBookCover, $settings->opac_default_book_cover_path);
         $this->deleteReplacedFile($oldLogo, $settings->sidebar_logo_path);
         $this->deleteReplacedFile($oldLoginModalLogo, $settings->login_modal_logo_path);
+        $this->deleteReplacedFile($oldAttendanceRegisterLogo, $settings->register_modal_attendance_logo_path);
+        $this->deleteReplacedFile($oldLibraryRegisterLogo, $settings->register_modal_library_logo_path);
 
         $this->logUpdateActivity($old, $settings, $user);
 
@@ -247,9 +383,7 @@ final class BrandingService
 
         $title = 'Branding settings updated';
         $body = 'Changed: '.implode(', ', $changed).'.';
-        $actionRoute = collect($changed)->every(fn (string $field): bool => in_array($field, self::LOGIN_MODAL_FIELDS, true))
-            ? 'developer.login-modal.edit'
-            : 'developer.branding.edit';
+        $actionRoute = $this->determineActionRoute($changed);
 
         $this->activityLogger->log(
             module: 'branding',
@@ -260,6 +394,23 @@ final class BrandingService
             actionUrl: route($actionRoute, absolute: false),
             icon: 'palette',
         );
+    }
+
+    /** @param list<string> $changedFields */
+    private function determineActionRoute(array $changedFields): string
+    {
+        $allLoginModal = collect($changedFields)->every(fn (string $field): bool => in_array($field, self::LOGIN_MODAL_FIELDS, true));
+        $allRegisterModal = collect($changedFields)->every(fn (string $field): bool => in_array($field, self::REGISTER_MODAL_FIELDS, true));
+
+        if ($allLoginModal && ! $allRegisterModal) {
+            return 'developer.login-modal.edit';
+        }
+
+        if ($allRegisterModal && ! $allLoginModal) {
+            return 'developer.register-modal.edit';
+        }
+
+        return 'developer.branding.edit';
     }
 
     private function deleteCustomFile(string|false|null $path): void
@@ -290,7 +441,7 @@ final class BrandingService
                 title: 'Branding value restored: '.$field,
                 body: 'Restored '.$field.' to its original Pantas default.',
                 subject: $settings,
-                actionUrl: route('developer.branding.edit', absolute: false),
+                actionUrl: $this->restoreActionUrlForField($field),
                 icon: 'restore',
             );
 
@@ -322,6 +473,19 @@ final class BrandingService
         );
 
         return $settings->fresh('updater');
+    }
+
+    private function restoreActionUrlForField(string $field): string
+    {
+        if (in_array($field, self::LOGIN_MODAL_FIELDS, true)) {
+            return route('developer.login-modal.edit', absolute: false);
+        }
+
+        if (in_array($field, self::REGISTER_MODAL_FIELDS, true)) {
+            return route('developer.register-modal.edit', absolute: false);
+        }
+
+        return route('developer.branding.edit', absolute: false);
     }
 
     public function restoreLoginModal(?string $field, User $user): BrandingSetting
@@ -360,6 +524,50 @@ final class BrandingService
             body: 'Restored all login modal assets, text, and colors to their original Pantas defaults.',
             subject: $settings,
             actionUrl: route('developer.login-modal.edit', absolute: false),
+            icon: 'restore',
+        );
+
+        return $settings->fresh('updater');
+    }
+
+    public function restoreRegisterModal(?string $field, User $user): BrandingSetting
+    {
+        if ($field !== null) {
+            if (! in_array($field, self::REGISTER_MODAL_FIELDS, true)) {
+                throw new \InvalidArgumentException('The requested field is not a register modal setting.');
+            }
+
+            return $this->restoreField(
+                $field,
+                $user,
+                route('developer.register-modal.edit', absolute: false),
+            );
+        }
+
+        $settings = $this->settings() ?? new BrandingSetting;
+        $oldAttendanceLogo = $settings->register_modal_attendance_logo_path;
+        $oldLibraryLogo = $settings->register_modal_library_logo_path;
+
+        DB::transaction(function () use ($settings, $user): void {
+            foreach (self::REGISTER_MODAL_FIELDS as $registerModalField) {
+                $settings->{$registerModalField} = null;
+            }
+
+            $settings->updated_by = $user->getKey();
+            $settings->save();
+        });
+
+        $this->clearCache();
+        $this->deleteReplacedFile($oldAttendanceLogo, null);
+        $this->deleteReplacedFile($oldLibraryLogo, null);
+
+        $this->activityLogger->log(
+            module: 'branding',
+            type: 'branding_restore_group',
+            title: 'Register modal restored to Pantas defaults',
+            body: 'Restored all register modal assets, text, and colors to their original Pantas defaults.',
+            subject: $settings,
+            actionUrl: route('developer.register-modal.edit', absolute: false),
             icon: 'restore',
         );
 
