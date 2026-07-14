@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\WcagContrast;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateLoginModalRequest extends FormRequest
@@ -31,6 +32,53 @@ final class UpdateLoginModalRequest extends FormRequest
             'login_modal_text_color' => $color,
             'login_modal_button_color' => $color,
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $data = $this->safe();
+
+            // Login modal text against form background
+            if ($data->has('login_modal_text_color') && $data->has('login_modal_background_color')) {
+                $rule = new WcagContrast('login_modal_text_color', 'login_modal_background_color', 'Modal text', 'Form background');
+                $rule->validate('login_modal_text_color', $data->input('login_modal_text_color'), function (string $message) use ($validator): void {
+                    $validator->errors()->add('login_modal_text_color', $message);
+                });
+            }
+
+            // Button text (#FFFFFF assumed) against button background
+            if ($data->has('login_modal_button_color')) {
+                $rule = new WcagContrast(
+                    foregroundField: 'login_modal_button_color',
+                    backgroundField: 'login_modal_button_color',
+                    foregroundLabel: 'Sign-in button text',
+                    backgroundLabel: 'Sign-in button',
+                );
+                // We check white (#FFFFFF) against the button color
+                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('login_modal_button_color'));
+                if ($ratio < 3.0) {
+                    $validator->errors()->add('login_modal_button_color', 'The Sign-in button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
+                }
+            }
+
+            // Left panel text (white assumed) against left panel background
+            if ($data->has('login_modal_left_background_color')) {
+                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('login_modal_left_background_color'));
+                if ($ratio < 4.5) {
+                    $validator->errors()->add('login_modal_left_background_color', 'The Left panel background must have at least 4.5:1 contrast ratio against white text (current ratio: '.number_format($ratio, 2).':1).');
+                }
+            }
+        });
     }
 
     protected function prepareForValidation(): void

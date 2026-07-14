@@ -208,6 +208,7 @@
         <div class="d-flex flex-wrap gap-2 mt-4">
             <button type="submit" class="btn btn-primary">Save Changes</button>
             <a href="{{ route('dashboard.developer') }}" class="btn btn-outline-secondary">Cancel</a>
+            <a href="{{ route('developer.branding.versions') }}" class="btn btn-outline-info">Version History</a>
             <button type="submit" form="restore-all" class="btn btn-outline-danger ms-auto">Restore to Default</button>
         </div>
     </form>

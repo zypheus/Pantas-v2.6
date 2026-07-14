@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\WcagContrast;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRegisterModalRequest extends FormRequest
@@ -53,6 +54,54 @@ final class UpdateRegisterModalRequest extends FormRequest
             'register_modal_library_active_role_color' => $color,
             'register_modal_library_submit_color' => $color,
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $data = $this->safe();
+
+            // Attendance panel: text vs panel background
+            if ($data->has('register_modal_attendance_text_color') && $data->has('register_modal_attendance_panel_color')) {
+                $rule = new WcagContrast('register_modal_attendance_text_color', 'register_modal_attendance_panel_color', 'Attendance text', 'Attendance panel');
+                $rule->validate('register_modal_attendance_text_color', $data->input('register_modal_attendance_text_color'), function (string $message) use ($validator): void {
+                    $validator->errors()->add('register_modal_attendance_text_color', $message);
+                });
+            }
+
+            // Library panel: text vs panel background
+            if ($data->has('register_modal_library_text_color') && $data->has('register_modal_library_panel_color')) {
+                $rule = new WcagContrast('register_modal_library_text_color', 'register_modal_library_panel_color', 'Library text', 'Library panel');
+                $rule->validate('register_modal_library_text_color', $data->input('register_modal_library_text_color'), function (string $message) use ($validator): void {
+                    $validator->errors()->add('register_modal_library_text_color', $message);
+                });
+            }
+
+            // Attendance submit button (white text assumed)
+            if ($data->has('register_modal_attendance_submit_color')) {
+                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('register_modal_attendance_submit_color'));
+                if ($ratio < 3.0) {
+                    $validator->errors()->add('register_modal_attendance_submit_color', 'The Attendance submit button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
+                }
+            }
+
+            // Library submit button (white text assumed)
+            if ($data->has('register_modal_library_submit_color')) {
+                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('register_modal_library_submit_color'));
+                if ($ratio < 3.0) {
+                    $validator->errors()->add('register_modal_library_submit_color', 'The Library submit button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
+                }
+            }
+        });
     }
 
     protected function prepareForValidation(): void

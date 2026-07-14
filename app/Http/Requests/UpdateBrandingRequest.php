@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\WcagContrast;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateBrandingRequest extends FormRequest
@@ -42,6 +43,39 @@ final class UpdateBrandingRequest extends FormRequest
             'table_border_color' => $color,
             'table_hover_color' => $color,
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator): void {
+            // Only run contrast checks if no prior failures exist
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $data = $this->safe();
+
+            $contrastRules = [
+                ['sidebar_brand_text_color', 'sidebar_background_color', 'Sidebar brand text', 'Sidebar background'],
+                ['sidebar_text_color', 'sidebar_background_color', 'Sidebar text', 'Sidebar background'],
+                ['sidebar_hover_text_color', 'sidebar_hover_background_color', 'Sidebar hover text', 'Sidebar hover background'],
+                ['table_header_text_color', 'table_header_color', 'Table header text', 'Table header background'],
+            ];
+
+            foreach ($contrastRules as [$fg, $bg, $fgLabel, $bgLabel]) {
+                if ($data->has($fg) && $data->has($bg)) {
+                    $rule = new WcagContrast($fg, $bg, $fgLabel, $bgLabel);
+                    $rule->validate($fg, $data->input($fg), function (string $message) use ($validator, $fg): void {
+                        $validator->errors()->add($fg, $message);
+                    });
+                }
+            }
+        });
     }
 
     protected function prepareForValidation(): void

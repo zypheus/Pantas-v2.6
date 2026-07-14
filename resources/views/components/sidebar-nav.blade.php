@@ -66,6 +66,11 @@
                         <i class="bi bi-activity"></i> Branding Activity
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('developer.branding.versions') }}" class="sidebar-link {{ request()->routeIs('developer.branding.versions', 'developer.branding.restore-version') ? 'active' : '' }}">
+                        <i class="bi bi-clock-history"></i> Version History
+                    </a>
+                </li>
                 @if (Route::has('developer.login-modal.edit'))
                     <li>
                         <a href="{{ route('developer.login-modal.edit') }}" class="sidebar-link {{ request()->routeIs('developer.login-modal.*') ? 'active' : '' }}">

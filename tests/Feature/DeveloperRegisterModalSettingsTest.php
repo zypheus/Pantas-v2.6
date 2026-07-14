@@ -68,16 +68,17 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_heading' => '  Create Account  ',
             'register_modal_attendance_portal_name' => '  Campus Attendance  ',
             'register_modal_library_portal_name' => '  Campus Library  ',
-            'register_modal_attendance_panel_color' => '#aabbcc',
-            'register_modal_library_submit_color' => '#ddeeff',
+            'register_modal_attendance_panel_color' => '#1a3a8a',
+            'register_modal_attendance_text_color' => '#FFFFFF',
+            'register_modal_library_submit_color' => '#1a3a8a',
         ]))->assertRedirect(route('developer.register-modal.edit', absolute: false));
 
         $settings = BrandingSetting::query()->firstOrFail();
         $this->assertSame('Create Account', $settings->register_modal_heading);
         $this->assertSame('Campus Attendance', $settings->register_modal_attendance_portal_name);
         $this->assertSame('Campus Library', $settings->register_modal_library_portal_name);
-        $this->assertSame('#AABBCC', $settings->register_modal_attendance_panel_color);
-        $this->assertSame('#DDEEFF', $settings->register_modal_library_submit_color);
+        $this->assertSame('#1A3A8A', $settings->register_modal_attendance_panel_color);
+        $this->assertSame('#1A3A8A', $settings->register_modal_library_submit_color);
         $this->assertStringStartsWith('branding/register-modal/', (string) $settings->register_modal_attendance_logo_path);
         $this->assertStringStartsWith('branding/register-modal/', (string) $settings->register_modal_library_logo_path);
         Storage::disk('public')->assertExists($settings->register_modal_attendance_logo_path);
@@ -212,12 +213,12 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_library_student_submit' => 'Submit Student Registration',
             'register_modal_library_employee_submit' => 'Submit Faculty & Staff Registration',
             'register_modal_attendance_panel_color' => '#d97706',
-            'register_modal_attendance_text_color' => '#172033',
+            'register_modal_attendance_text_color' => '#FFFFFF',
             'register_modal_attendance_accent_color' => '#B45309',
             'register_modal_attendance_active_role_color' => '#d97706',
             'register_modal_attendance_submit_color' => '#d97706',
             'register_modal_library_panel_color' => '#123C8C',
-            'register_modal_library_text_color' => '#172033',
+            'register_modal_library_text_color' => '#FFFFFF',
             'register_modal_library_accent_color' => '#123C8C',
             'register_modal_library_active_role_color' => '#175dbd',
             'register_modal_library_submit_color' => '#123C8C',

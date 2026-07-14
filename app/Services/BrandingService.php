@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\BrandingSetting;
+use App\Models\BrandingVersion;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -190,6 +191,7 @@ final class BrandingService
 
     public function __construct(
         private readonly AdminActivityLogger $activityLogger,
+        private readonly AssetOptimizer $assetOptimizer,
     ) {}
 
     /** @return array<string, mixed> */
@@ -278,6 +280,34 @@ final class BrandingService
         $oldLoginModalLogo = $settings->login_modal_logo_path;
         $oldAttendanceRegisterLogo = $settings->register_modal_attendance_logo_path;
         $oldLibraryRegisterLogo = $settings->register_modal_library_logo_path;
+
+        // Optimize before storing so the persisted file is compressed
+        if ($banner) {
+            $this->assetOptimizer->optimize($banner, 'banner');
+        }
+        if ($opacBanner) {
+            $this->assetOptimizer->optimize($opacBanner, 'banner');
+        }
+        if ($opacLogo) {
+            $this->assetOptimizer->optimize($opacLogo, 'logo');
+        }
+        if ($opacDefaultBookCover) {
+            $this->assetOptimizer->optimize($opacDefaultBookCover, 'banner');
+        }
+        if ($logo) {
+            $this->assetOptimizer->optimize($logo, 'logo');
+        }
+        if ($loginModalLogo) {
+            $this->assetOptimizer->optimize($loginModalLogo, 'logo');
+        }
+        if ($attendanceRegisterLogo) {
+            $this->assetOptimizer->optimize($attendanceRegisterLogo, 'logo');
+        }
+        if ($libraryRegisterLogo) {
+            $this->assetOptimizer->optimize($libraryRegisterLogo, 'logo');
+        }
+
+        // Store optimized files
         $newBanner = $banner?->store('branding/banners', 'public');
         $newOpacBanner = $opacBanner?->store('branding/banners', 'public');
         $newOpacLogo = $opacLogo?->store('branding/opac', 'public');
@@ -289,6 +319,9 @@ final class BrandingService
 
         try {
             DB::transaction(function () use ($settings, $values, $user, $newBanner, $newOpacBanner, $newOpacLogo, $newOpacDefaultBookCover, $newLogo, $newLoginModalLogo, $newAttendanceRegisterLogo, $newLibraryRegisterLogo): void {
+                // Take a snapshot before applying changes
+                $this->takeSnapshot($settings, $user);
+
                 foreach (self::COLOR_FIELDS as $field) {
                     if (array_key_exists($field, $values)) {
                         $settings->{$field} = $values[$field] ? strtoupper((string) $values[$field]) : null;
@@ -362,6 +395,74 @@ final class BrandingService
         $this->logUpdateActivity($old, $settings, $user);
 
         return $settings->fresh('updater');
+    }
+
+    /**
+     * Take a snapshot of the current branding settings for version history.
+     */
+    private function takeSnapshot(BrandingSetting $settings, User $user): void
+    {
+        if (! $settings->exists) {
+            return; // Don't snapshot a new record before first save
+        }
+
+        $snapshot = [];
+        foreach (array_keys($this->defaults()) as $field) {
+            $snapshot[$field] = $settings->{$field};
+        }
+
+        BrandingVersion::query()->create([
+            'branding_setting_id' => $settings->getKey(),
+            'snapshot' => $snapshot,
+            'changed_by' => $user->getKey(),
+        ]);
+    }
+
+    /**
+     * Restore branding settings from a specific version snapshot.
+     */
+    public function restoreFromVersion(int $versionId, User $user): BrandingSetting
+    {
+        $version = BrandingVersion::query()->findOrFail($versionId);
+        $settings = $this->settings() ?? new BrandingSetting;
+
+        DB::transaction(function () use ($version, $settings, $user): void {
+            $this->takeSnapshot($settings, $user);
+
+            foreach ($version->snapshot as $field => $value) {
+                $settings->{$field} = $value;
+            }
+
+            $settings->updated_by = $user->getKey();
+            $settings->save();
+        });
+
+        $this->clearCache();
+
+        $this->activityLogger->log(
+            module: 'branding',
+            type: 'branding_restore',
+            title: 'Branding restored from version #'.$versionId,
+            body: 'Restored branding settings to the state saved on '.$version->created_at->format('M j, Y g:i A').'.',
+            subject: $settings,
+            actionUrl: route('developer.branding.versions', absolute: false),
+            icon: 'restore',
+        );
+
+        return $settings->fresh('updater');
+    }
+
+    /**
+     * Get paginated version history.
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator<BrandingVersion>
+     */
+    public function getVersions(int $perPage = 20)
+    {
+        return BrandingVersion::query()
+            ->with('changer')
+            ->latest('id')
+            ->paginate($perPage);
     }
 
     /** @param array<string, mixed> $old */
@@ -506,6 +607,7 @@ final class BrandingService
         $oldLogo = $settings->login_modal_logo_path;
 
         DB::transaction(function () use ($settings, $user): void {
+            $this->takeSnapshot($settings, $user);
             foreach (self::LOGIN_MODAL_FIELDS as $loginModalField) {
                 $settings->{$loginModalField} = null;
             }
@@ -549,6 +651,7 @@ final class BrandingService
         $oldLibraryLogo = $settings->register_modal_library_logo_path;
 
         DB::transaction(function () use ($settings, $user): void {
+            $this->takeSnapshot($settings, $user);
             foreach (self::REGISTER_MODAL_FIELDS as $registerModalField) {
                 $settings->{$registerModalField} = null;
             }

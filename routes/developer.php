@@ -17,6 +17,10 @@ Route::middleware(['auth', 'developer'])->group(function (): void {
         ->name('developer.branding.restore');
     Route::get('/developer/branding/activity', [DeveloperBrandingController::class, 'activity'])
         ->name('developer.branding.activity');
+    Route::get('/developer/branding/versions', [DeveloperBrandingController::class, 'versions'])
+        ->name('developer.branding.versions');
+    Route::post('/developer/branding/versions/{version}/restore', [DeveloperBrandingController::class, 'restoreVersion'])
+        ->name('developer.branding.restore-version');
     Route::get('/developer/login-modal', [DeveloperLoginModalController::class, 'edit'])
         ->name('developer.login-modal.edit');
     Route::put('/developer/login-modal', [DeveloperLoginModalController::class, 'update'])

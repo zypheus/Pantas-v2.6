@@ -64,12 +64,12 @@ final class DeveloperLoginModalSettingsTest extends TestCase
         $this->actingAs($developer)->put('/developer/login-modal', $this->validSettings([
             'login_modal_logo' => UploadedFile::fake()->image('portal.png', 300, 300),
             'login_modal_portal_name' => '  Campus Portal  ',
-            'login_modal_button_color' => '#aabbcc',
+            'login_modal_button_color' => '#1a3a8a',
         ]))->assertRedirect(route('developer.login-modal.edit', absolute: false));
 
         $settings = BrandingSetting::query()->firstOrFail();
         $this->assertSame('Campus Portal', $settings->login_modal_portal_name);
-        $this->assertSame('#AABBCC', $settings->login_modal_button_color);
+        $this->assertSame('#1A3A8A', $settings->login_modal_button_color);
         $this->assertStringStartsWith('branding/login-modal/', (string) $settings->login_modal_logo_path);
         Storage::disk('public')->assertExists($settings->login_modal_logo_path);
 

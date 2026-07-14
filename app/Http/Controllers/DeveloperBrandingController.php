@@ -74,4 +74,18 @@ final class DeveloperBrandingController extends Controller
             isset($validated['field']) ? 'Branding value restored to its Pantas default.' : 'Original Pantas branding restored.',
         );
     }
+
+    public function versions(): View
+    {
+        return view('developer.branding.versions', [
+            'versions' => $this->branding->getVersions(),
+        ]);
+    }
+
+    public function restoreVersion(Request $request, int $version): RedirectResponse
+    {
+        $this->branding->restoreFromVersion($version, $request->user());
+
+        return redirect()->route('developer.branding.versions')->with('success', 'Branding restored from version #'.$version.'.');
+    }
 }

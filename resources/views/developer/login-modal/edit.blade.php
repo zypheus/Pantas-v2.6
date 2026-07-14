@@ -155,6 +155,7 @@
         <div class="d-flex flex-wrap gap-2 mt-4">
             <button type="submit" class="btn btn-primary">Save Login Modal</button>
             <a href="{{ route('dashboard.developer') }}" class="btn btn-outline-secondary">Cancel</a>
+            <a href="{{ route('developer.branding.versions') }}" class="btn btn-outline-info">Version History</a>
             <button type="submit" form="restore-login-modal-all" class="btn btn-outline-danger ms-auto">Restore Login Modal Defaults</button>
         </div>
     </form>

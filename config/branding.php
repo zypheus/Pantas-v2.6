@@ -12,6 +12,27 @@ return [
     */
     'css_path' => env('BRANDING_CSS', 'branding/branding.css'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Asset Optimization
+    |--------------------------------------------------------------------------
+    |
+    | Controls compression quality and resize behavior for uploaded branding
+    | images (banners, logos, etc.). The AssetOptimizer service applies these
+    | values after every file upload.
+    |
+    */
+    'optimization' => [
+        'jpeg_quality' => 85,
+        'png_compression' => 7,
+        'webp_quality' => 80,
+        'strip_exif' => true,
+        'dimensions' => [
+            'banner' => ['max_width' => 4000, 'max_height' => 2000],
+            'logo' => ['max_width' => 1000, 'max_height' => 1000],
+        ],
+    ],
+
     'defaults' => [
         'banner_path' => 'images/Bannernew.jpg',
         'opac_banner_path' => 'images/Bannernew.jpg',
