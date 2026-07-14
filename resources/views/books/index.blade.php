@@ -3,8 +3,6 @@
 @section('title', 'Books')
 
 @section('styles')
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="{{ asset('css/books/index.css') }}">
 @endsection
 @section('content')
