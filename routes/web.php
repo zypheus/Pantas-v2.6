@@ -9,7 +9,7 @@ use App\Models\Program;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/branding-assets/{type}/{filename}', BrandingAssetController::class)
-    ->whereIn('type', ['banners', 'logos', 'opac'])
+    ->whereIn('type', ['banners', 'logos', 'opac', 'login-modal'])
     ->where('filename', '[A-Za-z0-9._-]+')
     ->name('branding.asset');
 

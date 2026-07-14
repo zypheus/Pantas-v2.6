@@ -29,6 +29,9 @@ final class BrandingAssetController extends Controller
         } elseif ($type === 'logos') {
             $requestedPath = "branding/logos/{$filename}";
             abort_unless(($branding->active()['sidebar_logo_path'] ?? null) === $requestedPath, 404);
+        } elseif ($type === 'login-modal') {
+            $requestedPath = "branding/login-modal/{$filename}";
+            abort_unless(($branding->active()['login_modal_logo_path'] ?? null) === $requestedPath, 404);
         } else {
             abort(404);
         }

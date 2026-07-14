@@ -6,7 +6,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('img/pantas-10.png') }}">
     <title>PANTAS | Platform</title>
     <link rel="stylesheet" href="{{ asset('style.css') }}?v=responsive-nav-7">
-    <link rel="stylesheet" href="{{ asset('css/auth-modal.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/auth-modal.css') }}?v=3">
 </head>
 <body>
 
@@ -86,6 +86,6 @@
     @include('partials.auth-modal')
 
     <script src="{{ asset('script.js') }}?v=responsive-nav-5"></script>
-    <script src="{{ asset('js/auth-modal.js') }}?v=2"></script>
+    <script src="{{ asset('js/auth-modal.js') }}?v=3"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 @php
-    $modalShouldOpen = session('auth_modal') || $errors->any() || session('success') || session('error') || session('status');
+    $modalShouldOpen = ($forceAuthModalOpen ?? false) || session('auth_modal') || $errors->any() || session('success') || session('error') || session('status');
     $initialView = old('modal_view', session('auth_modal', $errors->any() ? 'register' : 'login'));
     $initialService = old('service', session('auth_service', 'attendance'));
     $initialType = old('registration_type', session('auth_type', 'student'));
@@ -13,6 +13,11 @@
     data-initial-view="{{ $initialView }}"
     data-initial-service="{{ $initialService }}"
     data-initial-type="{{ $initialType }}"
+    data-login-welcome="{{ $activeBranding['login_modal_welcome_label'] }}"
+    data-login-portal-name="{{ $activeBranding['login_modal_portal_name'] }}"
+    data-login-description="{{ $activeBranding['login_modal_description'] }}"
+    data-close-url="{{ $authModalCloseUrl ?? '' }}"
+    style="--lm-login-left:{{ $activeBranding['login_modal_left_background_color'] }};--lm-login-bg:{{ $activeBranding['login_modal_background_color'] }};--lm-login-text:{{ $activeBranding['login_modal_text_color'] }};--lm-login-button:{{ $activeBranding['login_modal_button_color'] }}"
     aria-hidden="true"
 >
     <div class="lm-card-wrap">
@@ -21,14 +26,20 @@
         </button>
 
         <div class="lm-card">
-            <aside class="lm-left" id="lmLeft">
+            <aside class="lm-left login-mode" id="lmLeft">
                 <div class="lm-waves"><span></span><span></span><span></span></div>
-                <div class="lm-left-top" id="lmLeftTop">Welcome to</div>
+                <div class="lm-left-top" id="lmLeftTop">{{ $activeBranding['login_modal_welcome_label'] }}</div>
                 <div class="lm-badge lib" id="lmBadge">
-                    <img src="{{ asset('img/pantas-10.png') }}" alt="PANTAS mark">
+                    <img
+                        id="lmBadgeImage"
+                        src="{{ $brandingLoginModalLogoUrl }}"
+                        data-login-src="{{ $brandingLoginModalLogoUrl }}"
+                        data-registration-src="{{ asset('img/pantas-10.png') }}"
+                        alt="PANTAS mark"
+                    >
                 </div>
-                <div class="lm-brandname" id="lmBrandName">PANTAS Portal</div>
-                <p class="lm-blurb" id="lmBlurb">Sign in to access the Library and Attendance systems.</p>
+                <div class="lm-brandname" id="lmBrandName">{{ $activeBranding['login_modal_portal_name'] }}</div>
+                <p class="lm-blurb" id="lmBlurb">{{ $activeBranding['login_modal_description'] }}</p>
                 <div class="lm-left-links">
                     <button type="button" data-lm-go="register">Register</button>
                     <span class="lm-dot">|</span>
@@ -39,7 +50,7 @@
             <div class="lm-right">
                 <div class="lm-views" id="lmViews">
                     <section class="lm-view" data-lm-view-panel="login">
-                        <h2>Sign in to your account</h2>
+                        <h2>{{ $activeBranding['login_modal_sign_in_heading'] }}</h2>
 
                         @if (session('status') || session('success'))
                             <div class="lm-flash-success">{{ session('status') ?? session('success') }}</div>
@@ -71,7 +82,7 @@
                                     type="email"
                                     id="lm_email"
                                     name="email"
-                                    placeholder="staff@pantas.edu.ph"
+                                    placeholder="{{ $activeBranding['login_modal_email_placeholder'] }}"
                                     value="{{ old('email') }}"
                                     autocomplete="username"
                                     required
@@ -83,7 +94,7 @@
                                     type="password"
                                     id="lm_password"
                                     name="password"
-                                    placeholder="Enter password"
+                                    placeholder="{{ $activeBranding['login_modal_password_placeholder'] }}"
                                     autocomplete="current-password"
                                     required
                                 >

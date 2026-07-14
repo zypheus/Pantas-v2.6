@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceProgram;
+use App\Models\Program;
 use App\Services\Auth\ModuleAccessService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,11 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return view('auth.login');
+        return view('auth.login', [
+            'attendancePrograms' => AttendanceProgram::query()->orderBy('program_name')->get(),
+            'libraryPrograms' => Program::query()->orderBy('program_name')->get(),
+            'workStartYears' => range((int) date('Y'), 1980),
+        ]);
     }
 
     public function login(Request $request)

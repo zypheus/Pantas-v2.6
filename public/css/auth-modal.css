@@ -1,4 +1,8 @@
 .lm-overlay {
+    --lm-login-left: #123c8c;
+    --lm-login-bg: #ffffff;
+    --lm-login-text: #172033;
+    --lm-login-button: #123c8c;
     position: fixed;
     inset: 0;
     z-index: 3000;
@@ -68,6 +72,12 @@
     background:
         radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
         linear-gradient(145deg, #071653, #123c8c 58%, #0b1f62);
+}
+
+.lm-left.login-mode {
+    background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
+        linear-gradient(145deg, #071653, var(--lm-login-left) 58%, #0b1f62);
 }
 
 .lm-left.att-mode {
@@ -328,6 +338,31 @@
 
 .lm-btn.lib {
     background: linear-gradient(135deg, #0f3f83, #175dbd);
+}
+
+[data-lm-view-panel="login"] {
+    color: var(--lm-login-text);
+    background: var(--lm-login-bg);
+}
+
+[data-lm-view-panel="login"] h2,
+[data-lm-view-panel="login"] label {
+    color: var(--lm-login-text);
+}
+
+[data-lm-view-panel="login"] .lm-form,
+[data-lm-view-panel="login"] form {
+    background: var(--lm-login-bg);
+}
+
+[data-lm-view-panel="login"] .lm-btn.lib {
+    background: var(--lm-login-button);
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.2);
+}
+
+[data-lm-view-panel="login"] .lm-swap {
+    color: var(--lm-login-text);
+    background: var(--lm-login-bg);
 }
 
 .lm-btn.att {

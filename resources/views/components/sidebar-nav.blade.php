@@ -66,6 +66,13 @@
                         <i class="bi bi-activity"></i> Branding Activity
                     </a>
                 </li>
+                @if (Route::has('developer.login-modal.edit'))
+                    <li>
+                        <a href="{{ route('developer.login-modal.edit') }}" class="sidebar-link {{ request()->routeIs('developer.login-modal.*') ? 'active' : '' }}">
+                            <i class="bi bi-window-stack"></i> Login Modal Settings
+                        </a>
+                    </li>
+                @endif
             @else
                 <li>
                     <a href="{{ route('dashboard.developer') }}#branding-settings" class="sidebar-link">

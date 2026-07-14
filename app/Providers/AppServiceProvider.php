@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
                 'brandingOpacLogoUrl' => $branding->assetUrl('opac_logo_path'),
                 'brandingOpacDefaultBookCoverUrl' => $branding->assetUrl('opac_default_book_cover_path'),
                 'brandingSidebarLogoUrl' => $branding->assetUrl('sidebar_logo_path'),
+                'brandingLoginModalLogoUrl' => $branding->assetUrl('login_modal_logo_path'),
             ]);
         });
 

@@ -33,6 +33,25 @@
                     <img src="{{ $bannerUrl }}" alt="Current banner" class="img-fluid rounded border mb-3" style="max-height:180px;width:100%;object-fit:cover">
                     <a href="{{ route('developer.branding.edit') }}" class="btn btn-primary">Open Branding Settings</a>
                 </article>
+
+                <article class="dashboard-panel" id="login-modal-settings">
+                    <div class="dashboard-panel-header">
+                        <div>
+                            <span class="dashboard-panel-kicker">Public authentication</span>
+                            <h2>Login Modal Settings</h2>
+                        </div>
+                        <span class="dashboard-panel-meta">Separate settings</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 my-3">
+                        <img src="{{ $brandingLoginModalLogoUrl }}" alt="Current login modal logo" style="width:72px;height:72px;object-fit:contain">
+                        <div>
+                            <strong>{{ $branding['login_modal_portal_name'] ?? config('branding.defaults.login_modal_portal_name', 'PANTAS Portal') }}</strong>
+                            <p class="mb-0 text-muted">{{ $branding['login_modal_sign_in_heading'] ?? config('branding.defaults.login_modal_sign_in_heading', 'Sign in to your account') }}</p>
+                        </div>
+                    </div>
+                    <p class="text-muted">Manage the public login logo, wording, placeholders, and colors without changing registration workflows.</p>
+                    <a href="{{ route('developer.login-modal.edit') }}" class="btn btn-primary">Open Login Modal Settings</a>
+                </article>
             </div>
         </section>
     </div>

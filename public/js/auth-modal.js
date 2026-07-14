@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const left = document.getElementById('lmLeft');
     const leftTop = document.getElementById('lmLeftTop');
     const badge = document.getElementById('lmBadge');
+    const badgeImage = document.getElementById('lmBadgeImage');
     const brandName = document.getElementById('lmBrandName');
     const blurb = document.getElementById('lmBlurb');
     const service = document.getElementById('lmService');
@@ -17,11 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const copy = {
         login: {
-            top: 'Welcome to',
+            top: overlay.dataset.loginWelcome || 'Welcome to',
             cls: 'lib',
-            name: 'PANTAS Portal',
-            text: 'Sign in to access the Library and Attendance systems.',
+            name: overlay.dataset.loginPortalName || 'PANTAS Portal',
+            text: overlay.dataset.loginDescription || 'Sign in to access the Library and Attendance systems.',
             att: false,
+            login: true,
         },
         attendance: {
             top: 'Register for',
@@ -29,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'PANTAS Attendance',
             text: 'Create your attendance record. Students and employees can log school attendance once approved.',
             att: true,
+            login: false,
         },
         library: {
             top: 'Register for',
@@ -36,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'PANTAS Library',
             text: 'Apply for library access. A librarian reviews each request before your library ID is issued.',
             att: false,
+            login: false,
         },
     };
 
@@ -49,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
         brandName.textContent = config.name;
         blurb.textContent = config.text;
         left.classList.toggle('att-mode', config.att);
+        left.classList.toggle('login-mode', config.login);
+        if (badgeImage) {
+            badgeImage.src = config.login ? badgeImage.dataset.loginSrc : badgeImage.dataset.registrationSrc;
+        }
     }
 
     function initCanvas(canvas) {
@@ -117,6 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeLoginModal() {
+        if (overlay.dataset.closeUrl) {
+            window.location.assign(overlay.dataset.closeUrl);
+            return;
+        }
+
         overlay.classList.remove('open');
         overlay.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('auth-modal-open');
