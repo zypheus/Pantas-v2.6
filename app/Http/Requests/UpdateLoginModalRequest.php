@@ -29,7 +29,11 @@ final class UpdateLoginModalRequest extends FormRequest
             'login_modal_email_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_password_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_left_background_color' => $color,
+            'login_modal_welcome_portal_color' => $color,
+            'login_modal_description_color' => $color,
             'login_modal_background_color' => $color,
+            'login_modal_form_background_color' => $color,
+            'login_modal_form_border_color' => $color,
             'login_modal_text_color' => $color,
             'login_modal_button_color' => $color,
         ];
@@ -90,7 +94,7 @@ final class UpdateLoginModalRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['login_modal_left_background_color', 'login_modal_background_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
+        foreach (['login_modal_left_background_color', 'login_modal_welcome_portal_color', 'login_modal_description_color', 'login_modal_background_color', 'login_modal_form_background_color', 'login_modal_form_border_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
             if ($this->filled($field)) {
                 $this->merge([$field => strtoupper(trim((string) $this->input($field)))]);
             }

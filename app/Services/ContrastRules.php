@@ -20,6 +20,9 @@ final class ContrastRules
             ],
             'login-modal' => [
                 ['fg' => 'login_modal_text_color', 'bg' => 'login_modal_background_color', 'fgLabel' => 'Modal text', 'bgLabel' => 'Form background', 'largeText' => false],
+                ['fg' => 'login_modal_text_color', 'bg' => 'login_modal_form_background_color', 'fgLabel' => 'Modal text', 'bgLabel' => 'Login form background', 'largeText' => false],
+                ['fg' => 'login_modal_welcome_portal_color', 'bg' => 'login_modal_left_background_color', 'fgLabel' => 'Welcome and portal text', 'bgLabel' => 'Left panel background', 'largeText' => true],
+                ['fg' => 'login_modal_description_color', 'bg' => 'login_modal_left_background_color', 'fgLabel' => 'Login description', 'bgLabel' => 'Left panel background', 'largeText' => false],
                 ['fg' => null, 'bg' => 'login_modal_button_color', 'fgLabel' => 'Sign-in button text', 'bgLabel' => 'Sign-in button', 'largeText' => true, 'fgOverride' => '#FFFFFF'],
                 ['fg' => null, 'bg' => 'login_modal_left_background_color', 'fgLabel' => 'Left panel text', 'bgLabel' => 'Left panel background', 'largeText' => false, 'fgOverride' => '#FFFFFF'],
             ],
