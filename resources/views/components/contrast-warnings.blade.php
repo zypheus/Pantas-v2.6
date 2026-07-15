@@ -65,30 +65,18 @@ function showContrastWarning(warnings, index) {
 
     html += '</div>';
 
-    // Continue to next warning if any
-    function next() {
-        showContrastWarning(warnings, index + 1);
-    }
-
     Swal.fire({
         title: '<span style="font-size:20px">⚠️ Accessibility Warning</span>',
         html: html,
         icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#2563eb',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'I understand, save anyway',
-        cancelButtonText: 'Let me fix it',
-        reverseButtons: true
-    }).then(function (result) {
-        if (result.isConfirmed) {
-            next();
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            var input = document.getElementById(w.field + '_text') || document.getElementById(w.field);
-            if (input) {
-                input.focus();
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        showCancelButton: false,
+        confirmButtonColor: '#6b7280',
+        confirmButtonText: 'Let me fix it'
+    }).then(function () {
+        var input = document.getElementById(w.field + '_text') || document.getElementById(w.field);
+        if (input) {
+            input.focus();
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 }

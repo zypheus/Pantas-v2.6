@@ -47,7 +47,7 @@ final class UpdateBrandingRequest extends FormRequest
     }
 
     /**
-     * Run contrast checks after validation passes — flash warnings instead of blocking.
+     * Run contrast checks after validation passes — block saving if WCAG AA fails.
      */
     public function passedValidation(): void
     {
@@ -88,6 +88,14 @@ final class UpdateBrandingRequest extends FormRequest
 
         if ($warnings !== []) {
             session()->flash('contrast_warnings', $warnings);
+
+            $errorMessages = [];
+            foreach ($warnings as $w) {
+                $textType = $w['largeText'] ? 'large text (≥3:1)' : 'normal text (≥4.5:1)';
+                $errorMessages[$w['field']] = "{$w['fgLabel']} ({$w['fgColor']}) on {$w['bgLabel']} ({$w['bgColor']}) has only {$w['ratio']}:1 contrast ratio — minimum {$w['threshold']}:1 required for {$textType}.";
+            }
+
+            throw \Illuminate\Validation\ValidationException::withMessages($errorMessages);
         }
     }
 
