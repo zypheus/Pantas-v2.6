@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Rules\WcagContrast;
+use App\Services\ContrastRules;
+use App\Services\ContrastValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateBrandingRequest extends FormRequest
@@ -46,36 +47,48 @@ final class UpdateBrandingRequest extends FormRequest
     }
 
     /**
-     * Configure the validator instance.
-     *
-     * @param \Illuminate\Validation\Validator $validator
+     * Run contrast checks after validation passes — flash warnings instead of blocking.
      */
-    public function withValidator($validator): void
+    public function passedValidation(): void
     {
-        $validator->after(function ($validator): void {
-            // Only run contrast checks if no prior failures exist
-            if ($validator->errors()->isNotEmpty()) {
-                return;
+        $warnings = [];
+        $data = $this->safe();
+
+        foreach (ContrastRules::for('branding') as $rule) {
+            $foreground = $rule['fgOverride'] ?? $data->input($rule['fg']);
+            $background = $data->input($rule['bg']);
+
+            if ($foreground === null || $background === null) {
+                continue;
             }
 
-            $data = $this->safe();
+            $foreground = strtoupper((string) $foreground);
+            $background = strtoupper((string) $background);
 
-            $contrastRules = [
-                ['sidebar_brand_text_color', 'sidebar_background_color', 'Sidebar brand text', 'Sidebar background'],
-                ['sidebar_text_color', 'sidebar_background_color', 'Sidebar text', 'Sidebar background'],
-                ['sidebar_hover_text_color', 'sidebar_hover_background_color', 'Sidebar hover text', 'Sidebar hover background'],
-                ['table_header_text_color', 'table_header_color', 'Table header text', 'Table header background'],
-            ];
-
-            foreach ($contrastRules as [$fg, $bg, $fgLabel, $bgLabel]) {
-                if ($data->has($fg) && $data->has($bg)) {
-                    $rule = new WcagContrast($fg, $bg, $fgLabel, $bgLabel);
-                    $rule->validate($fg, $data->input($fg), function (string $message) use ($validator, $fg): void {
-                        $validator->errors()->add($fg, $message);
-                    });
-                }
+            if (! preg_match('/^#[0-9A-F]{6}$/', $foreground) || ! preg_match('/^#[0-9A-F]{6}$/', $background)) {
+                continue;
             }
-        });
+
+            $ratio = ContrastValidator::ratio($foreground, $background);
+            $threshold = $rule['largeText'] ? 3.0 : 4.5;
+
+            if ($ratio < $threshold) {
+                $warnings[] = [
+                    'field' => $rule['fg'] ?? $rule['bg'],
+                    'fgLabel' => $rule['fgLabel'],
+                    'bgLabel' => $rule['bgLabel'],
+                    'fgColor' => $foreground,
+                    'bgColor' => $background,
+                    'ratio' => round($ratio, 2),
+                    'threshold' => $threshold,
+                    'largeText' => $rule['largeText'],
+                ];
+            }
+        }
+
+        if ($warnings !== []) {
+            session()->flash('contrast_warnings', $warnings);
+        }
     }
 
     protected function prepareForValidation(): void

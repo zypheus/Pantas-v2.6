@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Rules\WcagContrast;
+use App\Services\ContrastRules;
+use App\Services\ContrastValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateLoginModalRequest extends FormRequest
@@ -28,86 +29,60 @@ final class UpdateLoginModalRequest extends FormRequest
             'login_modal_email_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_password_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_left_background_color' => $color,
-            'login_modal_welcome_portal_color' => $color,
-            'login_modal_description_color' => $color,
             'login_modal_background_color' => $color,
-            'login_modal_form_background_color' => $color,
-            'login_modal_form_border_color' => $color,
             'login_modal_text_color' => $color,
             'login_modal_button_color' => $color,
         ];
     }
 
     /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * Run contrast checks after validation passes — flash warnings instead of blocking.
      */
-    public function withValidator($validator): void
+    public function passedValidation(): void
     {
-        $validator->after(function ($validator): void {
-            if ($validator->errors()->isNotEmpty()) {
-                return;
+        $warnings = [];
+        $data = $this->safe();
+
+        foreach (ContrastRules::for('login-modal') as $rule) {
+            $foreground = $rule['fgOverride'] ?? $data->input($rule['fg']);
+            $background = $data->input($rule['bg']);
+
+            if ($foreground === null || $background === null) {
+                continue;
             }
 
-            $data = $this->safe();
+            $foreground = strtoupper((string) $foreground);
+            $background = strtoupper((string) $background);
 
-            // Login modal text against form background
-            if ($data->has('login_modal_text_color') && $data->has('login_modal_background_color')) {
-                $rule = new WcagContrast('login_modal_text_color', 'login_modal_background_color', 'Modal text', 'Form background');
-                $rule->validate('login_modal_text_color', $data->input('login_modal_text_color'), function (string $message) use ($validator): void {
-                    $validator->errors()->add('login_modal_text_color', $message);
-                });
+            if (! preg_match('/^#[0-9A-F]{6}$/', $foreground) || ! preg_match('/^#[0-9A-F]{6}$/', $background)) {
+                continue;
             }
 
-            // Login form text against the inner form-card background
-            if ($data->has('login_modal_text_color') && $data->has('login_modal_form_background_color')) {
-                $rule = new WcagContrast('login_modal_text_color', 'login_modal_form_background_color', 'Modal text', 'Login form background');
-                $rule->validate('login_modal_text_color', $data->input('login_modal_text_color'), function (string $message) use ($validator): void {
-                    $validator->errors()->add('login_modal_text_color', $message);
-                });
-            }
+            $ratio = ContrastValidator::ratio($foreground, $background);
+            $threshold = $rule['largeText'] ? 3.0 : 4.5;
 
-            foreach ([
-                'login_modal_welcome_portal_color' => 'Welcome and portal text',
-                'login_modal_description_color' => 'Login description',
-            ] as $field => $label) {
-                if ($data->has($field) && $data->has('login_modal_left_background_color')) {
-                    $rule = new WcagContrast($field, 'login_modal_left_background_color', $label, 'Left panel background');
-                    $rule->validate($field, $data->input($field), function (string $message) use ($validator, $field): void {
-                        $validator->errors()->add($field, $message);
-                    });
-                }
+            if ($ratio < $threshold) {
+                $warnings[] = [
+                    'field' => $rule['fg'] ?? $rule['bg'],
+                    'fgLabel' => $rule['fgLabel'],
+                    'bgLabel' => $rule['bgLabel'],
+                    'fgColor' => $foreground,
+                    'bgColor' => $background,
+                    'ratio' => round($ratio, 2),
+                    'threshold' => $threshold,
+                    'largeText' => $rule['largeText'],
+                ];
             }
+        }
 
-            // Button text (#FFFFFF assumed) against button background
-            if ($data->has('login_modal_button_color')) {
-                $rule = new WcagContrast(
-                    foregroundField: 'login_modal_button_color',
-                    backgroundField: 'login_modal_button_color',
-                    foregroundLabel: 'Sign-in button text',
-                    backgroundLabel: 'Sign-in button',
-                );
-                // We check white (#FFFFFF) against the button color
-                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('login_modal_button_color'));
-                if ($ratio < 3.0) {
-                    $validator->errors()->add('login_modal_button_color', 'The Sign-in button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
-                }
-            }
-
-            // Left panel text (white assumed) against left panel background
-            if ($data->has('login_modal_left_background_color')) {
-                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('login_modal_left_background_color'));
-                if ($ratio < 4.5) {
-                    $validator->errors()->add('login_modal_left_background_color', 'The Left panel background must have at least 4.5:1 contrast ratio against white text (current ratio: '.number_format($ratio, 2).':1).');
-                }
-            }
-        });
+        if ($warnings !== []) {
+            session()->flash('contrast_warnings', $warnings);
+        }
     }
 
     protected function prepareForValidation(): void
     {
-        foreach (['login_modal_left_background_color', 'login_modal_welcome_portal_color', 'login_modal_description_color', 'login_modal_background_color', 'login_modal_form_background_color', 'login_modal_form_border_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
+        foreach (['login_modal_left_background_color', 'login_modal_background_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
             if ($this->filled($field)) {
                 $this->merge([$field => strtoupper(trim((string) $this->input($field)))]);
             }

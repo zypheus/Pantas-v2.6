@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Rules\WcagContrast;
+use App\Services\ContrastRules;
+use App\Services\ContrastValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRegisterModalRequest extends FormRequest
@@ -44,15 +45,11 @@ final class UpdateRegisterModalRequest extends FormRequest
             'register_modal_library_student_submit' => ['nullable', 'string', 'max:120'],
             'register_modal_library_employee_submit' => ['nullable', 'string', 'max:120'],
             'register_modal_attendance_panel_color' => $color,
-            'register_modal_attendance_welcome_portal_color' => $color,
-            'register_modal_attendance_description_color' => $color,
             'register_modal_attendance_text_color' => $color,
             'register_modal_attendance_accent_color' => $color,
             'register_modal_attendance_active_role_color' => $color,
             'register_modal_attendance_submit_color' => $color,
             'register_modal_library_panel_color' => $color,
-            'register_modal_library_welcome_portal_color' => $color,
-            'register_modal_library_description_color' => $color,
             'register_modal_library_text_color' => $color,
             'register_modal_library_accent_color' => $color,
             'register_modal_library_active_role_color' => $color,
@@ -61,66 +58,59 @@ final class UpdateRegisterModalRequest extends FormRequest
     }
 
     /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * Run contrast checks after validation passes — flash warnings instead of blocking.
      */
-    public function withValidator($validator): void
+    public function passedValidation(): void
     {
-        $validator->after(function ($validator): void {
-            if ($validator->errors()->isNotEmpty()) {
-                return;
+        $warnings = [];
+        $data = $this->safe();
+
+        foreach (ContrastRules::for('register-modal') as $rule) {
+            $foreground = $rule['fgOverride'] ?? $data->input($rule['fg']);
+            $background = $data->input($rule['bg']);
+
+            if ($foreground === null || $background === null) {
+                continue;
             }
 
-            $data = $this->safe();
+            $foreground = strtoupper((string) $foreground);
+            $background = strtoupper((string) $background);
 
-            // Attendance panel: text vs panel background
-            if ($data->has('register_modal_attendance_text_color') && $data->has('register_modal_attendance_panel_color')) {
-                $rule = new WcagContrast('register_modal_attendance_text_color', 'register_modal_attendance_panel_color', 'Attendance text', 'Attendance panel');
-                $rule->validate('register_modal_attendance_text_color', $data->input('register_modal_attendance_text_color'), function (string $message) use ($validator): void {
-                    $validator->errors()->add('register_modal_attendance_text_color', $message);
-                });
+            if (! preg_match('/^#[0-9A-F]{6}$/', $foreground) || ! preg_match('/^#[0-9A-F]{6}$/', $background)) {
+                continue;
             }
 
-            // Library panel: text vs panel background
-            if ($data->has('register_modal_library_text_color') && $data->has('register_modal_library_panel_color')) {
-                $rule = new WcagContrast('register_modal_library_text_color', 'register_modal_library_panel_color', 'Library text', 'Library panel');
-                $rule->validate('register_modal_library_text_color', $data->input('register_modal_library_text_color'), function (string $message) use ($validator): void {
-                    $validator->errors()->add('register_modal_library_text_color', $message);
-                });
-            }
+            $ratio = ContrastValidator::ratio($foreground, $background);
+            $threshold = $rule['largeText'] ? 3.0 : 4.5;
 
-            // Attendance submit button (white text assumed)
-            if ($data->has('register_modal_attendance_submit_color')) {
-                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('register_modal_attendance_submit_color'));
-                if ($ratio < 3.0) {
-                    $validator->errors()->add('register_modal_attendance_submit_color', 'The Attendance submit button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
-                }
+            if ($ratio < $threshold) {
+                $warnings[] = [
+                    'field' => $rule['fg'] ?? $rule['bg'],
+                    'fgLabel' => $rule['fgLabel'],
+                    'bgLabel' => $rule['bgLabel'],
+                    'fgColor' => $foreground,
+                    'bgColor' => $background,
+                    'ratio' => round($ratio, 2),
+                    'threshold' => $threshold,
+                    'largeText' => $rule['largeText'],
+                ];
             }
+        }
 
-            // Library submit button (white text assumed)
-            if ($data->has('register_modal_library_submit_color')) {
-                $ratio = \App\Services\ContrastValidator::ratio('#FFFFFF', $data->input('register_modal_library_submit_color'));
-                if ($ratio < 3.0) {
-                    $validator->errors()->add('register_modal_library_submit_color', 'The Library submit button must have at least 3:1 contrast ratio against white button text (current ratio: '.number_format($ratio, 2).':1).');
-                }
-            }
-        });
+        if ($warnings !== []) {
+            session()->flash('contrast_warnings', $warnings);
+        }
     }
 
     protected function prepareForValidation(): void
     {
         $colorFields = [
             'register_modal_attendance_panel_color',
-            'register_modal_attendance_welcome_portal_color',
-            'register_modal_attendance_description_color',
             'register_modal_attendance_text_color',
             'register_modal_attendance_accent_color',
             'register_modal_attendance_active_role_color',
             'register_modal_attendance_submit_color',
             'register_modal_library_panel_color',
-            'register_modal_library_welcome_portal_color',
-            'register_modal_library_description_color',
             'register_modal_library_text_color',
             'register_modal_library_accent_color',
             'register_modal_library_active_role_color',

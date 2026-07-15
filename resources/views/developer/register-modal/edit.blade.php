@@ -94,8 +94,6 @@
                             ];
                             $attendanceColorFields = [
                                 'register_modal_attendance_panel_color' => 'Panel background',
-                                'register_modal_attendance_welcome_portal_color' => 'Welcome and portal text',
-                                'register_modal_attendance_description_color' => 'Description text',
                                 'register_modal_attendance_text_color' => 'Modal text',
                                 'register_modal_attendance_accent_color' => 'Accent',
                                 'register_modal_attendance_active_role_color' => 'Active role',
@@ -183,8 +181,6 @@
                             ];
                             $libraryColorFields = [
                                 'register_modal_library_panel_color' => 'Panel background',
-                                'register_modal_library_welcome_portal_color' => 'Welcome and portal text',
-                                'register_modal_library_description_color' => 'Description text',
                                 'register_modal_library_text_color' => 'Modal text',
                                 'register_modal_library_accent_color' => 'Accent',
                                 'register_modal_library_active_role_color' => 'Active role',
@@ -257,7 +253,7 @@
 
                         <div class="register-modal-preview-stage rounded border p-3">
                             {{-- Attendance Preview --}}
-                            <div id="registerPreviewAttendance" class="register-modal-preview" style="--rm-panel:{{ old('register_modal_attendance_panel_color', $branding['register_modal_attendance_panel_color']) }};--rm-welcome-portal:{{ old('register_modal_attendance_welcome_portal_color', $branding['register_modal_attendance_welcome_portal_color']) }};--rm-description:{{ old('register_modal_attendance_description_color', $branding['register_modal_attendance_description_color']) }};--rm-text:{{ old('register_modal_attendance_text_color', $branding['register_modal_attendance_text_color']) }};--rm-accent:{{ old('register_modal_attendance_accent_color', $branding['register_modal_attendance_accent_color']) }};--rm-active-role:{{ old('register_modal_attendance_active_role_color', $branding['register_modal_attendance_active_role_color']) }};--rm-submit:{{ old('register_modal_attendance_submit_color', $branding['register_modal_attendance_submit_color']) }}">
+                            <div id="registerPreviewAttendance" class="register-modal-preview" style="--rm-panel:{{ old('register_modal_attendance_panel_color', $branding['register_modal_attendance_panel_color']) }};--rm-text:{{ old('register_modal_attendance_text_color', $branding['register_modal_attendance_text_color']) }};--rm-accent:{{ old('register_modal_attendance_accent_color', $branding['register_modal_attendance_accent_color']) }};--rm-active-role:{{ old('register_modal_attendance_active_role_color', $branding['register_modal_attendance_active_role_color']) }};--rm-submit:{{ old('register_modal_attendance_submit_color', $branding['register_modal_attendance_submit_color']) }}">
                                 <div class="rm-preview-panel">
                                     <small id="previewAttWelcome">{{ old('register_modal_attendance_welcome_label', $branding['register_modal_attendance_welcome_label']) }}</small>
                                     <span class="rm-preview-logo"><img src="{{ $attendanceLogoUrl }}" alt="Preview Attendance logo"></span>
@@ -275,7 +271,7 @@
                             </div>
 
                             {{-- Library Preview --}}
-                            <div id="registerPreviewLibrary" class="register-modal-preview d-none" style="--rm-panel:{{ old('register_modal_library_panel_color', $branding['register_modal_library_panel_color']) }};--rm-welcome-portal:{{ old('register_modal_library_welcome_portal_color', $branding['register_modal_library_welcome_portal_color']) }};--rm-description:{{ old('register_modal_library_description_color', $branding['register_modal_library_description_color']) }};--rm-text:{{ old('register_modal_library_text_color', $branding['register_modal_library_text_color']) }};--rm-accent:{{ old('register_modal_library_accent_color', $branding['register_modal_library_accent_color']) }};--rm-active-role:{{ old('register_modal_library_active_role_color', $branding['register_modal_library_active_role_color']) }};--rm-submit:{{ old('register_modal_library_submit_color', $branding['register_modal_library_submit_color']) }}">
+                            <div id="registerPreviewLibrary" class="register-modal-preview d-none" style="--rm-panel:{{ old('register_modal_library_panel_color', $branding['register_modal_library_panel_color']) }};--rm-text:{{ old('register_modal_library_text_color', $branding['register_modal_library_text_color']) }};--rm-accent:{{ old('register_modal_library_accent_color', $branding['register_modal_library_accent_color']) }};--rm-active-role:{{ old('register_modal_library_active_role_color', $branding['register_modal_library_active_role_color']) }};--rm-submit:{{ old('register_modal_library_submit_color', $branding['register_modal_library_submit_color']) }}">
                                 <div class="rm-preview-panel">
                                     <small id="previewLibWelcome">{{ old('register_modal_library_welcome_label', $branding['register_modal_library_welcome_label']) }}</small>
                                     <span class="rm-preview-logo"><img src="{{ $libraryLogoUrl }}" alt="Preview Library logo"></span>
@@ -316,11 +312,14 @@
     @endforeach
     <form id="restore-register-modal-all" method="POST" action="{{ route('developer.register-modal.restore') }}" class="d-none" onsubmit="return confirm('Restore all register modal settings to the original Pantas defaults?')">@csrf</form>
 </div>
+
+@include('components.contrast-warnings')
+
 @endsection
 
 @push('styles')
 <style>
-.register-modal-preview-stage{background:#e5e7eb;min-height:400px;display:grid;place-items:center;overflow:auto}.register-modal-preview{display:grid;grid-template-columns:1fr 1.15fr;width:min(680px,100%);min-height:360px;overflow:hidden;border-radius:22px;background:#fff;color:var(--rm-text);box-shadow:0 22px 60px rgba(15,23,42,.22);transition:width .2s ease}.rm-preview-panel,.rm-preview-form{padding:32px;display:flex;flex-direction:column;justify-content:center}.rm-preview-panel{align-items:center;text-align:center;background:var(--rm-panel);color:var(--rm-welcome-portal)}.rm-preview-panel small{text-transform:uppercase;letter-spacing:.12em;font-weight:700}.rm-preview-logo{display:grid;place-items:center;width:72px;height:72px;margin:16px;border-radius:20px;background:#fff}.rm-preview-logo img{width:56px;height:56px;object-fit:contain}.rm-preview-panel strong{font-size:26px}.rm-preview-panel p{font-size:13px;margin:12px 0 0;color:var(--rm-description)}.rm-preview-form h3{font-size:22px;margin-bottom:18px}.rm-roles{display:flex;gap:10px;margin-bottom:18px}.rm-role{border:1px solid #d3dbea;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:900;background:#fff}.rm-role-active{color:#fff;background:var(--rm-active-role);border-color:var(--rm-active-role)}.rm-preview-form .rm-submit{border-radius:9px;padding:11px;text-align:center;color:#fff;background:var(--rm-submit);font-weight:700}.register-modal-preview.is-mobile{grid-template-columns:1fr;width:min(340px,100%)}.register-modal-preview.is-mobile .rm-preview-panel{padding:22px}.register-modal-preview.is-mobile .rm-preview-form{padding:24px}.register-modal-preview.is-mobile .rm-preview-panel p{display:none}@media(max-width:767.98px){.register-modal-preview{grid-template-columns:1fr}.rm-preview-panel{padding:22px}.rm-preview-form{padding:24px}}
+.register-modal-preview-stage{background:#e5e7eb;min-height:400px;display:grid;place-items:center;overflow:auto}.register-modal-preview{display:grid;grid-template-columns:1fr 1.15fr;width:min(680px,100%);min-height:360px;overflow:hidden;border-radius:22px;background:#fff;color:var(--rm-text);box-shadow:0 22px 60px rgba(15,23,42,.22);transition:width .2s ease}.rm-preview-panel,.rm-preview-form{padding:32px;display:flex;flex-direction:column;justify-content:center}.rm-preview-panel{align-items:center;text-align:center;background:var(--rm-panel);color:#fff}.rm-preview-panel small{text-transform:uppercase;letter-spacing:.12em;font-weight:700}.rm-preview-logo{display:grid;place-items:center;width:72px;height:72px;margin:16px;border-radius:20px;background:#fff}.rm-preview-logo img{width:56px;height:56px;object-fit:contain}.rm-preview-panel strong{font-size:26px}.rm-preview-panel p{font-size:13px;margin:12px 0 0;opacity:.88}.rm-preview-form h3{font-size:22px;margin-bottom:18px}.rm-roles{display:flex;gap:10px;margin-bottom:18px}.rm-role{border:1px solid #d3dbea;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:900;background:#fff}.rm-role-active{color:#fff;background:var(--rm-active-role);border-color:var(--rm-active-role)}.rm-preview-form .rm-submit{border-radius:9px;padding:11px;text-align:center;color:#fff;background:var(--rm-submit);font-weight:700}.register-modal-preview.is-mobile{grid-template-columns:1fr;width:min(340px,100%)}.register-modal-preview.is-mobile .rm-preview-panel{padding:22px}.register-modal-preview.is-mobile .rm-preview-form{padding:24px}.register-modal-preview.is-mobile .rm-preview-panel p{display:none}@media(max-width:767.98px){.register-modal-preview{grid-template-columns:1fr}.rm-preview-panel{padding:22px}.rm-preview-form{padding:24px}}
 </style>
 @endpush
 
@@ -340,8 +339,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Color CSS variable targets
     const attColorTargets = {
         register_modal_attendance_panel_color: '--rm-panel',
-        register_modal_attendance_welcome_portal_color: '--rm-welcome-portal',
-        register_modal_attendance_description_color: '--rm-description',
         register_modal_attendance_text_color: '--rm-text',
         register_modal_attendance_accent_color: '--rm-accent',
         register_modal_attendance_active_role_color: '--rm-active-role',
@@ -349,8 +346,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     const libColorTargets = {
         register_modal_library_panel_color: '--rm-panel',
-        register_modal_library_welcome_portal_color: '--rm-welcome-portal',
-        register_modal_library_description_color: '--rm-description',
         register_modal_library_text_color: '--rm-text',
         register_modal_library_accent_color: '--rm-accent',
         register_modal_library_active_role_color: '--rm-active-role',
@@ -483,6 +478,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('libraryRegisterLogoPreview').src = url;
         previewLib.querySelector('.rm-preview-logo img').src = url;
     });
+
+    // Register modal contrast rules for real-time checking
+    initContrastChecker([
+        {fg: 'register_modal_attendance_text_color', bg: 'register_modal_attendance_panel_color', fgLabel: 'Attendance text', bgLabel: 'Attendance panel', largeText: false},
+        {fg: 'register_modal_library_text_color', bg: 'register_modal_library_panel_color', fgLabel: 'Library text', bgLabel: 'Library panel', largeText: false},
+        {fgOverride: '#FFFFFF', bg: 'register_modal_attendance_submit_color', fgLabel: 'Attendance submit button text', bgLabel: 'Attendance submit button', largeText: true},
+        {fgOverride: '#FFFFFF', bg: 'register_modal_library_submit_color', fgLabel: 'Library submit button text', bgLabel: 'Library submit button', largeText: true},
+    ]);
 
     // Service toggle
     document.querySelectorAll('[data-preview-service]').forEach(function (button) {
