@@ -53,11 +53,15 @@ final class DeveloperRegisterModalFoundationTest extends TestCase
             'register_modal_library_student_submit',
             'register_modal_library_employee_submit',
             'register_modal_attendance_panel_color',
+            'register_modal_attendance_welcome_portal_color',
+            'register_modal_attendance_description_color',
             'register_modal_attendance_text_color',
             'register_modal_attendance_accent_color',
             'register_modal_attendance_active_role_color',
             'register_modal_attendance_submit_color',
             'register_modal_library_panel_color',
+            'register_modal_library_welcome_portal_color',
+            'register_modal_library_description_color',
             'register_modal_library_text_color',
             'register_modal_library_accent_color',
             'register_modal_library_active_role_color',
@@ -77,7 +81,11 @@ final class DeveloperRegisterModalFoundationTest extends TestCase
         $this->assertSame('Register for', $active['register_modal_library_welcome_label']);
         $this->assertSame('PANTAS Library', $active['register_modal_library_portal_name']);
         $this->assertSame('#d97706', $active['register_modal_attendance_panel_color']);
+        $this->assertSame('#FFFFFF', $active['register_modal_attendance_welcome_portal_color']);
+        $this->assertSame('#FFFFFF', $active['register_modal_attendance_description_color']);
         $this->assertSame('#123C8C', $active['register_modal_library_panel_color']);
+        $this->assertSame('#FFFFFF', $active['register_modal_library_welcome_portal_color']);
+        $this->assertSame('#FFFFFF', $active['register_modal_library_description_color']);
         $this->assertFalse($active['is_customized']);
     }
 
@@ -135,11 +143,15 @@ final class DeveloperRegisterModalFoundationTest extends TestCase
                 'register_modal_library_student_submit' => 'Submit Scholar Registration',
                 'register_modal_library_employee_submit' => 'Submit Faculty Registration',
                 'register_modal_attendance_panel_color' => '#112233',
+                'register_modal_attendance_welcome_portal_color' => '#F8FAFC',
+                'register_modal_attendance_description_color' => '#FEF3C7',
                 'register_modal_attendance_text_color' => '#223344',
                 'register_modal_attendance_accent_color' => '#334455',
                 'register_modal_attendance_active_role_color' => '#445566',
                 'register_modal_attendance_submit_color' => '#556677',
                 'register_modal_library_panel_color' => '#667788',
+                'register_modal_library_welcome_portal_color' => '#E0F2FE',
+                'register_modal_library_description_color' => '#DBEAFE',
                 'register_modal_library_text_color' => '#778899',
                 'register_modal_library_accent_color' => '#8899AA',
                 'register_modal_library_active_role_color' => '#99AABB',
@@ -160,7 +172,11 @@ final class DeveloperRegisterModalFoundationTest extends TestCase
         $this->assertSame('Campus Attendance', $active['register_modal_attendance_portal_name']);
         $this->assertSame('Campus Library', $active['register_modal_library_portal_name']);
         $this->assertSame('#556677', $active['register_modal_attendance_submit_color']);
+        $this->assertSame('#F8FAFC', $active['register_modal_attendance_welcome_portal_color']);
+        $this->assertSame('#FEF3C7', $active['register_modal_attendance_description_color']);
         $this->assertSame('#AABBCC', $active['register_modal_library_submit_color']);
+        $this->assertSame('#E0F2FE', $active['register_modal_library_welcome_portal_color']);
+        $this->assertSame('#DBEAFE', $active['register_modal_library_description_color']);
         $this->assertTrue($active['is_customized']);
 
         $activity = AdminActivity::query()->where('type', 'branding_update')->firstOrFail();

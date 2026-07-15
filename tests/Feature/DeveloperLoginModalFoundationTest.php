@@ -38,7 +38,11 @@ final class DeveloperLoginModalFoundationTest extends TestCase
             'login_modal_email_placeholder',
             'login_modal_password_placeholder',
             'login_modal_left_background_color',
+            'login_modal_welcome_portal_color',
+            'login_modal_description_color',
             'login_modal_background_color',
+            'login_modal_form_background_color',
+            'login_modal_form_border_color',
             'login_modal_text_color',
             'login_modal_button_color',
         ]));
@@ -49,6 +53,10 @@ final class DeveloperLoginModalFoundationTest extends TestCase
         $this->assertSame('PANTAS Portal', $active['login_modal_portal_name']);
         $this->assertSame('Sign in to your account', $active['login_modal_sign_in_heading']);
         $this->assertSame('#123C8C', $active['login_modal_button_color']);
+        $this->assertSame('#FFFFFF', $active['login_modal_welcome_portal_color']);
+        $this->assertSame('#DBEAFE', $active['login_modal_description_color']);
+        $this->assertSame('#FFFFFF', $active['login_modal_form_background_color']);
+        $this->assertSame('#DCE3EE', $active['login_modal_form_border_color']);
         $this->assertFalse($active['is_customized']);
     }
 
@@ -91,7 +99,11 @@ final class DeveloperLoginModalFoundationTest extends TestCase
                 'login_modal_email_placeholder' => 'name@example.edu',
                 'login_modal_password_placeholder' => 'Your password',
                 'login_modal_left_background_color' => '#112233',
+                'login_modal_welcome_portal_color' => '#F8FAFC',
+                'login_modal_description_color' => '#E2E8F0',
                 'login_modal_background_color' => '#F8FAFC',
+                'login_modal_form_background_color' => '#F1F5F9',
+                'login_modal_form_border_color' => '#64748B',
                 'login_modal_text_color' => '#223344',
                 'login_modal_button_color' => '#AABBCC',
             ],
@@ -106,6 +118,10 @@ final class DeveloperLoginModalFoundationTest extends TestCase
         $this->assertSame('Welcome back', $active['login_modal_welcome_label']);
         $this->assertSame('Campus Portal', $active['login_modal_portal_name']);
         $this->assertSame('#AABBCC', $active['login_modal_button_color']);
+        $this->assertSame('#F8FAFC', $active['login_modal_welcome_portal_color']);
+        $this->assertSame('#E2E8F0', $active['login_modal_description_color']);
+        $this->assertSame('#F1F5F9', $active['login_modal_form_background_color']);
+        $this->assertSame('#64748B', $active['login_modal_form_border_color']);
         $this->assertTrue($active['is_customized']);
 
         $activity = AdminActivity::query()->where('type', 'branding_update')->firstOrFail();

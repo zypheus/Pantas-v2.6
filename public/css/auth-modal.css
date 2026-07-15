@@ -1,8 +1,16 @@
 .lm-overlay {
     --lm-login-left: #123c8c;
+    --lm-login-welcome-portal: #ffffff;
+    --lm-login-description: #dbeafe;
     --lm-login-bg: #ffffff;
+    --lm-login-form-bg: #ffffff;
+    --lm-login-form-border: #dce3ee;
     --lm-login-text: #172033;
     --lm-login-button: #123c8c;
+    --lm-reg-att-welcome-portal: #ffffff;
+    --lm-reg-att-description: #ffffff;
+    --lm-reg-lib-welcome-portal: #ffffff;
+    --lm-reg-lib-description: #ffffff;
     position: fixed;
     inset: 0;
     z-index: 3000;
@@ -151,6 +159,33 @@
     color: rgba(255, 255, 255, 0.86);
     line-height: 1.65;
     font-size: 15px;
+}
+
+.lm-left.login-mode .lm-left-top,
+.lm-left.login-mode .lm-brandname {
+    color: var(--lm-login-welcome-portal);
+}
+
+.lm-left.login-mode .lm-blurb {
+    color: var(--lm-login-description);
+}
+
+.lm-left.att-mode .lm-left-top,
+.lm-left.att-mode .lm-brandname {
+    color: var(--lm-reg-att-welcome-portal);
+}
+
+.lm-left.att-mode .lm-blurb {
+    color: var(--lm-reg-att-description);
+}
+
+.lm-left.lib-mode .lm-left-top,
+.lm-left.lib-mode .lm-brandname {
+    color: var(--lm-reg-lib-welcome-portal);
+}
+
+.lm-left.lib-mode .lm-blurb {
+    color: var(--lm-reg-lib-description);
 }
 
 .lm-left-links {
@@ -350,9 +385,13 @@
     color: var(--lm-login-text);
 }
 
-[data-lm-view-panel="login"] .lm-form,
-[data-lm-view-panel="login"] form {
-    background: var(--lm-login-bg);
+[data-lm-view-panel="login"] .lm-form {
+    border-color: var(--lm-login-form-border);
+    background: var(--lm-login-form-bg);
+}
+
+[data-lm-view-panel="login"] .lm-form form {
+    background: transparent;
 }
 
 [data-lm-view-panel="login"] .lm-btn.lib {

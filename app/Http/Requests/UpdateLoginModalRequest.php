@@ -28,7 +28,11 @@ final class UpdateLoginModalRequest extends FormRequest
             'login_modal_email_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_password_placeholder' => ['nullable', 'string', 'max:120'],
             'login_modal_left_background_color' => $color,
+            'login_modal_welcome_portal_color' => $color,
+            'login_modal_description_color' => $color,
             'login_modal_background_color' => $color,
+            'login_modal_form_background_color' => $color,
+            'login_modal_form_border_color' => $color,
             'login_modal_text_color' => $color,
             'login_modal_button_color' => $color,
         ];
@@ -37,7 +41,7 @@ final class UpdateLoginModalRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  \Illuminate\Validation\Validator  $validator
      */
     public function withValidator($validator): void
     {
@@ -54,6 +58,26 @@ final class UpdateLoginModalRequest extends FormRequest
                 $rule->validate('login_modal_text_color', $data->input('login_modal_text_color'), function (string $message) use ($validator): void {
                     $validator->errors()->add('login_modal_text_color', $message);
                 });
+            }
+
+            // Login form text against the inner form-card background
+            if ($data->has('login_modal_text_color') && $data->has('login_modal_form_background_color')) {
+                $rule = new WcagContrast('login_modal_text_color', 'login_modal_form_background_color', 'Modal text', 'Login form background');
+                $rule->validate('login_modal_text_color', $data->input('login_modal_text_color'), function (string $message) use ($validator): void {
+                    $validator->errors()->add('login_modal_text_color', $message);
+                });
+            }
+
+            foreach ([
+                'login_modal_welcome_portal_color' => 'Welcome and portal text',
+                'login_modal_description_color' => 'Login description',
+            ] as $field => $label) {
+                if ($data->has($field) && $data->has('login_modal_left_background_color')) {
+                    $rule = new WcagContrast($field, 'login_modal_left_background_color', $label, 'Left panel background');
+                    $rule->validate($field, $data->input($field), function (string $message) use ($validator, $field): void {
+                        $validator->errors()->add($field, $message);
+                    });
+                }
             }
 
             // Button text (#FFFFFF assumed) against button background
@@ -83,7 +107,7 @@ final class UpdateLoginModalRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['login_modal_left_background_color', 'login_modal_background_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
+        foreach (['login_modal_left_background_color', 'login_modal_welcome_portal_color', 'login_modal_description_color', 'login_modal_background_color', 'login_modal_form_background_color', 'login_modal_form_border_color', 'login_modal_text_color', 'login_modal_button_color'] as $field) {
             if ($this->filled($field)) {
                 $this->merge([$field => strtoupper(trim((string) $this->input($field)))]);
             }

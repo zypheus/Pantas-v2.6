@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Pantas</title>
-    <link rel="stylesheet" href="{{ asset('css/auth-modal.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/auth-modal.css') }}?v=5">
     <style>
         html,
         body {
@@ -26,6 +26,6 @@
         'authModalCloseUrl' => route('landing'),
     ])
 
-    <script src="{{ asset('js/auth-modal.js') }}?v=3"></script>
+    <script src="{{ asset('js/auth-modal.js') }}?v=4"></script>
 </body>
 </html>

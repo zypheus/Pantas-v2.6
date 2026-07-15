@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         blurb.textContent = config.text;
         left.classList.toggle('att-mode', config.att);
         left.classList.toggle('login-mode', config.login);
+        left.classList.toggle('lib-mode', !config.login && !config.att);
         if (badgeImage) {
             if (config.login) {
                 badgeImage.src = badgeImage.dataset.loginSrc;

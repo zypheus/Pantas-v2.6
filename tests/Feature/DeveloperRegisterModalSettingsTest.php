@@ -38,6 +38,10 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             ->assertSee('Restore Register Modal Defaults')
             ->assertSee('name="register_modal_heading"', false)
             ->assertSee('name="register_modal_attendance_panel_color"', false)
+            ->assertSee('name="register_modal_attendance_welcome_portal_color"', false)
+            ->assertSee('name="register_modal_attendance_description_color"', false)
+            ->assertSee('name="register_modal_library_welcome_portal_color"', false)
+            ->assertSee('name="register_modal_library_description_color"', false)
             ->assertSee('name="register_modal_library_submit_color"', false);
 
         $this->actingAs($developer)
@@ -69,7 +73,11 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_attendance_portal_name' => '  Campus Attendance  ',
             'register_modal_library_portal_name' => '  Campus Library  ',
             'register_modal_attendance_panel_color' => '#1a3a8a',
+            'register_modal_attendance_welcome_portal_color' => '#f8fafc',
+            'register_modal_attendance_description_color' => '#fef3c7',
             'register_modal_attendance_text_color' => '#FFFFFF',
+            'register_modal_library_welcome_portal_color' => '#e0f2fe',
+            'register_modal_library_description_color' => '#dbeafe',
             'register_modal_library_submit_color' => '#1a3a8a',
         ]))->assertRedirect(route('developer.register-modal.edit', absolute: false));
 
@@ -78,6 +86,10 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
         $this->assertSame('Campus Attendance', $settings->register_modal_attendance_portal_name);
         $this->assertSame('Campus Library', $settings->register_modal_library_portal_name);
         $this->assertSame('#1A3A8A', $settings->register_modal_attendance_panel_color);
+        $this->assertSame('#F8FAFC', $settings->register_modal_attendance_welcome_portal_color);
+        $this->assertSame('#FEF3C7', $settings->register_modal_attendance_description_color);
+        $this->assertSame('#E0F2FE', $settings->register_modal_library_welcome_portal_color);
+        $this->assertSame('#DBEAFE', $settings->register_modal_library_description_color);
         $this->assertSame('#1A3A8A', $settings->register_modal_library_submit_color);
         $this->assertStringStartsWith('branding/register-modal/', (string) $settings->register_modal_attendance_logo_path);
         $this->assertStringStartsWith('branding/register-modal/', (string) $settings->register_modal_library_logo_path);
@@ -98,11 +110,15 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_library_logo' => UploadedFile::fake()->image('tiny.png', 32, 32),
             'register_modal_heading' => str_repeat('x', 81),
             'register_modal_attendance_panel_color' => 'url(javascript:alert(1))',
+            'register_modal_attendance_welcome_portal_color' => 'red',
+            'register_modal_attendance_description_color' => 'transparent',
             'register_modal_attendance_text_color' => 'red',
             'register_modal_attendance_accent_color' => '#1234',
             'register_modal_attendance_active_role_color' => 'var(--danger)',
             'register_modal_attendance_submit_color' => 'maroon',
             'register_modal_library_panel_color' => 'transparent',
+            'register_modal_library_welcome_portal_color' => 'white',
+            'register_modal_library_description_color' => 'inherit',
             'register_modal_library_text_color' => '#GGGBBB',
             'register_modal_library_accent_color' => 'rebeccapurple',
             'register_modal_library_active_role_color' => '#12',
@@ -112,11 +128,15 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_library_logo',
             'register_modal_heading',
             'register_modal_attendance_panel_color',
+            'register_modal_attendance_welcome_portal_color',
+            'register_modal_attendance_description_color',
             'register_modal_attendance_text_color',
             'register_modal_attendance_accent_color',
             'register_modal_attendance_active_role_color',
             'register_modal_attendance_submit_color',
             'register_modal_library_panel_color',
+            'register_modal_library_welcome_portal_color',
+            'register_modal_library_description_color',
             'register_modal_library_text_color',
             'register_modal_library_accent_color',
             'register_modal_library_active_role_color',
@@ -213,11 +233,15 @@ final class DeveloperRegisterModalSettingsTest extends TestCase
             'register_modal_library_student_submit' => 'Submit Student Registration',
             'register_modal_library_employee_submit' => 'Submit Faculty & Staff Registration',
             'register_modal_attendance_panel_color' => '#d97706',
+            'register_modal_attendance_welcome_portal_color' => '#FFFFFF',
+            'register_modal_attendance_description_color' => '#FFFFFF',
             'register_modal_attendance_text_color' => '#FFFFFF',
             'register_modal_attendance_accent_color' => '#B45309',
             'register_modal_attendance_active_role_color' => '#d97706',
             'register_modal_attendance_submit_color' => '#d97706',
             'register_modal_library_panel_color' => '#123C8C',
+            'register_modal_library_welcome_portal_color' => '#FFFFFF',
+            'register_modal_library_description_color' => '#FFFFFF',
             'register_modal_library_text_color' => '#FFFFFF',
             'register_modal_library_accent_color' => '#123C8C',
             'register_modal_library_active_role_color' => '#175dbd',

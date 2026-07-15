@@ -37,6 +37,10 @@ final class DeveloperLoginModalSettingsTest extends TestCase
             ->assertSee('Live preview')
             ->assertSee('Restore Login Modal Defaults')
             ->assertSee('name="login_modal_portal_name"', false)
+            ->assertSee('name="login_modal_welcome_portal_color"', false)
+            ->assertSee('name="login_modal_description_color"', false)
+            ->assertSee('name="login_modal_form_background_color"', false)
+            ->assertSee('name="login_modal_form_border_color"', false)
             ->assertSee('name="login_modal_button_color"', false);
 
         $this->actingAs($developer)
@@ -64,11 +68,19 @@ final class DeveloperLoginModalSettingsTest extends TestCase
         $this->actingAs($developer)->put('/developer/login-modal', $this->validSettings([
             'login_modal_logo' => UploadedFile::fake()->image('portal.png', 300, 300),
             'login_modal_portal_name' => '  Campus Portal  ',
+            'login_modal_welcome_portal_color' => '#f8fafc',
+            'login_modal_description_color' => '#dbeafe',
+            'login_modal_form_background_color' => '#f1f5f9',
+            'login_modal_form_border_color' => '#64748b',
             'login_modal_button_color' => '#1a3a8a',
         ]))->assertRedirect(route('developer.login-modal.edit', absolute: false));
 
         $settings = BrandingSetting::query()->firstOrFail();
         $this->assertSame('Campus Portal', $settings->login_modal_portal_name);
+        $this->assertSame('#F8FAFC', $settings->login_modal_welcome_portal_color);
+        $this->assertSame('#DBEAFE', $settings->login_modal_description_color);
+        $this->assertSame('#F1F5F9', $settings->login_modal_form_background_color);
+        $this->assertSame('#64748B', $settings->login_modal_form_border_color);
         $this->assertSame('#1A3A8A', $settings->login_modal_button_color);
         $this->assertStringStartsWith('branding/login-modal/', (string) $settings->login_modal_logo_path);
         Storage::disk('public')->assertExists($settings->login_modal_logo_path);
@@ -86,14 +98,22 @@ final class DeveloperLoginModalSettingsTest extends TestCase
             'login_modal_logo' => UploadedFile::fake()->image('tiny.png', 32, 32),
             'login_modal_portal_name' => str_repeat('x', 101),
             'login_modal_left_background_color' => 'url(javascript:alert(1))',
+            'login_modal_welcome_portal_color' => 'red',
+            'login_modal_description_color' => 'transparent',
             'login_modal_background_color' => 'red',
+            'login_modal_form_background_color' => 'transparent',
+            'login_modal_form_border_color' => '1px solid red',
             'login_modal_text_color' => '#1234',
             'login_modal_button_color' => 'var(--danger)',
         ]))->assertSessionHasErrors([
             'login_modal_logo',
             'login_modal_portal_name',
             'login_modal_left_background_color',
+            'login_modal_welcome_portal_color',
+            'login_modal_description_color',
             'login_modal_background_color',
+            'login_modal_form_background_color',
+            'login_modal_form_border_color',
             'login_modal_text_color',
             'login_modal_button_color',
         ]);
@@ -162,7 +182,11 @@ final class DeveloperLoginModalSettingsTest extends TestCase
             'login_modal_email_placeholder' => 'staff@pantas.edu.ph',
             'login_modal_password_placeholder' => 'Enter password',
             'login_modal_left_background_color' => '#123C8C',
+            'login_modal_welcome_portal_color' => '#FFFFFF',
+            'login_modal_description_color' => '#DBEAFE',
             'login_modal_background_color' => '#FFFFFF',
+            'login_modal_form_background_color' => '#FFFFFF',
+            'login_modal_form_border_color' => '#DCE3EE',
             'login_modal_text_color' => '#172033',
             'login_modal_button_color' => '#123C8C',
         ], $overrides);

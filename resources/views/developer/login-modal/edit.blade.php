@@ -35,7 +35,11 @@
         ];
         $colorFields = [
             'login_modal_left_background_color' => 'Left panel background',
-            'login_modal_background_color' => 'Form background',
+            'login_modal_welcome_portal_color' => 'Welcome and portal text',
+            'login_modal_description_color' => 'Description text',
+            'login_modal_background_color' => 'Modal background',
+            'login_modal_form_background_color' => 'Login form background',
+            'login_modal_form_border_color' => 'Login form border',
             'login_modal_text_color' => 'Text color',
             'login_modal_button_color' => 'Sign-in button',
         ];
@@ -129,7 +133,7 @@
                         </div>
 
                         <div class="login-modal-preview-stage rounded border p-3">
-                            <div id="loginModalPreview" class="login-modal-preview mx-auto" style="--lm-preview-left:{{ old('login_modal_left_background_color', $branding['login_modal_left_background_color']) }};--lm-preview-bg:{{ old('login_modal_background_color', $branding['login_modal_background_color']) }};--lm-preview-text:{{ old('login_modal_text_color', $branding['login_modal_text_color']) }};--lm-preview-button:{{ old('login_modal_button_color', $branding['login_modal_button_color']) }}">
+                            <div id="loginModalPreview" class="login-modal-preview mx-auto" style="--lm-preview-left:{{ old('login_modal_left_background_color', $branding['login_modal_left_background_color']) }};--lm-preview-welcome-portal:{{ old('login_modal_welcome_portal_color', $branding['login_modal_welcome_portal_color']) }};--lm-preview-description:{{ old('login_modal_description_color', $branding['login_modal_description_color']) }};--lm-preview-bg:{{ old('login_modal_background_color', $branding['login_modal_background_color']) }};--lm-preview-form-bg:{{ old('login_modal_form_background_color', $branding['login_modal_form_background_color']) }};--lm-preview-form-border:{{ old('login_modal_form_border_color', $branding['login_modal_form_border_color']) }};--lm-preview-text:{{ old('login_modal_text_color', $branding['login_modal_text_color']) }};--lm-preview-button:{{ old('login_modal_button_color', $branding['login_modal_button_color']) }}">
                                 <div class="login-modal-preview-left">
                                     <small id="previewWelcome">{{ old('login_modal_welcome_label', $branding['login_modal_welcome_label']) }}</small>
                                     <span class="login-modal-preview-logo"><img id="previewLogo" src="{{ $logoUrl }}" alt="Preview logo"></span>
@@ -138,12 +142,14 @@
                                 </div>
                                 <div class="login-modal-preview-right">
                                     <h3 id="previewHeading">{{ old('login_modal_sign_in_heading', $branding['login_modal_sign_in_heading']) }}</h3>
-                                    <label>Email <span>*</span></label>
-                                    <div class="login-modal-preview-input" id="previewEmailPlaceholder">{{ old('login_modal_email_placeholder', $branding['login_modal_email_placeholder']) }}</div>
-                                    <label>Password <span>*</span></label>
-                                    <div class="login-modal-preview-input" id="previewPasswordPlaceholder">{{ old('login_modal_password_placeholder', $branding['login_modal_password_placeholder']) }}</div>
-                                    <div class="login-modal-preview-remember">□ Remember me</div>
-                                    <div class="login-modal-preview-button">Sign In</div>
+                                    <div class="login-modal-preview-form">
+                                        <label>Email <span>*</span></label>
+                                        <div class="login-modal-preview-input" id="previewEmailPlaceholder">{{ old('login_modal_email_placeholder', $branding['login_modal_email_placeholder']) }}</div>
+                                        <label>Password <span>*</span></label>
+                                        <div class="login-modal-preview-input" id="previewPasswordPlaceholder">{{ old('login_modal_password_placeholder', $branding['login_modal_password_placeholder']) }}</div>
+                                        <div class="login-modal-preview-remember">□ Remember me</div>
+                                        <div class="login-modal-preview-button">Sign In</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -170,7 +176,7 @@
 
 @push('styles')
 <style>
-.login-modal-preview-stage{background:#e5e7eb;min-height:430px;display:grid;place-items:center;overflow:auto}.login-modal-preview{display:grid;grid-template-columns:1fr 1.15fr;width:min(680px,100%);min-height:390px;overflow:hidden;border-radius:22px;background:var(--lm-preview-bg);color:var(--lm-preview-text);box-shadow:0 22px 60px rgba(15,23,42,.22);transition:width .2s ease}.login-modal-preview-left,.login-modal-preview-right{padding:34px;display:flex;flex-direction:column;justify-content:center}.login-modal-preview-left{align-items:center;text-align:center;background:var(--lm-preview-left);color:#fff}.login-modal-preview-left small{text-transform:uppercase;letter-spacing:.12em;font-weight:700}.login-modal-preview-logo{display:grid;place-items:center;width:78px;height:78px;margin:18px;border-radius:22px;background:#fff}.login-modal-preview-logo img{width:62px;height:62px;object-fit:contain}.login-modal-preview-left strong{font-size:28px}.login-modal-preview-left p{font-size:13px;margin:14px 0 0;opacity:.88}.login-modal-preview-right h3{font-size:23px;margin-bottom:22px}.login-modal-preview-right label{font-size:12px;font-weight:700;margin-bottom:6px}.login-modal-preview-right label span{color:#dc2626}.login-modal-preview-input{min-height:42px;border:1px solid #d7deea;border-radius:9px;padding:11px;margin-bottom:14px;color:#6b7280;background:#fff;font-size:13px}.login-modal-preview-remember{font-size:12px;margin-bottom:16px}.login-modal-preview-button{border-radius:9px;padding:11px;text-align:center;color:#fff;background:var(--lm-preview-button);font-weight:700}.login-modal-preview.is-mobile{grid-template-columns:1fr;width:min(340px,100%)}.login-modal-preview.is-mobile .login-modal-preview-left{padding:24px}.login-modal-preview.is-mobile .login-modal-preview-right{padding:26px}.login-modal-preview.is-mobile .login-modal-preview-left p{display:none}@media(max-width:767.98px){.login-modal-preview{grid-template-columns:1fr}.login-modal-preview-left{padding:24px}.login-modal-preview-right{padding:26px}}
+.login-modal-preview-stage{background:#e5e7eb;min-height:430px;display:grid;place-items:center;overflow:auto}.login-modal-preview{display:grid;grid-template-columns:1fr 1.15fr;width:min(680px,100%);min-height:390px;overflow:hidden;border-radius:22px;background:var(--lm-preview-bg);color:var(--lm-preview-text);box-shadow:0 22px 60px rgba(15,23,42,.22);transition:width .2s ease}.login-modal-preview-left,.login-modal-preview-right{padding:34px;display:flex;flex-direction:column;justify-content:center}.login-modal-preview-left{align-items:center;text-align:center;background:var(--lm-preview-left);color:var(--lm-preview-welcome-portal)}.login-modal-preview-left small{text-transform:uppercase;letter-spacing:.12em;font-weight:700}.login-modal-preview-logo{display:grid;place-items:center;width:78px;height:78px;margin:18px;border-radius:22px;background:#fff}.login-modal-preview-logo img{width:62px;height:62px;object-fit:contain}.login-modal-preview-left strong{font-size:28px}.login-modal-preview-left p{font-size:13px;margin:14px 0 0;color:var(--lm-preview-description)}.login-modal-preview-right h3{font-size:23px;margin-bottom:22px}.login-modal-preview-form{padding:16px 24px;border:1px solid var(--lm-preview-form-border);border-radius:12px;background:var(--lm-preview-form-bg)}.login-modal-preview-right label{font-size:12px;font-weight:700;margin-bottom:6px}.login-modal-preview-right label span{color:#dc2626}.login-modal-preview-input{min-height:42px;border:1px solid #d7deea;border-radius:9px;padding:11px;margin-bottom:14px;color:#6b7280;background:#fff;font-size:13px}.login-modal-preview-remember{font-size:12px;margin-bottom:16px}.login-modal-preview-button{border-radius:9px;padding:11px;text-align:center;color:#fff;background:var(--lm-preview-button);font-weight:700}.login-modal-preview.is-mobile{grid-template-columns:1fr;width:min(340px,100%)}.login-modal-preview.is-mobile .login-modal-preview-left{padding:24px}.login-modal-preview.is-mobile .login-modal-preview-right{padding:26px}.login-modal-preview.is-mobile .login-modal-preview-left p{display:none}@media(max-width:767.98px){.login-modal-preview{grid-template-columns:1fr}.login-modal-preview-left{padding:24px}.login-modal-preview-right{padding:26px}}
 </style>
 @endpush
 
@@ -189,7 +195,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     const colorTargets = {
         login_modal_left_background_color: '--lm-preview-left',
+        login_modal_welcome_portal_color: '--lm-preview-welcome-portal',
+        login_modal_description_color: '--lm-preview-description',
         login_modal_background_color: '--lm-preview-bg',
+        login_modal_form_background_color: '--lm-preview-form-bg',
+        login_modal_form_border_color: '--lm-preview-form-border',
         login_modal_text_color: '--lm-preview-text',
         login_modal_button_color: '--lm-preview-button'
     };

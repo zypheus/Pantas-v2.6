@@ -36,7 +36,11 @@ final class LoginModalBrandingIntegrationTest extends TestCase
             'login_modal_email_placeholder' => 'staff@example.edu',
             'login_modal_password_placeholder' => 'Secure password',
             'login_modal_left_background_color' => '#102030',
+            'login_modal_welcome_portal_color' => '#FEF3C7',
+            'login_modal_description_color' => '#DBEAFE',
             'login_modal_background_color' => '#F8FAFC',
+            'login_modal_form_background_color' => '#F1F5F9',
+            'login_modal_form_border_color' => '#64748B',
             'login_modal_text_color' => '#203040',
             'login_modal_button_color' => '#405060',
             'updated_by' => $developer->id,
@@ -49,7 +53,11 @@ final class LoginModalBrandingIntegrationTest extends TestCase
             ->assertSee('data-login-portal-name="Campus Access"', false)
             ->assertSee('data-login-description="Use your approved account."', false)
             ->assertSee('--lm-login-left:#102030', false)
+            ->assertSee('--lm-login-welcome-portal:#FEF3C7', false)
+            ->assertSee('--lm-login-description:#DBEAFE', false)
             ->assertSee('--lm-login-bg:#F8FAFC', false)
+            ->assertSee('--lm-login-form-bg:#F1F5F9', false)
+            ->assertSee('--lm-login-form-border:#64748B', false)
             ->assertSee('--lm-login-text:#203040', false)
             ->assertSee('--lm-login-button:#405060', false)
             ->assertSee('/branding-assets/login-modal/custom.png', false)
@@ -79,6 +87,24 @@ final class LoginModalBrandingIntegrationTest extends TestCase
             ->assertSee(route('library.pending.store', absolute: false))
             ->assertSee(route('library.pendingEmployee.store', absolute: false))
             ->assertSee('data-default-registration-src="'.asset('img/pantas-10.png').'"', false);
+    }
+
+    public function test_registration_copy_colors_render_independently_for_both_services(): void
+    {
+        BrandingSetting::query()->create([
+            'register_modal_attendance_welcome_portal_color' => '#FEF3C7',
+            'register_modal_attendance_description_color' => '#FFFBEB',
+            'register_modal_library_welcome_portal_color' => '#E0F2FE',
+            'register_modal_library_description_color' => '#DBEAFE',
+        ]);
+        Cache::forget(BrandingService::CACHE_KEY);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('--lm-reg-att-welcome-portal:#FEF3C7', false)
+            ->assertSee('--lm-reg-att-description:#FFFBEB', false)
+            ->assertSee('--lm-reg-lib-welcome-portal:#E0F2FE', false)
+            ->assertSee('--lm-reg-lib-description:#DBEAFE', false);
     }
 
     public function test_direct_login_uses_the_same_branded_modal_and_opens_it_automatically(): void
